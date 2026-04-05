@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelia Admin — Tableau de bord</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="app-sidebar">
+        <div class="logo-area">
+            Travel<em>ia</em>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item active">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏨</span>
+                Hébergements
+            </a>
+
+            <!-- ✅ MODIFIÉ ICI -->
+            <a href="{{ path('app_reservation_index') }}" class="nav-item">
+                <span class="nav-icon">📘</span>
+                Réservations
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🛶</span>
+                Activités
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span>
+                Clients
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Paramètres
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin</span>
+                <small>Accès complet</small>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <div class="glow-bg"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Bienvenue, <em>Admin</em></h1>
+                    <p style="font-size: 0.9rem; opacity: 0.5; margin-top: 0.5rem;">
+                        La plateforme Travelia fonctionne parfaitement aujourd’hui.
+                    </p>
+                </div>
+                <div class="date-pill">{{ "now"|date("d/m/Y") }}</div>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <div class="dashboard-grid">
+
+            <div class="stat-card">
+                <div class="stat-label">Revenus mensuels</div>
+                <div class="stat-value">€142,8K</div>
+                <div class="stat-trend">+14.2% ↑</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Réservations actives</div>
+                <div class="stat-value">3,190</div>
+                <div class="stat-trend">+5.8% ↑</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Avis en attente</div>
+                <div class="stat-value">48</div>
+                <div class="stat-trend down">-2.4% ↓</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Satisfaction client</div>
+                <div class="stat-value">98.4%</div>
+                <div class="stat-trend">+0.2% ↑</div>
+            </div>
+
+            <!-- Overview -->
+            <div class="overview-section">
+
+                <!-- Stat cercle -->
+                <div class="traveler-stats">
+                    <div class="chart-title">Statistiques clients</div>
+
+                    <div class="circle-wrap">
+                        <svg class="circle-svg" viewBox="0 0 160 160">
+                            <circle class="circle-bg" cx="80" cy="80" r="70"></circle>
+                            <circle class="circle-val" cx="80" cy="80" r="70"></circle>
+                        </svg>
+
+                        <div class="chart-center">
+                            <span class="chart-n">82%</span>
+                            <span class="chart-l">Fidélité</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:2rem; width:100%;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-size:0.7rem; opacity:0.4;">Nouveaux clients</span>
+                            <span style="font-size:0.7rem; color:var(--gold);">2,450</span>
+                        </div>
+
+                        <div style="width:100%; height:2px; background:rgba(255,255,255,0.05);">
+                            <div style="width:82%; height:100%; background:var(--gold);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graph -->
+                <div class="booking-graph">
+                    <div class="graph-header">
+                        <div class="graph-title">
+                            <h3>Évolution des réservations</h3>
+                            <p style="font-size:0.75rem; opacity:0.3;">Derniers 7 jours</p>
+                        </div>
+
+                        <div class="graph-controls">
+                            <button class="g-btn">J</button>
+                            <button class="g-btn active">S</button>
+                            <button class="g-btn">M</button>
+                            <button class="g-btn">A</button>
+                        </div>
+                    </div>
+
+                    <div class="graph-canvas">
+                        <svg class="svg-graph-lines" viewBox="0 0 800 240">
+                            <path class="g-area" d="M0,200 Q150,120 300,160 T600,80 T800,120 L800,240 L0,240 Z"></path>
+                            <path class="g-line" d="M0,200 Q150,120 300,160 T600,80 T800,120"></path>
+                        </svg>
+
+                        <div class="graph-labels">
+                            <span>Lun</span>
+                            <span>Mar</span>
+                            <span>Mer</span>
+                            <span>Jeu</span>
+                            <span>Ven</span>
+                            <span>Sam</span>
+                            <span>Dim</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liste -->
+                <div class="bookings-list">
+                    <div class="list-head">
+                        <h4>Activités récentes</h4>
+                    </div>
+
+                    <div class="booking-item">
+                        <div class="b-cust">Villa Luxe</div>
+                        <div class="b-dest">Maldives</div>
+                        <div class="b-date">il y a 4 min</div>
+                        <div class="b-status">Confirmé</div>
+                    </div>
+
+                    <div class="booking-item">
+                        <div class="b-cust">Vol TP922</div>
+                        <div class="b-dest">Dubai → Paris</div>
+                        <div class="b-date">il y a 15 min</div>
+                        <div class="b-status">Confirmé</div>
+                    </div>
+
+                    <div class="booking-item">
+                        <div class="b-cust">Safari</div>
+                        <div class="b-dest">Tanzanie</div>
+                        <div class="b-date">il y a 1h</div>
+                        <div class="b-status">En attente</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ asset('js/admin.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+{{ form_start(form) }}
+
+<style>
+    .travelia-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .travelia-form .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+
+    .field-group label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(255,255,255,0.55);
+        font-weight: 700;
+    }
+
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+        width: 100%;
+        padding: 0.95rem 1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #fff;
+        outline: none;
+        font-size: 0.95rem;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+        border-color: rgba(201, 168, 76, 0.55);
+        box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+    }
+
+    .field-group option {
+        color: #111;
+    }
+
+    .field-errors {
+        color: #ef4444;
+        font-size: 0.78rem;
+        margin-top: 0.2rem;
+    }
+
+    .global-errors {
+        grid-column: 1 / -1;
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #ef4444;
+        padding: 1rem 1.2rem;
+        border-radius: 14px;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+    }
+
+    .save-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.95rem 1.5rem;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, var(--gold), var(--gold2));
+        color: #111;
+        box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
+    }
+</style>
+
+<div class="travelia-form">
+    {% if form_errors(form) %}
+        <div class="global-errors">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <div class="field-group">
+        {{ form_label(form.typeTransport) }}
+        {{ form_widget(form.typeTransport) }}
+        <div class="field-errors">{{ form_errors(form.typeTransport) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.numeroBillet) }}
+        {{ form_widget(form.numeroBillet) }}
+        <div class="field-errors">{{ form_errors(form.numeroBillet) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.dateDepart) }}
+        {{ form_widget(form.dateDepart) }}
+        <div class="field-errors">{{ form_errors(form.dateDepart) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.dateArrivee) }}
+        {{ form_widget(form.dateArrivee) }}
+        <div class="field-errors">{{ form_errors(form.dateArrivee) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.prix) }}
+        {{ form_widget(form.prix) }}
+        <div class="field-errors">{{ form_errors(form.prix) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.statut) }}
+        {{ form_widget(form.statut) }}
+        <div class="field-errors">{{ form_errors(form.statut) }}</div>
+    </div>
+
+    <div class="field-group full-width">
+        {{ form_label(form.reservation) }}
+        {{ form_widget(form.reservation) }}
+        <div class="field-errors">{{ form_errors(form.reservation) }}</div>
+    </div>
+
+    <div class="form-actions">
+        <button class="save-btn">{{ button_label|default('Enregistrer') }}</button>
+    </div>
+</div>
+
+{{ form_end(form) }}

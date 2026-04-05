@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des réservations</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
+    <style>
+        .page-switch {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .switch-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 170px;
+            padding: 0.9rem 1.3rem;
+            border-radius: 14px;
+            border: 1px solid rgba(201, 168, 76, 0.35);
+            background: rgba(255,255,255,0.02);
+            color: var(--gold2);
+            text-decoration: none;
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            transition: all 0.3s var(--ease);
+        }
+
+        .switch-btn.active,
+        .switch-btn:hover {
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.22);
+        }
+
+        .content-card {
+            width: 100%;
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            border-radius: 28px;
+            padding: 2.2rem;
+            backdrop-filter: blur(20px);
+            margin-top: 1rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--serif);
+            font-size: 2.4rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .create-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            text-transform: uppercase;
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
+            transition: transform 0.2s ease;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .data-table-wrap {
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .data-table thead th {
+            text-align: left;
+            padding: 1.1rem 1rem;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            font-weight: 800;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .data-table tbody td {
+            padding: 1.3rem 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 1rem;
+            color: rgba(255,255,255,0.92);
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-pill.confirme {
+            background: rgba(16, 185, 129, 0.16);
+            color: #10b981;
+        }
+
+        .status-pill.attente {
+            background: rgba(245, 158, 11, 0.16);
+            color: #f59e0b;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            padding: 0.65rem 0.9rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--gold2);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .delete-inline-form {
+            margin: 0;
+        }
+
+        .delete-inline-form .delete-trigger-btn {
+            min-width: 100px;
+            padding: 0.65rem 0.9rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            background: rgba(239, 68, 68, 0.14);
+            color: #ef4444;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 1200px) {
+            .data-table-wrap {
+                overflow-x: auto;
+            }
+
+            .data-table {
+                min-width: 1100px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="app-sidebar">
+        <div class="logo-area">
+            Travel<em>ia</em>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏨</span>
+                Hébergements
+            </a>
+
+            <a href="{{ path('app_reservation_index') }}" class="nav-item active">
+                <span class="nav-icon">📘</span>
+                Réservations
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🛶</span>
+                Activités
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span>
+                Clients
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Paramètres
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin</span>
+                <small>Accès complet</small>
+            </div>
+        </div>
+    </aside>
+
+    <main class="app-main">
+        <div class="glow-bg"></div>
+
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Gestion des <em>réservations</em></h1>
+                    <p style="font-size: 0.95rem; opacity: 0.5; margin-top: 0.5rem;">
+                        Suivi complet des réservations Travelia.
+                    </p>
+                </div>
+                <div class="date-pill">Admin Dashboard</div>
+            </div>
+        </header>
+
+        <div class="page-switch">
+            <a href="{{ path('app_billet_index') }}" class="switch-btn">Tables billets</a>
+            <a href="{{ path('app_reservation_index') }}" class="switch-btn active">Tables réservations</a>
+        </div>
+
+        <section class="content-card">
+            <div class="section-header">
+                <h2>Liste des réservations</h2>
+                <a href="{{ path('app_reservation_new') }}" class="create-btn">+ Créer nouveau</a>
+            </div>
+
+            <div class="data-table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%;">ID</th>
+                            <th style="width: 17%;">Date</th>
+                            <th style="width: 16%;">Statut</th>
+                            <th style="width: 14%;">Paiement</th>
+                            <th style="width: 12%;">Client</th>
+                            <th style="width: 16%;">Destination</th>
+                            <th style="width: 17%;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for reservation in reservations %}
+                        {% set statutClass =
+                            reservation.statut|lower starts with 'confirm'
+                                ? 'confirme'
+                                : 'attente'
+                        %}
+                        <tr>
+                            <td>{{ reservation.id }}</td>
+                            <td>{{ reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '' }}</td>
+                            <td>
+                                <span class="status-pill {{ statutClass }}">
+                                    {{ reservation.statut }}
+                                </span>
+                            </td>
+                            <td>{{ reservation.modalitesPaiement }}</td>
+                            <td>{{ reservation.clientId }}</td>
+                            <td>{{ reservation.paysDestination }}</td>
+                            <td>
+                                <div class="action-group">
+                                    <a class="action-btn" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+                                    <a class="action-btn" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+
+                                    <form method="post"
+                                          action="{{ path('app_reservation_delete', {'id': reservation.id}) }}"
+                                          class="delete-inline-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+                                        <button type="button" class="delete-trigger-btn open-delete-modal">Supprimer</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">Aucune réservation trouvée.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    {{ include('partials/delete_modal.html.twig') }}
+    <script src="{{ asset('js/admin.js') }}"></script>
+</body>
+</html>
