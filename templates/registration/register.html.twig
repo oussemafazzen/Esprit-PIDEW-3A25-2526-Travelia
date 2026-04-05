@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — Travelia{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .auth-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 3rem;
+        max-width: 500px;
+        margin: 100px auto;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    }
+    .auth-title {
+        font-family: var(--serif);
+        font-size: 2.5rem;
+        font-weight: 300;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--white);
+    }
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-control {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        color: #fff;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+    .form-control:focus {
+        border-color: var(--gold);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .error-list {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.3rem;
+        list-style: none;
+        padding-left: 0.5rem;
+    }
+    select.form-control option {
+        background: var(--ink);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="panel" style="display: block; overflow-y: auto;">
+    <div class="auth-card">
+        <h1 class="auth-title">Inscription</h1>
+
+        {{ form_start(registrationForm) }}
+            <div class="form-group">
+                {{ form_row(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.password.first, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.password.second, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.nationalite, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.date_naissance, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 2rem;">
+                <button type="submit" class="cta-btn full">S'inscrire</button>
+                <a href="{{ path('app_home') }}" class="cta-btn full" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6);">Retour à l'accueil</a>
+            </div>
+        {{ form_end(registrationForm) }}
+    </div>
+</section>
+{% endblock %}

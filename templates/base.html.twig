@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Travelia — Luxury Travel Platform{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}" />
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+    <!-- Live canvas particle FX -->
+    <canvas id="live-canvas"></canvas>
+
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+        <div class="nav-logo">
+            <div class="nav-logo-mark">✈</div>
+            <span class="nav-logo-text">Travelia</span>
+        </div>
+
+        <div class="nav-links">
+            {% if app.user and is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') %}
+                {# Client Dashboard Navbar #}
+                <a href="#" class="nav-link">Réservations</a>
+                <a href="#" class="nav-link">Hébergement</a>
+                <a href="#" class="nav-link">Activités</a>
+                <a href="#" class="nav-link">Avis</a>
+            {% else %}
+                {# Home Page Navbar #}
+                <a href="{{ path('app_home') }}#hero" class="nav-link active" data-section="0">Home</a>
+                <a href="{{ path('app_home') }}#hotels" class="nav-link" data-section="1">Hotels</a>
+                <a href="{{ path('app_home') }}#flights" class="nav-link" data-section="2">Flights</a>
+                <a href="{{ path('app_home') }}#activities" class="nav-link" data-section="3">Activities</a>
+                <a href="{{ path('app_home') }}#reviews" class="nav-link" data-section="4">Reviews</a>
+            {% endif %}
+        </div>
+
+        <div class="auth-nav">
+            {% if app.user %}
+                <div class="profile-dropdown">
+                    <button class="trip-btn">
+                        <span class="trip-icon">👤</span>
+                        {{ app.user.prenom }}
+                    </button>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item"><strong>{{ app.user.nom }} {{ app.user.prenom }}</strong></div>
+                        <div class="dropdown-item">{{ app.user.email }}</div>
+                        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;">
+                        <a href="{{ path('app_logout') }}" class="dropdown-item" style="color: #f87171;">Déconnexion</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+                <a href="{{ path('app_register') }}" class="trip-btn">Inscription</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="scroll-wrap" id="scroll-wrap">
+        {% block body %}{% endblock %}
+    </main>
+
+    <script src="{{ asset('js/horizon-3d.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

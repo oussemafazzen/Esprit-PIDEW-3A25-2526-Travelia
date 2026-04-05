@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Travelia{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .login-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 3.5rem;
+        max-width: 550px;
+        margin: 120px auto;
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
+    .login-title {
+        font-family: var(--serif);
+        font-size: 2.2rem;
+        font-weight: 300;
+        margin-bottom: 0.8rem;
+        color: var(--gold2);
+    }
+    .login-lead {
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+    .form-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .form-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        color: #fff;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+    .form-input:focus {
+        border-color: var(--gold);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .login-btn {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .alert-error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="panel" style="display: block; overflow-y: auto;">
+    <div class="login-card">
+        <h1 class="login-title">Bienvenue sur Travelia</h1>
+        <p class="login-lead">
+            Votre plateforme complète de gestion de voyages & loisirs. <br/>
+            Gérez facilement vos réservations, hébergements, activités et avis en un seul endroit.
+        </p>
+
+        <form method="post">
+            {% if error %}
+                <div class="alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label" for="inputEmail">Email Address</label>
+                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-input" autocomplete="email" required autofocus placeholder="name@luxury.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="inputPassword">Password</label>
+                <input type="password" name="password" id="inputPassword" class="form-input" autocomplete="current-password" required placeholder="••••••••">
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button class="trip-btn login-btn" type="submit">
+                Se Connecter
+            </button>
+            <div style="margin-top: 1.5rem; font-size: 0.8rem;">
+                <span style="opacity: 0.5;">Un nouveau compte ?</span>
+                <a href="{{ path('app_register') }}" style="color: var(--gold2); font-weight: 600;">S'inscrire</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

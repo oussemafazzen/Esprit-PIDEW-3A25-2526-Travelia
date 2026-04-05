@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Travelia Admin — Minimalist Luxury Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
+  {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="app-sidebar">
+    <div class="logo-area">
+      Travel<em>ia</em>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="{{ path('app_admin_dashboard') }}" class="nav-item {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
+        <span class="nav-icon">⬚</span>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🏨</span>
+        Hotels
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">✈</span>
+        Flights
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🛶</span>
+        Activities
+      </a>
+      <a href="{{ path('app_admin_travelers') }}" class="nav-item {{ app.request.get('_route') == 'app_admin_travelers' ? 'active' : '' }}">
+        <span class="nav-icon">👥</span>
+        Travelers
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔧</span>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar"></div>
+      <div class="user-info">
+        <span>Admin ({{ app.user.prenom }})</span>
+        <small>Executive Access</small>
+      </div>
+    </div>
+    <div style="padding: 1rem 2rem;">
+        <a href="{{ path('app_logout') }}" style="color: #fca5a5; text-decoration: none; font-size: 0.8rem;">Logout</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="app-main">
+    <div class="glow-bg"></div>
+    
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 1rem; border-radius: 12px; margin-bottom: 2rem;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+  </main>
+
+  <script src="{{ asset('js/admin.js') }}"></script>
+  {% block javascripts %}{% endblock %}
+</body>
+</html>

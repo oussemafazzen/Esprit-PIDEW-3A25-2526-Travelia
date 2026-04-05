@@ -1,0 +1,29 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block body %}
+<header class="header">
+  <h1>Modifier le Client <em>#{{ client.id }}.</em></h1>
+</header>
+
+<div class="table-wrap" style="max-width: 600px;">
+    <form method="post">
+        <div class="form-group">
+            <label style="display:block; margin-bottom: 0.5rem; color: rgba(255,255,255,0.4);">Nom</label>
+            <input type="text" name="nom" value="{{ client.nom }}" class="search-input" style="width: 100%;" required />
+        </div>
+        <div class="form-group" style="margin-top: 1.5rem;">
+            <label style="display:block; margin-bottom: 0.5rem; color: rgba(255,255,255,0.4);">Prénom</label>
+            <input type="text" name="prenom" value="{{ client.prenom }}" class="search-input" style="width: 100%;" required />
+        </div>
+        <div class="form-group" style="margin-top: 1.5rem;">
+            <label style="display:block; margin-bottom: 0.5rem; color: rgba(255,255,255,0.4);">Email</label>
+            <input type="email" name="email" value="{{ client.email }}" class="search-input" style="width: 100%;" required />
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-top: 3rem;">
+            <button type="submit" class="cta-btn">Enregistrer les modifications</button>
+            <a href="{{ path('app_admin_dashboard') }}" class="cta-btn" style="background: rgba(255,255,255,0.1); color: #fff;">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

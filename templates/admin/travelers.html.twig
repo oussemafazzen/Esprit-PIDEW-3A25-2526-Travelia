@@ -1,0 +1,103 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Travelers — Travelia Executive Management{% endblock %}
+
+{% block body %}
+    <header class="header">
+      <div class="header-top">
+        <div class="header-greeting">
+          <h1>Gestion des <em>Voyageurs</em></h1>
+          <p class="header-lead">Gérez les comptes clients, leurs statuts et informations personnelles.</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search & Sort Filter Bar -->
+    <section class="filter-bar">
+        <form method="get" action="{{ path('app_admin_travelers') }}" style="display: flex; gap: 1rem; width: 100%;">
+            <input type="text" name="q" value="{{ search }}" class="search-input" placeholder="Rechercher par nom, prénom ou email...">
+            
+            <select name="sort" class="sort-select">
+                <option value="nom" {% if sortBy == 'nom' %}selected{% endif %}>Nom</option>
+                <option value="prenom" {% if sortBy == 'prenom' %}selected{% endif %}>Prénom</option>
+                <option value="email" {% if sortBy == 'email' %}selected{% endif %}>Email</option>
+            </select>
+
+            <button type="submit" style="background: var(--gold); border: none; padding: 0.8rem 2rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                Filtrer
+            </button>
+        </form>
+    </section>
+
+    <!-- Travelers List -->
+    <div class="bookings-list">
+      <div class="list-head">
+        <h4>Liste Exécutive</h4>
+        <span style="font-size: 0.75rem; opacity: 0.4;">{{ clients|length }} voyageurs trouvés</span>
+      </div>
+      
+      <style>
+        .traveler-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .traveler-table th { text-align: left; padding: 1rem; font-size: 0.72rem; text-transform: uppercase; color: rgba(255,255,255,0.3); border-bottom: 1px solid var(--gbord); }
+        .traveler-table td { padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.88rem; }
+        .traveler-table tr:hover { background: rgba(255,255,255,0.02); }
+        .badge { font-size: 0.65rem; padding: 0.3rem 0.6rem; border-radius: 4px; text-transform: uppercase; font-weight: 700; }
+        .badge.actif { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .badge.bloque { background: rgba(239, 68, 68, 0.1); color: #fca5a5; }
+      </style>
+
+      <table class="traveler-table">
+        <thead>
+            <tr>
+                <th>Voyageur</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Nationalité</th>
+                <th>Naissance</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">{{ client.nom }} {{ client.prenom }}</div>
+                        <small style="opacity: 0.4; font-size: 0.7rem;">ID: #{{ client.id }}</small>
+                    </td>
+                    <td style="opacity: 0.6; font-size: 0.8rem;">{{ client.email }}</td>
+                    <td style="opacity: 0.6;">{{ client.telephone }}</td>
+                    <td>{{ client.nationalite }}</td>
+                    <td style="opacity: 0.6;">{{ client.dateNaissance|date('d/m/Y') }}</td>
+                    <td>
+                        <span class="badge {{ client.statut|lower }}">
+                            {{ client.statut }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.8rem;">
+                            <a href="{{ path('app_admin_client_edit', {id: client.id}) }}" class="action-btn">Edit</a>
+                            
+                            <form method="post" action="{{ path('app_admin_client_toggle_status', {id: client.id}) }}" style="display: inline;" onsubmit="return confirm('Confirmer le changement de statut ?');">
+                                <button type="submit" class="action-btn">
+                                    {{ client.statut == 'ACTIF' ? 'Block' : 'Unblock' }}
+                                </button>
+                            </form>
+
+                            <form method="post" action="{{ path('app_admin_client_delete', {id: client.id}) }}" style="display: inline;" onsubmit="return confirm('Attention: Cette action est irréversible. Confirmer la suppression ?');">
+                                <button type="submit" class="action-btn delete">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 4rem; opacity: 0.3;">
+                        Aucun voyageur ne correspond à votre recherche.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

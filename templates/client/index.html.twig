@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Espace — Travelia{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .dashboard-panel {
+        max-width: 1100px;
+        margin: 120px auto;
+        padding: 0 2rem;
+    }
+    .welcome-header {
+        text-align: left;
+        margin-bottom: 3.5rem;
+        background: var(--panel);
+        border: 1px solid var(--gbord);
+        padding: 3rem;
+        border-radius: 24px;
+        backdrop-filter: blur(20px);
+    }
+    .welcome-title {
+        font-family: var(--serif);
+        font-size: 2.8rem;
+        font-weight: 300;
+        margin-bottom: 1rem;
+    }
+    .welcome-title em { font-style: italic; color: var(--gold2); }
+    .welcome-lead {
+        font-size: 1rem;
+        color: rgba(255,255,255,0.5);
+        line-height: 1.6;
+        max-width: 700px;
+    }
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    .data-card {
+        background: var(--panel);
+        border: 1px solid var(--gbord);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(20px);
+    }
+    .card-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .data-list { list-style: none; }
+    .data-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .data-item:last-child { border: none; }
+    .item-main { font-weight: 500; font-size: 0.9rem; }
+    .item-sub { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+    .status-badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 0.3rem 0.6rem;
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-radius: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="panel" style="display: block; overflow-y: auto;">
+    <div class="dashboard-panel">
+        <header class="welcome-header">
+            <h1 class="welcome-title">Bienvenue sur <em>Travelia</em></h1>
+            <p class="welcome-lead">
+                Votre plateforme complète de gestion de voyages & loisirs. <br/>
+                Gérez facilement vos réservations, hébergements, activités et avis en un seul endroit.
+            </p>
+        </header>
+
+        <div class="data-grid">
+            <!-- Réservations Section -->
+            <div class="data-card">
+                <h3 class="card-title">🎟 Mes Réservations</h3>
+                <div class="data-list">
+                    {% for res in reservations %}
+                        <div class="data-item">
+                            <div>
+                                <div class="item-main">{{ res.dest }}</div>
+                                <div class="item-sub">{{ res.date|date('d/m/Y') }}</div>
+                            </div>
+                            <span class="status-badge">{{ res.status }}</span>
+                        </div>
+                    {% else %}
+                        <p style="opacity: 0.3; font-size: 0.8rem;">Aucune réservation pour le moment.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Hébergement Section -->
+            <div class="data-card">
+                <h3 class="card-title">🏨 Mes Hébergements</h3>
+                <div class="data-list">
+                    {% for heb in hebergements %}
+                        <div class="data-item">
+                            <div>
+                                <div class="item-main">{{ heb.nom }}</div>
+                                <div class="item-sub">📍 {{ heb.lieu }}</div>
+                            </div>
+                            <a href="#" style="font-size: 0.7rem; color: var(--gold);">Détails →</a>
+                        </div>
+                    {% else %}
+                        <p style="opacity: 0.3; font-size: 0.8rem;">Aucun hébergement réservé.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Activités Section -->
+            <div class="data-card">
+                <h3 class="card-title">🛶 Mes Activités</h3>
+                <div class="data-list">
+                    {% for act in activites %}
+                        <div class="data-item">
+                            <div>
+                                <div class="item-main">{{ act.nom }}</div>
+                                <div class="item-sub">📍 {{ act.lieu }}</div>
+                            </div>
+                            <span class="status-badge">Prévu</span>
+                        </div>
+                    {% else %}
+                        <p style="opacity: 0.3; font-size: 0.8rem;">Aucune activité prévue.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Avis Section -->
+            <div class="data-card">
+                <h3 class="card-title">✦ Mes Avis</h3>
+                <div class="data-list">
+                    <p style="opacity: 0.3; font-size: 0.8rem;">Vous n'avez pas encore laissé d'avis.</p>
+                    <button class="add-btn" style="width: 100%; margin-top: 1rem;">Laisser un avis +</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Dashboard — Travelia Executive{% endblock %}
+
+{% block body %}
+    <!-- Dashboard Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="header-greeting">
+          <h1>Welcome back, <em>Executive.</em></h1>
+          <p class="header-lead">The Travelia platform is performing exceptionally today.</p>
+        </div>
+        <div class="date-pill">{{ "now"|date("F d, Y") }} — Travelia Portal</div>
+      </div>
+    </header>
+
+    <!-- Top Stats Row -->
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Travelers</div>
+        <div class="stat-value">{{ totalClients }}</div>
+        <div class="stat-trend">+14.2% ↑</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Bookings</div>
+        <div class="stat-value">3,190</div>
+        <div class="stat-trend">+5.8% ↑</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending Reviews</div>
+        <div class="stat-value">48</div>
+        <div class="stat-trend down">-2.4% ↓</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">User Satisfaction</div>
+        <div class="stat-value">98.4%</div>
+        <div class="stat-trend">+0.2% ↑</div>
+      </div>
+
+      <!-- Overview Section: Traveler Circle + Stats Cards -->
+      <div class="overview-section">
+        
+        <!-- Traveler Statistics Circular Chart -->
+        <div class="traveler-stats">
+          <div class="chart-title">Traveler Retention</div>
+          <div class="circle-wrap">
+            <svg class="circle-svg" viewBox="0 0 160 160">
+              <circle class="circle-bg" cx="80" cy="80" r="70"></circle>
+              <circle class="circle-val" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="chart-center">
+              <span class="chart-n">82%</span>
+              <span class="chart-l">Retention Rate</span>
+            </div>
+          </div>
+          <div style="margin-top:2rem; width:100%;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+              <span style="font-size:0.7rem; opacity:0.4;">Executive Engagement</span>
+              <span style="font-size:0.7rem; color:var(--gold);">High</span>
+            </div>
+            <div style="width:100%; height:2px; background:rgba(255,255,255,0.05);">
+              <div style="width:82%; height:100%; background:var(--gold);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demographics statistics -->
+        <div class="booking-graph">
+          <div class="graph-header">
+            <div class="graph-title">
+              <h3>Executive Insights</h3>
+              <p style="font-size:0.75rem; opacity:0.3; font-weight:300;">Nationality & Age Demographics</p>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+            <!-- Nationality Section -->
+            <div>
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 1.5rem;">Top Nationalities</h4>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% for stat in nationalityStats %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 0.8rem 1.2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                            <span style="font-size: 0.85rem;">{{ stat.nationalite }}</span>
+                            <strong style="color: var(--gold2);">{{ stat.count }} voyageurs</strong>
+                        </div>
+                    {% else %}
+                        <p style="opacity:0.3; font-size:0.8rem;">No traveler data available.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Age Group Section -->
+            <div>
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 1.5rem;">Age Group Breakdown</h4>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% for age, count in ageGroupStats %}
+                        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.6;">
+                                <span>{{ age }} ans</span>
+                                <span>{{ count }} Voyageurs</span>
+                            </div>
+                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                                <div style="height: 100%; width: {{ (totalClients > 0 ? (count / totalClients * 100) : 0)|round }}%; background: var(--gold); border-radius: 10px;"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- End Overview -->
+    </div> <!-- End Grid -->
+{% endblock %}
