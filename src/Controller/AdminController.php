@@ -72,11 +72,11 @@ class AdminController extends AbstractController
     public function editClient(Client $client, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($request->isMethod('POST')) {
-            $client->setNom($request->request->get('nom'));
-            $client->setPrenom($request->request->get('prenom'));
-            $client->setEmail($request->request->get('email'));
-            $client->setTelephone($request->request->get('telephone'));
-            $client->setNationalite($request->request->get('nationalite'));
+            $client->setNom($request->request->get('nom', $client->getNom()));
+            $client->setPrenom($request->request->get('prenom', $client->getPrenom()));
+            $client->setEmail($request->request->get('email', $client->getEmail()));
+            $client->setTelephone($request->request->get('telephone', $client->getTelephone() ?? ""));
+            $client->setNationalite($request->request->get('nationalite', $client->getNationalite() ?? ""));
             
             $entityManager->flush();
 

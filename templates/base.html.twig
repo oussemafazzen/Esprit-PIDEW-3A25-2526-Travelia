@@ -23,32 +23,22 @@
         </div>
 
         <div class="nav-links">
-            {% if app.user and is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') %}
-                {# Client Dashboard Navbar #}
-                <a href="#" class="nav-link">Réservations</a>
-                <a href="#" class="nav-link">Hébergement</a>
-                <a href="#" class="nav-link">Activités</a>
-                <a href="#" class="nav-link">Avis</a>
-            {% else %}
-                {# Home Page Navbar #}
-                <a href="{{ path('app_home') }}#hero" class="nav-link active" data-section="0">Home</a>
-                <a href="{{ path('app_home') }}#hotels" class="nav-link" data-section="1">Hotels</a>
-                <a href="{{ path('app_home') }}#flights" class="nav-link" data-section="2">Flights</a>
-                <a href="{{ path('app_home') }}#activities" class="nav-link" data-section="3">Activities</a>
-                <a href="{{ path('app_home') }}#reviews" class="nav-link" data-section="4">Reviews</a>
-            {% endif %}
+            <a href="{{ path('app_home') }}#hero" class="nav-link active" data-section="0">Home</a>
+            <a href="{{ path('app_home') }}#hotels" class="nav-link" data-section="1">Hotels</a>
+            <a href="{{ path('app_home') }}#flights" class="nav-link" data-section="2">Flights</a>
+            <a href="{{ path('app_home') }}#activities" class="nav-link" data-section="3">Activities</a>
+            <a href="{{ path('app_home') }}#reviews" class="nav-link" data-section="4">Reviews</a>
         </div>
 
         <div class="auth-nav">
             {% if app.user %}
-                <div class="profile-dropdown">
-                    <button class="trip-btn">
+                <div class="profile-dropdown" id="userMenu">
+                    <button class="trip-btn" id="userMenuTrigger">
                         <span class="trip-icon">👤</span>
                         {{ app.user.prenom }}
                     </button>
-                    <div class="dropdown-content">
-                        <div class="dropdown-item"><strong>{{ app.user.nom }} {{ app.user.prenom }}</strong></div>
-                        <div class="dropdown-item">{{ app.user.email }}</div>
+                    <div class="dropdown-content" id="userDropdown">
+                        <a href="{{ path('app_profile') }}" class="dropdown-item">Profil</a>
                         <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;">
                         <a href="{{ path('app_logout') }}" class="dropdown-item" style="color: #f87171;">Déconnexion</a>
                     </div>
@@ -65,6 +55,23 @@
     </main>
 
     <script src="{{ asset('js/horizon-3d.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('userMenuTrigger');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (trigger && dropdown) {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', () => {
+                    dropdown.classList.remove('show');
+                });
+            }
+        });
+    </script>
     {% block javascripts %}{% endblock %}
 </body>
 </html>
