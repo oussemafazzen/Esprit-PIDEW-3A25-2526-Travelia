@@ -1,0 +1,167 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Gestion des billets{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .page-switch {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .switch-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 170px;
+            padding: 0.9rem 1.3rem;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            transition: all 0.3s var(--ease);
+            backdrop-filter: blur(10px);
+        }
+
+        .switch-btn.active,
+        .switch-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(201, 168, 76, 0.08);
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.15);
+        }
+
+        .content-card {
+            width: 100%;
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            border-radius: 28px;
+            padding: 2.2rem;
+            backdrop-filter: blur(20px);
+            margin-top: 1rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--serif);
+            font-size: 2.4rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .create-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            text-transform: uppercase;
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
+            transition: transform 0.2s ease;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.85rem;
+            border_radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-pill.confirme {
+            background: rgba(16, 185, 129, 0.16);
+            color: #10b981;
+        }
+
+        .status-pill.attente {
+            background: rgba(245, 158, 11, 0.16);
+            color: #f59e0b;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="page-switch">
+        <a href="/billet/" class="switch-btn active">Tables billets</a>
+        <a href="/reservation/" class="switch-btn">Tables réservations</a>
+    </div>
+
+    <section class="content-card">
+        <div class="section-header">
+            <h2>Liste des billets</h2>
+            <a href="{{ path('app_billet_new') }}" class="create-btn lux-modal-trigger" data-modal-title="Créer un billet">+ Créer nouveau</a>
+        </div>
+
+        <div class="data-table-wrap">
+            <table class="crud-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">ID</th>
+                        <th style="width: 12%;">Transport</th>
+                        <th style="width: 15%;">N° Billet</th>
+                        <th style="width: 15%;">Départ</th>
+                        <th style="width: 15%;">Arrivée</th>
+                        <th style="width: 10%;">Prix</th>
+                        <th style="width: 12%;">Statut</th>
+                        <th style="width: 16%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for billet in billets %}
+                    {% set statutClass = billet.statut|lower starts with 'confirm' ? 'confirme' : 'attente' %}
+                    <tr>
+                        <td>{{ billet.id }}</td>
+                        <td>{{ billet.typeTransport }}</td>
+                        <td>{{ billet.numeroBillet }}</td>
+                        <td>{{ billet.dateDepart ? billet.dateDepart|date('Y-m-d') : '' }}</td>
+                        <td>{{ billet.dateArrivee ? billet.dateArrivee|date('Y-m-d') : '' }}</td>
+                        <td>{{ billet.prix }} €</td>
+                        <td><span class="status-pill {{ statutClass }}">{{ billet.statut }}</span></td>
+                        <td>
+                            <div class="crud-actions">
+                                <a class="crud-action-btn lux-modal-trigger" data-modal-title="Détails billet" href="{{ path('app_billet_show', {'id': billet.id}) }}">Voir</a>
+                                <a class="crud-action-btn lux-modal-trigger" data-modal-title="Modifier billet" href="{{ path('app_billet_edit', {'id': billet.id}) }}">Modifier</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:3rem; opacity:0.5;">Aucun billet trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+{% endblock %}

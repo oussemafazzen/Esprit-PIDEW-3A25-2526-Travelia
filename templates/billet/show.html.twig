@@ -1,0 +1,25 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Détail billet{% endblock %}
+
+{% block body %}
+    <div class="page-switch" style="display:flex; gap:1rem; margin-bottom:2rem;">
+        <a href="/billet/" class="switch-btn active">Tables billets</a>
+        <a href="/reservation/" class="switch-btn">Tables réservations</a>
+    </div>
+    <section style="background:var(--panel); border:1px solid var(--gbord); border-radius:28px; padding:2.2rem; backdrop-filter:blur(20px);">
+        <h2 style="font-family:var(--serif); font-size:2.4rem; font-weight:400; margin-bottom:1.5rem;">Billet <em style="color:var(--gold); font-style:italic;">#{{ billet.id }}</em></h2>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:1.5rem;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Type transport</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.typeTransport }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Numéro billet</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.numeroBillet }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Date départ</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.dateDepart ? billet.dateDepart|date('d/m/Y') : '–' }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Date arrivée</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.dateArrivee ? billet.dateArrivee|date('d/m/Y') : '–' }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Prix</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.prix }} €</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Statut</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.statut }}</div></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="{{ path('app_billet_index') }}" class="crud-action-btn">← Retour</a>
+            <a href="{{ path('app_billet_edit', {'id': billet.id}) }}" class="crud-action-btn">✏ Modifier</a>
+        </div>
+    </section>
+{% endblock %}

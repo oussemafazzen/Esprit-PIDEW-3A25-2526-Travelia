@@ -1,0 +1,17 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Nouvelle réservation{% endblock %}
+
+{% block body %}
+    <div class="page-switch" style="display:flex; gap:1rem; margin-bottom:2rem;">
+        <a href="/billet/" class="switch-btn">Tables billets</a>
+        <a href="/reservation/" class="switch-btn active">Tables réservations</a>
+    </div>
+    <section style="background:var(--panel); border:1px solid var(--gbord); border-radius:28px; padding:2.2rem; backdrop-filter:blur(20px);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.6rem;">
+            <h2 style="font-family:var(--serif); font-size:2.4rem; font-weight:400;">Créer une <em style="color:var(--gold); font-style:italic;">réservation</em></h2>
+            <a href="{{ path('app_reservation_index') }}" class="crud-action-btn">← Retour</a>
+        </div>
+        {{ include('reservation/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+    </section>
+{% endblock %}

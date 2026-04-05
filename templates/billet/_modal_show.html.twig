@@ -1,0 +1,31 @@
+{# Pure fragment — returned for AJAX/modal requests only. No extends. #}
+<div class="modal-detail-view">
+    <style>
+        .md-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem; margin-bottom: 1.5rem; }
+        .md-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 0.9rem 1.1rem; }
+        .md-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.35rem; font-weight: 700; }
+        .md-value { font-size: 0.95rem; color: #fff; font-weight: 600; }
+        .md-actions { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 0.5rem; }
+        .md-btn { display: inline-flex; padding: 0.7rem 1.1rem; border-radius: 10px; text-decoration: none; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: var(--gold2); transition: 0.2s; cursor: pointer; }
+        .md-btn:hover { background: rgba(255,255,255,0.08); }
+        .md-btn-del { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25); color: #ef4444; }
+    </style>
+
+    <div class="md-grid">
+        <div class="md-item"><div class="md-label">ID</div><div class="md-value">{{ billet.id }}</div></div>
+        <div class="md-item"><div class="md-label">Type transport</div><div class="md-value">{{ billet.typeTransport }}</div></div>
+        <div class="md-item"><div class="md-label">Numéro billet</div><div class="md-value">{{ billet.numeroBillet }}</div></div>
+        <div class="md-item"><div class="md-label">Date départ</div><div class="md-value">{{ billet.dateDepart ? billet.dateDepart|date('d/m/Y') : '–' }}</div></div>
+        <div class="md-item"><div class="md-label">Date arrivée</div><div class="md-value">{{ billet.dateArrivee ? billet.dateArrivee|date('d/m/Y') : '–' }}</div></div>
+        <div class="md-item"><div class="md-label">Prix</div><div class="md-value">{{ billet.prix }} €</div></div>
+        <div class="md-item"><div class="md-label">Statut</div><div class="md-value">{{ billet.statut }}</div></div>
+        <div class="md-item"><div class="md-label">Réservation</div><div class="md-value">{{ billet.reservation ? '#' ~ billet.reservation.id : '–' }}</div></div>
+    </div>
+
+    <div class="md-actions" style="justify-content: flex-end;">
+        <form method="post" action="{{ path('app_billet_delete', {'id': billet.id}) }}" class="delete-form-custom" style="margin:0;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ billet.id) }}">
+            <button type="submit" class="md-btn md-btn-del">🗑 Supprimer</button>
+        </form>
+    </div>
+</div>

@@ -15,15 +15,35 @@ document.addEventListener('DOMContentLoaded', () => {
   // Run on load
   animateCircularChart();
 
-  // Simple sidebar navigation highlights
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(item => {
-    item.addEventListener('click', (e) => {
-      // For now, it's a prototype so we just toggle the active state visually
-      // e.preventDefault();
-      navItems.forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
+  // ── Delete Modal Global Logic ──
+  const deleteModal = document.getElementById('deleteConfirmModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  let formToSubmit = null;
+
+  document.querySelectorAll('.open-delete-modal').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      formToSubmit = btn.closest('form');
+      if (deleteModal) deleteModal.classList.add('active');
     });
   });
+
+  const closeDeleteModal = () => {
+    if (deleteModal) deleteModal.classList.remove('active');
+    formToSubmit = null;
+  };
+
+  if (deleteModal) {
+    deleteModal.querySelector('.delete-cancel-btn').addEventListener('click', closeDeleteModal);
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) closeDeleteModal();
+    });
+  }
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener('click', () => {
+      if (formToSubmit) formToSubmit.submit();
+    });
+  }
 
 });

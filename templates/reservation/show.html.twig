@@ -1,0 +1,24 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Détail réservation{% endblock %}
+
+{% block body %}
+    <div class="page-switch" style="display:flex; gap:1rem; margin-bottom:2rem;">
+        <a href="/billet/" class="switch-btn">Tables billets</a>
+        <a href="/reservation/" class="switch-btn active">Tables réservations</a>
+    </div>
+    <section style="background:var(--panel); border:1px solid var(--gbord); border-radius:28px; padding:2.2rem; backdrop-filter:blur(20px);">
+        <h2 style="font-family:var(--serif); font-size:2.4rem; font-weight:400; margin-bottom:1.5rem;">Réservation <em style="color:var(--gold); font-style:italic;">#{{ reservation.id }}</em></h2>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:1.5rem;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Date</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.dateReservation ? reservation.dateReservation|date('d/m/Y') : '–' }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Statut</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.statut }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Paiement</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.modalitesPaiement }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Client ID</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.clientId }}</div></div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem; grid-column:1/-1;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Destination</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.paysDestination }}</div></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <a href="{{ path('app_reservation_index') }}" class="crud-action-btn">← Retour</a>
+            <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="crud-action-btn">✏ Modifier</a>
+        </div>
+    </section>
+{% endblock %}
