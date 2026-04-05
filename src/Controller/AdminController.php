@@ -18,14 +18,15 @@ final class AdminController extends AbstractController
         $reservations = $reservationRepository->findAll();
         $billets = $billetRepository->findAll();
 
+        // Revenus
         $totalRevenue = 0.0;
         foreach ($billets as $billet) {
             $prix = $billet->getPrix();
             $totalRevenue += $prix !== null ? (float) $prix : 0;
         }
 
+        // Réservations
         $totalReservations = count($reservations);
-
         $pendingReservations = 0;
         $confirmedReservations = 0;
 
@@ -45,30 +46,41 @@ final class AdminController extends AbstractController
             ? round(($confirmedReservations / $totalReservations) * 100, 1)
             : 0;
 
-        $labels = [];
-        $daysMap = [];
+        // Billets
+        $totalBillets = count($billets);
+        $pendingBillets = 0;
+        $confirmedBillets = 0;
 
-        for ($i = 6; $i >= 0; $i--) {
-            $day = new \DateTimeImmutable("-{$i} days");
-            $key = $day->format('Y-m-d');
-            $labels[] = $day->format('D');
-            $daysMap[$key] = 0;
+        foreach ($billets as $billet) {
+            $statut = mb_strtolower(trim((string) $billet->getStatut()));
+
+            if (str_contains($statut, 'attente')) {
+                $pendingBillets++;
+            }
+
+            if (str_contains($statut, 'confirm')) {
+                $confirmedBillets++;
+            }
         }
+
+        $billetConfirmationRate = $totalBillets > 0
+            ? round(($confirmedBillets / $totalBillets) * 100, 1)
+            : 0;
+
+        // Graphe PAR MOIS (réservations)
+        $labels = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUI', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
+        $chartData = array_fill(0, 12, 0);
 
         foreach ($reservations as $reservation) {
             $date = $reservation->getDateReservation();
 
             if ($date instanceof \DateTimeInterface) {
-                $key = $date->format('Y-m-d');
-
-                if (array_key_exists($key, $daysMap)) {
-                    $daysMap[$key]++;
-                }
+                $monthIndex = (int) $date->format('n') - 1;
+                $chartData[$monthIndex]++;
             }
         }
 
-        $chartData = array_values($daysMap);
-
+        // Réservations récentes
         usort($reservations, function ($a, $b) {
             $dateA = $a->getDateReservation();
             $dateB = $b->getDateReservation();
@@ -88,15 +100,44 @@ final class AdminController extends AbstractController
 
         $recentReservations = array_slice($reservations, 0, 5);
 
+        // Billets récents
+        usort($billets, function ($a, $b) {
+            $dateA = $a->getDateDepart();
+            $dateB = $b->getDateDepart();
+
+            if (!$dateA && !$dateB) {
+                return 0;
+            }
+            if (!$dateA) {
+                return 1;
+            }
+            if (!$dateB) {
+                return -1;
+            }
+
+            return $dateB <=> $dateA;
+        });
+
+        $recentBillets = array_slice($billets, 0, 5);
+
         return $this->render('admin/dashboard.html.twig', [
             'totalRevenue' => $totalRevenue,
+
             'totalReservations' => $totalReservations,
             'pendingReservations' => $pendingReservations,
             'confirmedReservations' => $confirmedReservations,
             'confirmationRate' => $confirmationRate,
+
+            'totalBillets' => $totalBillets,
+            'pendingBillets' => $pendingBillets,
+            'confirmedBillets' => $confirmedBillets,
+            'billetConfirmationRate' => $billetConfirmationRate,
+
             'labels' => $labels,
             'chartData' => $chartData,
+
             'recentReservations' => $recentReservations,
+            'recentBillets' => $recentBillets,
         ]);
     }
 }
