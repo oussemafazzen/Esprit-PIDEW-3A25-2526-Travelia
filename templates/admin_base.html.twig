@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Travelia Admin{% endblock %}</title>
+  <link rel="stylesheet" href="{{ asset('admin.css') }}" />
+  <style>
+    /* Guaranteed Cache-Busting Table Design mapped to your Luxury Dashboard */
+    .crud-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      margin-top: 1rem;
+      background: transparent;
+    }
+    .crud-table th, .crud-table td {
+      padding: 1.2rem 1.5rem;
+      text-align: left;
+    }
+    .crud-table th {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.4);
+      background: transparent;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border: none;
+    }
+    .crud-table tbody tr {
+      background: rgba(255,255,255,0.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .crud-table tbody tr td {
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .crud-table tbody tr td:first-child { 
+      border-left: 1px solid rgba(255,255,255,0.04);
+      border-top-left-radius: 16px; 
+      border-bottom-left-radius: 16px; 
+    }
+    .crud-table tbody tr td:last-child { 
+      border-right: 1px solid rgba(255,255,255,0.04);
+      border-top-right-radius: 16px; 
+      border-bottom-right-radius: 16px; 
+    }
+    .crud-table tbody tr:hover {
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-4px) scale(1.002);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+    .crud-table tbody tr:hover td {
+      border-color: rgba(201, 168, 76, 0.3);
+    }
+    .crud-table td {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.65);
+    }
+    
+    .crud-actions {
+      display: flex;
+      gap: 0.8rem;
+    }
+    .crud-action-btn {
+      font-size: 0.72rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: rgba(201, 168, 76, 0.05);
+      color: var(--gold);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .crud-action-btn:hover {
+      background: var(--gold);
+      color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
+    }
+    .crud-header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      margin-top: 1rem;
+    }
+    .crud-header-actions h2 {
+      font-family: var(--serif); 
+      font-size: 3rem; 
+      font-weight: 300;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+    .create-new-btn {
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--ink) !important;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: none;
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .create-new-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(201, 168, 76, 0.5);
+    }
+    .switch-btn {
+      padding: 0.9rem 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      transition: all 0.3s;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(10px);
+    }
+    .switch-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.08);
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.15);
+    }
+    .switch-btn:hover:not(.active) {
+      border-color: rgba(255,255,255,0.3);
+      color: var(--white);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Modal Base and Animations */
+    .lux-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 20, 0.85); /* Dark cinematic depth */
+      backdrop-filter: blur(15px);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .lux-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .lux-modal {
+      background: rgba(15, 20, 35, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 60px rgba(201, 168, 76, 0.1);
+      border-radius: 24px;
+      width: 95%;
+      max-width: 650px;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: scale(0.9) translateY(40px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .lux-modal-overlay.active .lux-modal {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    
+    /* Modal Header & Content */
+    .modal-header {
+      padding: 1.8rem 2.5rem;
+      border-bottom: 1px solid var(--gbord);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: rgba(15, 20, 35, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+    .modal-header h3 {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: -0.01em;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: var(--gold);
+      transform: rotate(90deg) scale(1.1);
+    }
+    .modal-body {
+      padding: 2.5rem;
+    }
+
+    /* Modal Form Custom Overrides */
+    .modal-body form > div {
+      margin-bottom: 1.5rem;
+    }
+    .modal-body label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+    .modal-body input[type="text"],
+    .modal-body input[type="number"],
+    .modal-body input[type="date"],
+    .modal-body select,
+    .modal-body textarea {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .modal-body input:focus,
+    .modal-body select:focus,
+    .modal-body textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+    }
+    .modal-body fieldset { border: none; }
+    .modal-body .btn {
+      width: 100%;
+      padding: 1.2rem;
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--ink);
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
+    }
+    .modal-body .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(201, 168, 76, 0.4);
+    }
+    .modal-body ul { color: #ef4444; list-style: none; font-size: 0.85rem; margin-top: 0.5rem;}
+  </style>
+  {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="app-sidebar">
+    <div class="logo-area">
+      Travel<em>ia</em>
+    </div>
+    
+    <nav class="nav-menu">
+      {% set current_path = app.request.pathinfo %}
+      <a href="/admin.html" class="nav-item {% if current_path == '/admin.html' %}active{% endif %}">
+        <span class="nav-icon">⬚</span>
+        Dashboard
+      </a>
+      <a href="{{ path('app_hebergement_index') }}" class="nav-item {% if '/hebergement' in current_path and '/reservation' not in current_path %}active{% endif %}">
+        <span class="nav-icon">🏨</span>
+        Hôtels & hébergements
+      </a>
+      <a href="{{ path('app_reservationhebergement_index') }}" class="nav-item {% if '/reservationhebergement' in current_path %}active{% endif %}">
+        <span class="nav-icon">📅</span>
+        réservation des hôtels
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">✈</span>
+        Flights
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🛶</span>
+        Activities
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">👥</span>
+        Travelers
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔧</span>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar"></div>
+      <div class="user-info">
+        <span>Admin Portal</span>
+        <small>Executive Access</small>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="app-main">
+    <div class="glow-bg"></div>
+    
+    <!-- Dashboard Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="header-greeting">
+          <h1>Welcome back, <em>Executive.</em></h1>
+          <p class="header-lead" style="font-size: 0.9rem; opacity: 0.5; font-weight: 300; margin-top: 0.5rem;">Managing Hebergement & Reservations</p>
+        </div>
+        <div class="date-pill">Admin Dashboard</div>
+      </div>
+    </header>
+
+    <!-- Top Switch Buttons -->
+    <div class="dashboard-controls" style="margin-bottom: 2rem; display: flex; gap: 1rem; z-index: 2; position: relative;">
+        <a href="{{ path('app_hebergement_index') }}" class="switch-btn {% if 'hebergement' in app.request.attributes.get('_route') and 'reservation' not in app.request.attributes.get('_route') %}active{% endif %}">Hebergements Tables</a>
+        <a href="{{ path('app_reservationhebergement_index') }}" class="switch-btn {% if 'reservation' in app.request.attributes.get('_route') %}active{% endif %}">Reservations Tables</a>
+    </div>
+
+    <div style="z-index: 2; position: relative;">
+        {% block body %}{% endblock %}
+    </div>
+    
+  </main>
+
+  <!-- Animated Modal Portal -->
+  <div id="lux-modal-overlay" class="lux-modal-overlay">
+    <div class="lux-modal">
+        <header class="modal-header">
+            <h3 id="lux-modal-title">Action</h3>
+            <button class="modal-close">&times;</button>
+        </header>
+        <div id="lux-modal-body" class="modal-body">
+            <div style="text-align:center; padding: 2rem; color:var(--gold);">Loading...</div>
+        </div>
+    </div>
+  </div>
+  <div id="lux-confirm-overlay" class="lux-modal-overlay" style="z-index: 2000;">
+    <div class="lux-modal" style="max-width: 320px; text-align: center; padding: 2.5rem; background: var(--ink); border: 1px solid var(--gbord); border-radius: 20px;">
+        <div style="font-size: 3rem; margin-bottom: 1rem; line-height: 1;">⚠️</div>
+        <h3 style="font-family: var(--serif); font-size: 1.6rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem;">Confirm Deletion</h3>
+        <p id="lux-confirm-text" style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-bottom: 2rem;">This action cannot be undone.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button id="lux-confirm-cancel" style="flex: 1; padding: 0.7rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: 600; font-size: 0.75rem; text-transform: uppercase;">Cancel</button>
+            <button id="lux-confirm-yes" style="flex: 1; padding: 0.7rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; border-radius: 8px; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; cursor: pointer; transition: 0.3s;">Delete</button>
+        </div>
+    </div>
+  </div>
+
+  <script src="{{ asset('admin.js') }}"></script>
+  <script>
+    // Cinematic AJAX Modal Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalOverlay = document.getElementById('lux-modal-overlay');
+        const modalBody = document.getElementById('lux-modal-body');
+        const modalTitle = document.getElementById('lux-modal-title');
+        const closeBtn = document.querySelector('.modal-close');
+
+        const openModal = (title) => {
+            modalTitle.innerHTML = title;
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modalBody.innerHTML = '<div style="text-align:center; padding: 3rem; color:rgba(255,255,255,0.4); font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase;">Loading details...</div>';
+        };
+
+        const closeModal = () => {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if(e.target === modalOverlay) closeModal();
+        });
+
+        window.luxConfirm = function(message, callback) {
+            const overlay = document.getElementById('lux-confirm-overlay');
+            const cancelBtn = document.getElementById('lux-confirm-cancel');
+            const yesBtn = document.getElementById('lux-confirm-yes');
+            
+            document.getElementById('lux-confirm-text').innerText = message;
+            overlay.classList.add('active');
+            
+            const cleanup = () => {
+                overlay.classList.remove('active');
+                cancelBtn.onclick = null;
+                yesBtn.onclick = null;
+            };
+            
+            cancelBtn.onclick = (e) => { e.preventDefault(); cleanup(); };
+            yesBtn.onclick = (e) => { e.preventDefault(); cleanup(); callback(); };
+        };
+
+        const initAjaxForms = (container, defaultActionUrl) => {
+            container.querySelectorAll('form').forEach(form => {
+                if (!form.getAttribute('action') && defaultActionUrl) {
+                    form.setAttribute('action', defaultActionUrl);
+                }
+                
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const processForm = async () => {
+                        const submitBtn = form.querySelector('button');
+                        if(!submitBtn) return;
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = 'Processing...';
+                        submitBtn.style.opacity = '0.7';
+                        submitBtn.disabled = true;
+
+                        try {
+                            const response = await fetch(form.action, {
+                                method: form.method || 'POST',
+                                body: new FormData(form),
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            });
+                            
+                            if (response.redirected) {
+                                window.location.href = response.url; 
+                            } else {
+                                const html = await response.text();
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newForm = doc.querySelector('form');
+                                if(newForm) {
+                                    modalBody.innerHTML = '';
+                                    modalBody.appendChild(newForm);
+                                    initAjaxForms(modalBody, defaultActionUrl);
+                                } else {
+                                    window.location.reload(); 
+                                }
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            submitBtn.innerHTML = 'Error, Try Again';
+                            submitBtn.disabled = false;
+                            submitBtn.style.opacity = '1';
+                        }
+                    };
+
+                    if (form.classList.contains('delete-form-custom')) {
+                        window.luxConfirm("Are you sure you want to permanently delete this record?", processForm);
+                    } else {
+                        processForm();
+                    }
+                });
+            });
+        };
+
+        document.querySelectorAll('.lux-modal-trigger').forEach(trigger => {
+            trigger.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const url = trigger.href;
+                const title = trigger.dataset.modalTitle || 'Entity Management';
+                
+                openModal(title);
+                
+                try {
+                    const response = await fetch(url);
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Grab the view detail container or the primary form
+                    const contentNode = doc.querySelector('.modal-detail-view') || doc.querySelector('form:not([action*="delete"])') || doc.querySelector('form');
+                    
+                    if(contentNode) {
+                        modalBody.innerHTML = '';
+                        modalBody.appendChild(contentNode);
+                        initAjaxForms(modalBody, url);
+                    } else {
+                        modalBody.innerHTML = '<div style="color:red; text-align:center;">Failed to load data. The endpoint might be incorrect.</div>';
+                    }
+                } catch (err) {
+                    modalBody.innerHTML = '<div style="color:red; text-align:center;">Network Error. Please try again.</div>';
+                }
+            });
+        });
+    });
+  </script>
+  {% block javascripts %}{% endblock %}
+</body>
+</html>

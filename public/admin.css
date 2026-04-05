@@ -1,0 +1,413 @@
+/* =====================================================
+   TRAVELIA ADMIN — Minimalist Luxury Design
+   Design System: Midnight & Gold
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --gold:     #c9a84c;
+  --gold2:    #e8c97a;
+  --accent:   #d4af37;
+  --ink:      #050814;
+  --panel:    rgba(255, 255, 255, 0.04);
+  --glass:    rgba(255, 255, 255, 0.08);
+  --gbord:    rgba(255, 255, 255, 0.12);
+  --white:    #ffffff;
+  --ease:     cubic-bezier(0.16, 1, 0.3, 1);
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'Inter', system-ui, sans-serif;
+  --grotesk:  'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--sans);
+  overflow: hidden; /* Main dashboard as a single viewport */
+  height: 100vh;
+  display: flex;
+}
+
+/* ── Sidebar ── */
+.app-sidebar {
+  width: 260px;
+  background: rgba(10, 13, 26, 0.6);
+  border-right: 1px solid var(--gbord);
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(40px);
+  z-index: 10;
+}
+
+.logo-area {
+  padding: 3rem 2rem;
+  font-family: var(--grotesk);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--gold);
+}
+.logo-area em {
+  font-style: normal;
+  color: #fff;
+}
+
+.nav-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1.2rem;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s var(--ease);
+}
+.nav-item:hover, .nav-item.active {
+  background: var(--panel);
+  color: var(--white);
+}
+.nav-icon { font-size: 1.2rem; filter: opacity(0.6); transition: all 0.3s; }
+.nav-item:hover .nav-icon, .nav-item.active .nav-icon { filter: opacity(1) brightness(1.2); color: var(--gold2); }
+
+.nav-item.active {
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.sidebar-user {
+  padding: 2rem;
+  border-top: 1px solid var(--gbord);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.user-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border: 2px solid rgba(255,255,255,0.1);
+}
+.user-info span { display: block; font-size: 0.82rem; font-weight: 600; }
+.user-info small { font-size: 0.65rem; opacity: 0.4; }
+
+/* ── Main Content Area ── */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 3.5rem;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Background Gradients */
+.glow-bg {
+  position: absolute;
+  top: -20%; right: -10%;
+  width: 60%; height: 60%;
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.header {
+  margin-bottom: 3.5rem;
+  z-index: 1;
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.header-greeting h1 {
+  font-family: var(--serif);
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.header-greeting h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.date-pill {
+  padding: 0.5rem 1.2rem;
+  background: var(--panel);
+  border: 1px solid var(--gbord);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  backdrop-filter: blur(10px);
+}
+
+/* ── Dashboard Grid ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  z-index: 1;
+}
+
+/* Small Stat Cards */
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--gbord);
+  padding: 1.8rem;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  transition: transform 0.4s var(--ease);
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+.stat-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 1rem;
+}
+.stat-value {
+  font-family: var(--serif);
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.stat-trend {
+  font-size: 0.75rem;
+  color: #10b981; /* Success green */
+}
+.stat-trend.down { color: #ef4444; }
+
+/* ── Large Display Area ── */
+.overview-section {
+  grid-column: span 4;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+/* Rounded Traveler Stats Chart (from design 1) */
+.traveler-stats {
+  background: var(--panel);
+  border: 1px solid var(--gbord);
+  padding: 2rem;
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.chart-title {
+  width: 100%;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 2rem;
+}
+.circle-wrap {
+  position: relative;
+  width: 180px; height: 180px;
+}
+.circle-svg {
+  transform: rotate(-90deg);
+  width: 100%; height: 100%;
+}
+.circle-bg {
+  fill: none;
+  stroke: rgba(201, 168, 76, 0.1);
+  stroke-width: 12;
+}
+.circle-val {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 440; /* Circumference C=2*pi*r = 2*pi*70 ~= 440 */
+  stroke-dashoffset: 88; /* 80% left (440 * 0.2) */
+  transition: stroke-dashoffset 2s var(--ease);
+}
+.chart-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.chart-n { font-family: var(--serif); font-size: 2.2rem; font-weight: 500; color: var(--white); }
+.chart-l { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-top: 5px; }
+
+/* Booking Overview Graph (from minimalist design) */
+.booking-graph {
+  background: var(--panel);
+  border: 1px solid var(--gbord);
+  padding: 2.5rem;
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+}
+.graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2.5rem;
+}
+.graph-title h3 { font-family: var(--serif); font-size: 1.6rem; font-weight: 300; }
+.graph-controls { display: flex; gap: 1rem; }
+.g-btn {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.4);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.g-btn.active { color: var(--gold2); }
+
+/* SVG Graph Logic */
+.svg-graph-lines {
+  width: 100%;
+  height: 240px;
+  overflow: visible;
+}
+.g-line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.4));
+}
+.g-area {
+  fill: url(#graph-gradient);
+}
+.g-points circle { fill: var(--gold); stroke: var(--ink); stroke-width: 3; }
+
+/* Labels */
+.graph-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Recent Bookings List */
+.bookings-list {
+  grid-column: span 4;
+  margin-top: 1.5rem;
+}
+.list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.list-head h4 { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; }
+
+.booking-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 120px;
+  padding: 1.2rem 2rem;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 0.8rem;
+  transition: all 0.3s;
+  align-items: center;
+}
+.booking-item:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+  transform: translateX(5px);
+}
+.b-cust { font-weight: 600; font-size: 0.88rem; }
+.b-dest { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+.b-date { font-size: 0.75rem; color: var(--gold); }
+.b-status {
+  justify-self: end;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+/* Custom Table Design for CRUDs */
+.crud-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: var(--panel);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--gbord);
+  backdrop-filter: blur(20px);
+}
+.crud-table th, .crud-table td {
+  padding: 1.2rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.crud-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  background: rgba(0,0,0,0.2);
+}
+.crud-table tbody tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+.crud-table td {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.8);
+}
+.crud-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+.crud-action-btn {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(201, 168, 76, 0.1);
+  color: var(--gold);
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.crud-action-btn:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+.crud-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}

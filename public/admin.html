@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travelia Admin — Minimalist Luxury Dashboard</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="app-sidebar">
+    <div class="logo-area">
+      Travel<em>ia</em>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="#" class="nav-item active">
+        <span class="nav-icon">⬚</span>
+        Dashboard
+      </a>
+      <a href="/hebergement/" class="nav-item">
+        <span class="nav-icon">🏨</span>
+        Hôtels & hébergements
+      </a>
+      <a href="/reservationhebergement/" class="nav-item">
+        <span class="nav-icon">📅</span>
+        réservation des hôtels
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">✈</span>
+        Flights
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🛶</span>
+        Activities
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">👥</span>
+        Travelers
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔧</span>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar"></div>
+      <div class="user-info">
+        <span>Admin Portal</span>
+        <small>Executive Access</small>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="app-main">
+    <div class="glow-bg"></div>
+    
+    <!-- Dashboard Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="header-greeting">
+          <h1>Welcome back, <em>Executive.</em></h1>
+          <p class="header-lead" style="font-size: 0.9rem; opacity: 0.5; font-weight: 300; margin-top: 0.5rem;">The Travelia platform is performing exceptionally today.</p>
+        </div>
+        <div class="date-pill">April 02, 2026 — Thursday</div>
+      </div>
+    </header>
+
+    <!-- Top Stats Row -->
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">Monthly Revenue</div>
+        <div class="stat-value">€142,8K</div>
+        <div class="stat-trend">+14.2% ↑</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Bookings</div>
+        <div class="stat-value">3,190</div>
+        <div class="stat-trend">+5.8% ↑</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending Reviews</div>
+        <div class="stat-value">48</div>
+        <div class="stat-trend down">-2.4% ↓</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">User Satisfaction</div>
+        <div class="stat-value">98.4%</div>
+        <div class="stat-trend">+0.2% ↑</div>
+      </div>
+
+      <!-- Overview Section: Traveler Circle + Booking Graph -->
+      <div class="overview-section">
+        
+        <!-- Traveler Statistics Circular Chart (From Option 1) -->
+        <div class="traveler-stats">
+          <div class="chart-title">Traveler Statistics</div>
+          <div class="circle-wrap">
+            <svg class="circle-svg" viewBox="0 0 160 160">
+              <circle class="circle-bg" cx="80" cy="80" r="70"></circle>
+              <circle class="circle-val" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="chart-center">
+              <span class="chart-n">82%</span>
+              <span class="chart-l">Retention</span>
+            </div>
+          </div>
+          <div style="margin-top:2rem; width:100%;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+              <span style="font-size:0.7rem; opacity:0.4;">New Travelers</span>
+              <span style="font-size:0.7rem; color:var(--gold);">2,450</span>
+            </div>
+            <div style="width:100%; height:2px; background:rgba(255,255,255,0.05);">
+              <div style="width:82%; height:100%; background:var(--gold);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Overview Graph (From Minimalist Option) -->
+        <div class="booking-graph">
+          <div class="graph-header">
+            <div class="graph-title">
+              <h3>Booking Overview</h3>
+              <p style="font-size:0.75rem; opacity:0.3; font-weight:300;">Last 7 Days Performance</p>
+            </div>
+            <div class="graph-controls">
+              <button class="g-btn">D</button>
+              <button class="g-btn active">W</button>
+              <button class="g-btn">M</button>
+              <button class="g-btn">Y</button>
+            </div>
+          </div>
+          
+          <div class="graph-canvas">
+            <svg class="svg-graph-lines" viewBox="0 0 800 240">
+              <defs>
+                <linearGradient id="graph-gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(201, 168, 76, 0.4)" />
+                  <stop offset="100%" stop-color="rgba(10, 13, 26, 0)" />
+                </linearGradient>
+              </defs>
+              <!-- Areas and Lines -->
+              <path class="g-area" d="M0,200 Q150,120 300,160 T600,80 T800,120 L800,240 L0,240 Z"></path>
+              <path class="g-line" d="M0,200 Q150,120 300,160 T600,80 T800,120"></path>
+              
+              <!-- Points -->
+              <g class="g-points">
+                <circle cx="0" cy="200" r="5"></circle>
+                <circle cx="300" cy="160" r="5"></circle>
+                <circle cx="600" cy="80" r="5"></circle>
+                <circle cx="800" cy="120" r="5"></circle>
+              </g>
+            </svg>
+            <div class="graph-labels">
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+              <span>Sun</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Bookings List -->
+        <div class="bookings-list">
+          <div class="list-head">
+            <h4>Recent Global Activities</h4>
+            <a href="#" style="font-size: 0.72rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">View All</a>
+          </div>
+          
+          <div class="booking-item">
+            <div class="b-cust">Elysium Villa Stay</div>
+            <div class="b-dest">Maldives — Overwater suite</div>
+            <div class="b-date">Checked 4 mins ago</div>
+            <div class="b-status">Confirmed</div>
+          </div>
+          <div class="booking-item">
+            <div class="b-cust">First Class Flight TP922</div>
+            <div class="b-dest">Dubai (DXB) — Paris (CDG)</div>
+            <div class="b-date">Checked 15 mins ago</div>
+            <div class="b-status">Confirmed</div>
+          </div>
+          <div class="booking-item">
+            <div class="b-cust">Safari Expedition</div>
+            <div class="b-dest">Tanzania — Luxury Glamping</div>
+            <div class="b-date">Checked 1 hour ago</div>
+            <div class="b-status">In Review</div>
+          </div>
+        </div>
+
+      </div> <!-- End Overview -->
+    </div> <!-- End Grid -->
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

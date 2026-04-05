@@ -1,0 +1,50 @@
+{% block body %}
+<div class="modal-detail-view">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
+        <div class="detail-group" style="grid-column: span 2;">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Hébergement Réservé</label>
+            <div style="font-size: 1.4rem; font-weight: 600; color: var(--gold2); padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ reservationhebergement.idHebergement ? reservationhebergement.idHebergement.nom : 'N/A' }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Date de Début</label>
+            <div style="font-size: 1rem; color: #fff; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ reservationhebergement.dateDebut ? reservationhebergement.dateDebut|date('Y-m-d') : '' }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Date de Fin</label>
+            <div style="font-size: 1rem; color: #fff; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ reservationhebergement.dateFin ? reservationhebergement.dateFin|date('Y-m-d') : '' }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Nombre de Personnes</label>
+            <div style="font-size: 1rem; color: #fff; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ reservationhebergement.nombrePersonnes }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Statut</label>
+            <div style="font-size: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <span class="status-badge {% if reservationhebergement.statut|lower == 'confirmé' or reservationhebergement.statut|lower == 'confirme' %}confirmed{% elseif reservationhebergement.statut|lower == 'annulé' or reservationhebergement.statut|lower == 'annule' %}cancelled{% else %}pending{% endif %}" style="display: inline-block; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">
+                    {{ reservationhebergement.statut }}
+                </span>
+            </div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Client ID</label>
+            <div style="font-family: var(--sans); font-size: 1.1rem; color: rgba(255,255,255,0.7); padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">#{{ reservationhebergement.idClient }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Réservation ID</label>
+            <div style="font-size: 1rem; color: rgba(255,255,255,0.5); padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">#{{ reservationhebergement.idReservationHebergement }}</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem;">
+        {{ include('reservationhebergement/_delete_form.html.twig') }}
+    </div>
+    <style>
+      .modal-detail-view .btn:hover { background: rgba(255,255,255,0.05) !important; border-color: var(--white); }
+      .modal-detail-view form button { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 12px; padding: 0.8rem 1.8rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; }
+      .modal-detail-view form button:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+      .status-badge.confirmed { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+      .status-badge.pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+      .status-badge.cancelled { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    </style>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Reservation index{% endblock %}
+
+{% block body %}
+    <div class="crud-header-actions">
+        <h2>Reservation List</h2>
+        <a href="{{ path('app_reservationhebergement_new') }}" class="create-new-btn lux-modal-trigger" data-modal-title="Create New Reservation">
+            <span style="font-size: 1.2rem; line-height: 0;">+</span> Create new
+        </a>
+    </div>
+
+    <table class="crud-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th style="color: var(--gold);">Hebergement</th>
+                <th>Date Debut</th>
+                <th>Date Fin</th>
+                <th>Personnes</th>
+                <th>Statut</th>
+                <th>Client Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservationhebergement in reservationhebergements %}
+            <tr>
+                <td>{{ reservationhebergement.idReservationHebergement }}</td>
+                <td><strong style="color: white; font-weight: 600; letter-spacing: 0.02em;">{{ reservationhebergement.idHebergement ? reservationhebergement.idHebergement.nom : '' }}</strong></td>
+                <td><span style="color: var(--gold2);">{{ reservationhebergement.dateDebut ? reservationhebergement.dateDebut|date('Y-m-d') : '' }}</span></td>
+                <td><span style="color: var(--gold2);">{{ reservationhebergement.dateFin ? reservationhebergement.dateFin|date('Y-m-d') : '' }}</span></td>
+                <td>{{ reservationhebergement.nombrePersonnes }}</td>
+                <td>
+                    <span class="status-badge {% if reservationhebergement.statut|lower == 'confirmé' or reservationhebergement.statut|lower == 'confirme' %}confirmed{% elseif reservationhebergement.statut|lower == 'annulé' or reservationhebergement.statut|lower == 'annule' %}cancelled{% else %}pending{% endif %}">
+                        {{ reservationhebergement.statut }}
+                    </span>
+                </td>
+                <td>{{ reservationhebergement.idClient }}</td>
+                <td>
+                    <div class="crud-actions">
+                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Reservation Details" href="{{ path('app_reservationhebergement_show', {'idReservationHebergement': reservationhebergement.idReservationHebergement}) }}">View</a>
+                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Edit Reservation" href="{{ path('app_reservationhebergement_edit', {'idReservationHebergement': reservationhebergement.idReservationHebergement}) }}">Edit</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 4rem; opacity: 0.4;">No records found. Click 'Create new' to add an entry.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

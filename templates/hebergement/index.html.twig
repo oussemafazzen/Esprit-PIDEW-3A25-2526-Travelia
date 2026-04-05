@@ -1,0 +1,54 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Hebergement index{% endblock %}
+
+{% block body %}
+    <div class="crud-header-actions">
+        <h2>Hebergement List</h2>
+        <a href="{{ path('app_hebergement_new') }}" class="create-new-btn lux-modal-trigger" data-modal-title="Create New Hebergement">
+            <span style="font-size: 1.2rem; line-height: 0;">+</span> Create new
+        </a>
+    </div>
+
+    <table class="crud-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th style="color: var(--gold);">Nom</th>
+                <th>Type</th>
+                <th>Adresse</th>
+                <th>Ville</th>
+                <th>Pays</th>
+                <th>Capacite</th>
+                <th>Equipements</th>
+                <th>Tarif/Nuit</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for hebergement in hebergements %}
+            <tr>
+                <td>{{ hebergement.idHebergement }}</td>
+                <td><strong style="color: white; font-weight: 600; letter-spacing: 0.02em;">{{ hebergement.nom }}</strong></td>
+                <td><span style="opacity: 0.8; text-transform: capitalize;">{{ hebergement.type }}</span></td>
+                <td>{{ hebergement.adresse }}</td>
+                <td>{{ hebergement.ville }}</td>
+                <td>{{ hebergement.pays }}</td>
+                <td>{{ hebergement.capacite }}</td>
+                <td><span style="font-size: 0.8rem; opacity: 0.6;">{{ hebergement.equipements }}</span></td>
+                <td><strong style="color: var(--gold2);">€{{ hebergement.tarifParNuit }}</strong></td>
+                <td>
+                    <div class="crud-actions">
+                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Hebergement Details" href="{{ path('app_hebergement_show', {'idHebergement': hebergement.idHebergement}) }}">View</a>
+                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Edit Hebergement" href="{{ path('app_hebergement_edit', {'idHebergement': hebergement.idHebergement}) }}">Edit</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10" style="text-align: center; padding: 4rem; opacity: 0.4;">No records found. Click 'Create new' to add an entry.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

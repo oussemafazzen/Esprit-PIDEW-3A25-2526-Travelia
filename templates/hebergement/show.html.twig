@@ -1,0 +1,43 @@
+{% block body %}
+<div class="modal-detail-view">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
+        <div class="detail-group" style="grid-column: span 2;">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Nom de l'hôtel</label>
+            <div style="font-size: 1.4rem; font-weight: 600; color: var(--gold2); padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ hebergement.nom }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Type</label>
+            <div style="font-size: 1rem; color: #fff; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06); text-transform: capitalize;">{{ hebergement.type }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Identifiant</label>
+            <div style="font-size: 1rem; color: rgba(255,255,255,0.7); padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">#{{ hebergement.idHebergement }}</div>
+        </div>
+        <div class="detail-group" style="grid-column: span 2;">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Adresse Complète</label>
+            <div style="font-size: 1rem; color: #fff; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ hebergement.adresse }}, {{ hebergement.ville }}, {{ hebergement.pays }}</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Capacité</label>
+            <div style="font-size: 1rem; color: #fff; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ hebergement.capacite }} personnes</div>
+        </div>
+        <div class="detail-group">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.4rem; font-weight: 600;">Tarif Par Nuit</label>
+            <div style="font-family: var(--serif); font-size: 1.4rem; color: var(--gold); padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">€{{ hebergement.tarifParNuit }}</div>
+        </div>
+        <div class="detail-group" style="grid-column: span 2;">
+            <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Équipements</label>
+            <div style="font-size: 0.95rem; color: rgba(255,255,255,0.8); padding-top: 0.5rem; line-height: 1.5; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ hebergement.equipements }}</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem;">
+        {{ include('hebergement/_delete_form.html.twig') }}
+    </div>
+    <style>
+      .modal-detail-view .btn:hover { background: rgba(255,255,255,0.05) !important; border-color: var(--white); }
+      .modal-detail-view form button { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 12px; padding: 0.8rem 1.8rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; }
+      .modal-detail-view form button:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+    </style>
+</div>
+{% endblock %}

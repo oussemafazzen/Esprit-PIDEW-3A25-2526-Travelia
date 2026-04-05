@@ -1,0 +1,4 @@
+<form class="delete-form-custom" method="post" action="{{ path('app_hebergement_delete', {'idHebergement': hebergement.idHebergement}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ hebergement.idHebergement) }}">
+    <button class="btn">Delete</button>
+</form>
