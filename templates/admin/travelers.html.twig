@@ -17,11 +17,8 @@
         <form method="get" action="{{ path('app_admin_travelers') }}" style="display: flex; gap: 1rem; width: 100%;">
             <input type="text" name="q" value="{{ search }}" class="search-input" placeholder="Rechercher par nom, prénom ou email...">
             
-            <select name="sort" class="sort-select">
-                <option value="nom" {% if sortBy == 'nom' %}selected{% endif %}>Nom</option>
-                <option value="prenom" {% if sortBy == 'prenom' %}selected{% endif %}>Prénom</option>
-                <option value="email" {% if sortBy == 'email' %}selected{% endif %}>Email</option>
-            </select>
+            <!-- Sort removed from here as per request -->
+
 
             <button type="submit" style="background: var(--gold); border: none; padding: 0.8rem 2rem; border-radius: 12px; font-weight: 600; cursor: pointer;">
                 Filtrer
@@ -49,7 +46,22 @@
       <table class="traveler-table">
         <thead>
             <tr>
-                <th>Voyageur</th>
+                <th>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        Voyageur
+                        <a href="{{ path('app_admin_travelers', {sort: 'nom', direction: (sortBy == 'nom' and direction == 'ASC') ? 'DESC' : 'ASC', q: search}) }}" 
+                           style="text-decoration: none; color: var(--gold); display: inline-flex;"
+                           title="Trier par nom">
+                            <span style="font-size: 0.9rem; opacity: {{ sortBy == 'nom' ? '1' : '0.3' }};">
+                                {% if sortBy == 'nom' %}
+                                    {{ direction == 'ASC' ? '▲' : '▼' }}
+                                {% else %}
+                                    ⇅
+                                {% endif %}
+                            </span>
+                        </a>
+                    </div>
+                </th>
                 <th>Email</th>
                 <th>Téléphone</th>
                 <th>Nationalité</th>

@@ -38,10 +38,12 @@ class ClientRepository extends ServiceEntityRepository
      */
     public function findBySearchAndSort(?string $search = null, ?string $sortBy = 'nom', ?string $direction = 'ASC'): array
     {
-        $qb = $this->createQueryBuilder('c');
+        $qb = $this->createQueryBuilder('c')
+           ->where('c.role != :adminRole')
+           ->setParameter('adminRole', 'ADMINISTRATEUR');
 
         if ($search) {
-            $qb->where('c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search')
+            $qb->andWhere('c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 

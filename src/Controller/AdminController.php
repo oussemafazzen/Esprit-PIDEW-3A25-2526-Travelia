@@ -53,8 +53,8 @@ class AdminController extends AbstractController
     public function travelers(Request $request, ClientRepository $clientRepository): Response
     {
         $search = $request->query->get('q');
-        $sortBy = $request->query->get('sort', 'nom');
-        $direction = $request->query->get('direction', 'ASC');
+        $sortBy = $request->query->get('sort', 'date_creation');
+        $direction = $request->query->get('direction', 'DESC');
 
         $clients = $clientRepository->findBySearchAndSort($search, $sortBy, $direction);
 
