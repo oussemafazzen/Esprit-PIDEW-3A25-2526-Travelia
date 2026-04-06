@@ -16,10 +16,15 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ReservationhebergementController extends AbstractController
 {
     #[Route(name: 'app_reservationhebergement_index', methods: ['GET'])]
-    public function index(ReservationhebergementRepository $reservationhebergementRepository): Response
+    public function index(Request $request, ReservationhebergementRepository $reservationhebergementRepository): Response
     {
+        $search = $request->query->get('search');
+        $sortBy = $request->query->get('sort_by');
+
         return $this->render('reservationhebergement/index.html.twig', [
-            'reservationhebergements' => $reservationhebergementRepository->findAll(),
+            'reservationhebergements' => $reservationhebergementRepository->searchAndSort($search, $sortBy),
+            'currentSearch' => $search,
+            'currentSort' => $sortBy,
         ]);
     }
 
@@ -32,10 +37,16 @@ final class ReservationhebergementController extends AbstractController
         $hebergement = null;
         if ($hebergementId) {
             $hebergement = $entityManager->getRepository(Hebergement::class)->find($hebergementId);
+            $reservationhebergement->setIdHebergement($hebergement);
         }
         
         $form = $this->createForm(ReservationhebergementType::class, $reservationhebergement);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            // If the form was submitted but invalid, ensure the UI still knows which hotel it was!
+            $hebergement = $reservationhebergement->getIdHebergement();
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($reservationhebergement);

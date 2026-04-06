@@ -149,17 +149,17 @@
         <div class="form-group">
             {{ form_label(form.dateDebut) }}
             {{ form_widget(form.dateDebut) }}
-            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.dateDebut) }}</div>
+            <div style="color: #ff4d4d; font-weight: 600; font-size: 0.85rem; margin-top: 6px; padding: 4px 8px; background: rgba(255,0,0,0.1); border-radius: 4px;">{{ form_errors(form.dateDebut) }}</div>
         </div>
         <div class="form-group">
             {{ form_label(form.dateFin) }}
             {{ form_widget(form.dateFin) }}
-            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.dateFin) }}</div>
+            <div style="color: #ff4d4d; font-weight: 600; font-size: 0.85rem; margin-top: 6px; padding: 4px 8px; background: rgba(255,0,0,0.1); border-radius: 4px;">{{ form_errors(form.dateFin) }}</div>
         </div>
         <div class="form-group">
             {{ form_label(form.nombrePersonnes) }}
             {{ form_widget(form.nombrePersonnes) }}
-            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.nombrePersonnes) }}</div>
+            <div style="color: #ff4d4d; font-weight: 600; font-size: 0.85rem; margin-top: 6px; padding: 4px 8px; background: rgba(255,0,0,0.1); border-radius: 4px;">{{ form_errors(form.nombrePersonnes) }}</div>
         </div>
         <div class="form-group" style="display:none;">
             {{ form_label(form.statut) }}
@@ -168,7 +168,7 @@
         <div class="form-group">
             {{ form_label(form.idClient) }}
             {{ form_widget(form.idClient) }}
-            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.idClient) }}</div>
+            <div style="color: #ff4d4d; font-weight: 600; font-size: 0.85rem; margin-top: 6px; padding: 4px 8px; background: rgba(255,0,0,0.1); border-radius: 4px;">{{ form_errors(form.idClient) }}</div>
         </div>
         <div class="form-group" style="display:none;">
             {{ form_label(form.idHebergement) }}
@@ -186,6 +186,18 @@
     gsap.set("#scene", { transformOrigin: "68.85% 50%" }); 
 
     let isAnimating = false;
+ 
+    // Handle dynamic date range constraints
+    const startDateInput = document.querySelector('input[name="reservationhebergement[dateDebut]"]');
+    const endDateInput = document.querySelector('input[name="reservationhebergement[dateFin]"]');
+    if (startDateInput && endDateInput) {
+        startDateInput.addEventListener('change', () => {
+            endDateInput.min = startDateInput.value;
+            if (endDateInput.value && endDateInput.value < startDateInput.value) {
+                endDateInput.value = startDateInput.value;
+            }
+        });
+    }
 
     function openDoorWorkflow() {
         if(isAnimating) return;

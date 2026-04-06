@@ -3,11 +3,37 @@
 {% block title %}Reservation index{% endblock %}
 
 {% block body %}
-    <div class="crud-header-actions">
-        <h2>Reservation List</h2>
-        <a href="{{ path('app_reservationhebergement_new') }}" class="create-new-btn lux-modal-trigger" data-modal-title="Create New Reservation">
-            <span style="font-size: 1.2rem; line-height: 0;">+</span> Create new
-        </a>
+    <div class="crud-header-actions" style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <h2>Reservation List</h2>
+            <form action="{{ path('app_reservationhebergement_index') }}" method="get" style="display: flex; gap: 0.5rem; align-items: center;">
+                <div style="position: relative;">
+                    <input type="text" name="search" value="{{ currentSearch }}" placeholder="Rechercher par hébergement..." 
+                        style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.6rem 1rem; border-radius: 8px; color: white; width: 300px; font-family: var(--sans); font-size: 0.9rem;">
+                    {% if currentSearch %}
+                        <a href="{{ path('app_reservationhebergement_index') }}" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.3); text-decoration: none;">✕</a>
+                    {% endif %}
+                </div>
+                <button type="submit" style="background: var(--gold); border: none; padding: 0.6rem 1.2rem; border-radius: 8px; color: var(--ink); font-weight: 700; cursor: pointer; font-size: 0.85rem; text-transform: uppercase;">Rechercher</button>
+            </form>
+        </div>
+        
+        <div class="sort-container">
+            <span class="sort-label">Trier Par:</span>
+            <div class="sort-options">
+                <a href="{{ path('app_reservationhebergement_index', { 'sort_by': 'nom_hebergement', 'search': currentSearch }) }}" 
+                   class="sort-pill {% if currentSort == 'nom_hebergement' %}active{% endif %}">
+                    Hébergement
+                </a>
+                <a href="{{ path('app_reservationhebergement_index', { 'sort_by': 'statut', 'search': currentSearch }) }}" 
+                   class="sort-pill {% if currentSort == 'statut' %}active{% endif %}">
+                    Statut
+                </a>
+                {% if currentSort %}
+                    <a href="{{ path('app_reservationhebergement_index', { 'search': currentSearch }) }}" class="sort-reset" title="Réinitialiser">↺</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <table class="crud-table">

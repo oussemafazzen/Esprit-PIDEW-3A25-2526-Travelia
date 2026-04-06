@@ -17,11 +17,14 @@ class ReservationhebergementType extends AbstractType
         $builder
             ->add('dateDebut', DateType::class, [
                 'widget' => 'single_text',
+                'attr' => ['min' => (new \DateTime())->format('Y-m-d')],
             ])
             ->add('dateFin', DateType::class, [
                 'widget' => 'single_text',
             ])
-            ->add('nombrePersonnes')
+            ->add('nombrePersonnes', null, [
+                'attr' => ['min' => 1]
+            ])
             ->add('statut')
             ->add('idClient')
             ->add('idHebergement', EntityType::class, [

@@ -7,19 +7,26 @@ use App\Form\HebergementType;
 use App\Repository\HebergementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/hebergement')]
 final class HebergementController extends AbstractController
 {
     #[Route(name: 'app_hebergement_index', methods: ['GET'])]
-    public function index(HebergementRepository $hebergementRepository): Response
+    public function index(Request $request, HebergementRepository $hebergementRepository): Response
     {
+        $search = $request->query->get('search');
+        $sortBy = $request->query->get('sort_by');
+
         return $this->render('hebergement/index.html.twig', [
-            'hebergements' => $hebergementRepository->findAll(),
+            'hebergements' => $hebergementRepository->searchAndSort($search, $sortBy),
+            'currentSearch' => $search,
+            'currentSort' => $sortBy,
         ]);
     }
 
@@ -88,16 +95,35 @@ final class HebergementController extends AbstractController
     }
 
     #[Route('/new', name: 'app_hebergement_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $hebergement = new Hebergement();
         $form = $this->createForm(HebergementType::class, $hebergement);
         $form->handleRequest($request);
-
+ 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imageFile')->getData();
+ 
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+ 
+                try {
+                    $imageFile->move(
+                        $this->getParameter('kernel.project_dir').'/public/uploads/hotels',
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // handle exception if something happens during file upload
+                }
+ 
+                $hebergement->setImageUrl('/uploads/hotels/'.$newFilename);
+            }
+ 
             $entityManager->persist($hebergement);
             $entityManager->flush();
-
+ 
             return $this->redirectToRoute('app_hebergement_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -116,14 +142,33 @@ final class HebergementController extends AbstractController
     }
 
     #[Route('/{idHebergement}/edit', name: 'app_hebergement_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Hebergement $hebergement, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Hebergement $hebergement, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(HebergementType::class, $hebergement);
         $form->handleRequest($request);
-
+ 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imageFile')->getData();
+ 
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+ 
+                try {
+                    $imageFile->move(
+                        $this->getParameter('kernel.project_dir').'/public/uploads/hotels',
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+ 
+                $hebergement->setImageUrl('/uploads/hotels/'.$newFilename);
+            }
+ 
             $entityManager->flush();
-
+ 
             return $this->redirectToRoute('app_hebergement_index', [], Response::HTTP_SEE_OTHER);
         }
 
