@@ -18,7 +18,7 @@
     <!-- NAV -->
     <nav class="nav" id="nav">
         <div class="nav-logo">
-            <div class="nav-logo-mark">✈</div>
+            <div class="nav-logo-mark">T</div>
             <span class="nav-logo-text">Travelia</span>
         </div>
 
@@ -32,15 +32,22 @@
 
         <div class="auth-nav">
             {% if app.user %}
-                <div class="profile-dropdown" id="userMenu">
+                <div class="profile-dropdown-container">
                     <button class="trip-btn" id="userMenuTrigger">
-                        <span class="trip-icon">👤</span>
+                        <span class="trip-icon">✦</span>
                         {{ app.user.prenom }}
+                        <span class="dropdown-arrow">▾</span>
                     </button>
-                    <div class="dropdown-content" id="userDropdown">
-                        <a href="{{ path('app_profile') }}" class="dropdown-item">Profil</a>
-                        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;">
-                        <a href="{{ path('app_logout') }}" class="dropdown-item" style="color: #f87171;">Déconnexion</a>
+                    <div class="profile-dropdown-menu" id="profileDropdown">
+                        <a href="{{ path('app_profile') }}" class="dropdown-item">
+                            <span class="menu-icon">👤</span>
+                            Profil
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ path('app_logout') }}" class="dropdown-item logout">
+                            <span class="menu-icon">⏻</span>
+                            Déconnexion
+                        </a>
                     </div>
                 </div>
             {% else %}
@@ -54,23 +61,45 @@
         {% block body %}{% endblock %}
     </main>
 
+
     <script src="{{ asset('js/horizon-3d.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const trigger = document.getElementById('userMenuTrigger');
-            const dropdown = document.getElementById('userDropdown');
-            
-            if (trigger && dropdown) {
-                trigger.addEventListener('click', (e) => {
+        (function() {
+            const initDropdown = () => {
+                const trigger = document.getElementById('userMenuTrigger');
+                const dropdown = document.getElementById('profileDropdown');
+                
+                if (!trigger || !dropdown) return;
+
+                // Remove existing listener by cloning (simplest way to clear anonymous/multiple listeners)
+                const newTrigger = trigger.cloneNode(true);
+                trigger.parentNode.replaceChild(newTrigger, trigger);
+
+                const toggleDropdown = (e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     dropdown.classList.toggle('show');
-                });
-                
-                document.addEventListener('click', () => {
-                    dropdown.classList.remove('show');
-                });
-            }
-        });
+                };
+
+                newTrigger.addEventListener('click', toggleDropdown);
+
+                // Close when clicking outside - only add once to document
+                if (!window.dropdownClickRegistered) {
+                    document.addEventListener('click', (e) => {
+                        const activeDropdown = document.getElementById('profileDropdown');
+                        const activeTrigger = document.getElementById('userMenuTrigger');
+                        if (activeDropdown && activeDropdown.classList.contains('show') && 
+                            !activeDropdown.contains(e.target) && !activeTrigger.contains(e.target)) {
+                            activeDropdown.classList.remove('show');
+                        }
+                    });
+                    window.dropdownClickRegistered = true;
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', initDropdown);
+            document.addEventListener('turbo:load', initDropdown);
+        })();
     </script>
     {% block javascripts %}{% endblock %}
 </body>
