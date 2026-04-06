@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats des vols - Travelia{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+{% endblock %}
+
+{% block body %}
+<canvas id="live-canvas"></canvas>
+
+<nav class="nav" id="nav">
+    <div class="nav-logo">
+        <div class="nav-logo-mark">T</div>
+        <span class="nav-logo-text">Travelia</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ path('app_home') }}" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Hotels</a>
+        <a href="{{ path('app_flights_search') }}" class="nav-link active">Flights</a>
+        <a href="#" class="nav-link">Activities</a>
+        <a href="#" class="nav-link">Reviews</a>
+        <a href="{{ path('app_user_reservations') }}" class="nav-link">Mes réservations</a>
+    </div>
+
+    <a href="#" class="trip-btn">
+        <span class="trip-icon">✦</span>
+        Sign in
+    </a>
+</nav>
+
+<div class="flights-results-page">
+    <section class="flights-results-wrapper">
+        <div class="flights-results-header">
+            <span class="flights-results-tag">✦ Flights</span>
+            <h1 class="flights-results-title">Available <span>Flights</span></h1>
+
+            <p class="flights-results-subtitle">
+                {% if destination %}Destination : {{ destination }}{% endif %}
+                {% if date_depart %} • Départ : {{ date_depart|date('d/m/Y') }}{% endif %}
+                {% if date_arrivee %} • Arrivée : {{ date_arrivee|date('d/m/Y') }}{% endif %}
+                {% if type_transport %} • Transport : {{ type_transport|capitalize }}{% endif %}
+                {% if passagers %} • {{ passagers }} passager(s){% endif %}
+            </p>
+        </div>
+
+        <div class="flights-results-list">
+            {% if flights is not empty %}
+                {% for flight in flights %}
+                    <div class="premium-flight-card">
+                        <div class="premium-flight-left">
+                            <div class="premium-flight-icon">
+                                {% set transport = (flight.typeTransport ?? 'avion')|lower %}
+                                {% if transport == 'train' %}
+                                    🚆
+                                {% elseif transport == 'bus' %}
+                                    🚌
+                                {% elseif transport == 'bateau' %}
+                                    ⛴
+                                {% else %}
+                                    ✈
+                                {% endif %}
+                            </div>
+
+                            <div class="premium-flight-meta">
+                                <h3>{{ flight.reference }}</h3>
+                                <p>
+                                    {% if flight.dateDepart %}
+                                        {{ flight.dateDepart|date('d/m/Y H:i') }}
+                                    {% else %}
+                                        Horaire à confirmer
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="premium-flight-center">
+                            <div class="premium-flight-route">
+                                <div class="premium-flight-city">
+                                    <strong>{{ flight.depart ?? 'TUN' }}</strong>
+                                    <span>Départ</span>
+                                </div>
+
+                                <div class="premium-flight-line-wrap">
+                                    <span class="premium-flight-line"></span>
+                                    <span class="premium-flight-plane">
+                                        {% if transport == 'train' %}
+                                            🚆
+                                        {% elseif transport == 'bus' %}
+                                            🚌
+                                        {% elseif transport == 'bateau' %}
+                                            ⛴
+                                        {% else %}
+                                            ✈
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                <div class="premium-flight-city">
+                                    <strong>{{ destination ?: (flight.arrivee ?? 'Destination') }}</strong>
+                                    <span>Arrivée</span>
+                                </div>
+                            </div>
+
+                            <div class="premium-flight-info">
+                                {% if flight.dateDepart %}
+                                    <span>Départ : {{ flight.dateDepart|date('d M Y - H:i') }}</span>
+                                {% endif %}
+
+                                {% if flight.dateArrivee %}
+                                    <span>Arrivée : {{ flight.dateArrivee|date('d M Y - H:i') }}</span>
+                                {% elseif date_arrivee %}
+                                    <span>Arrivée souhaitée : {{ date_arrivee|date('d/m/Y') }}</span>
+                                {% endif %}
+
+                                <span class="premium-flight-badge">
+                                    {{ flight.typeTransport ?? type_transport ?? 'avion' }}
+                                </span>
+
+                                {% if destination %}
+                                    <span class="premium-flight-badge">
+                                        {{ destination }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="premium-flight-right">
+                            <div class="premium-flight-price">
+                                {{ flight.prix ?? '--' }} DT
+                            </div>
+
+                            <a href="#" class="premium-flight-book-btn">
+                                Choisir
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="premium-flight-empty">
+                    <h3>Aucun vol trouvé</h3>
+                    <p>Essayez une autre destination ou une autre date.</p>
+                    <a href="{{ path('app_flights_search') }}" class="premium-flight-back-btn">
+                        Retour à la recherche
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Travelia — Accueil{% endblock %}
+
+{% block body %}
+
+<nav class="nav">
+    <div class="nav-logo">
+        <div class="nav-logo-mark">T</div>
+        <span class="nav-logo-text">Travelia</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ path('app_home') }}" class="nav-link active">Accueil</a>
+        <a href="#" class="nav-link">Hôtels</a>
+        <a href="{{ path('app_flights_search') }}" class="nav-link">Vols</a>
+        <a href="#" class="nav-link">Activités</a>
+        <a href="#" class="nav-link">Avis</a>
+    </div>
+
+    <button class="trip-btn">Connexion</button>
+</nav>
+
+<main>
+    <section class="hero">
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <p class="hero-eyebrow">AI-powered travel curation</p>
+            <h1 class="hero-title">
+                Bienvenue sur <em>Travelia</em>
+            </h1>
+            <p class="hero-text">
+                Découvrez des hôtels, des vols et des activités dans une interface moderne.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{{ path('app_flights_search') }}" class="btn-primary">Explorer les vols</a>
+                <a href="#" class="btn-secondary">Découvrir les offres</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-preview">
+        <div class="preview-card">
+            <span class="preview-label">Hôtels</span>
+            <h2>Séjours premium</h2>
+            <p>Explore les meilleurs hébergements avec une expérience élégante.</p>
+        </div>
+
+        <div class="preview-card">
+            <span class="preview-label">Vols</span>
+            <h2>Vols disponibles</h2>
+            <p>Rechercher des billets et afficher les trajets disponibles.</p>
+        </div>
+
+        <div class="preview-card">
+            <span class="preview-label">Activités</span>
+            <h2>Expériences uniques</h2>
+            <p>Ajoute des aventures inoubliables à ton voyage.</p>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

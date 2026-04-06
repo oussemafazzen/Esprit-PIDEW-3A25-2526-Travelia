@@ -1,0 +1,14 @@
+{{ form_start(form, {
+    'attr': {
+        'id': 'editReservationForm',
+        'action': path('app_user_reservation_edit', {'id': reservation.id})
+    }
+}) }}
+    {{ form_widget(form) }}
+
+    <div style="margin-top: 20px; display:flex; justify-content:flex-end;">
+        <button type="submit" class="premium-flight-book-btn">
+            Enregistrer
+        </button>
+    </div>
+{{ form_end(form) }}
