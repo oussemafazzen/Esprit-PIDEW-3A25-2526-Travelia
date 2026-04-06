@@ -474,33 +474,116 @@
   //  CONTENT INJECTION
   // ─────────────────────────────────────────────
 
-  // HOTELS
-  const hotels = [
-    { name:'Amanjiwo Resort', loc:'Java, Indonesia', type:'RESORT', price:'€480', per:'/night', r:'4.9', img:'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=75', emoji:'🏨' },
-    { name:'Soneva Fushi', loc:'Baa Atoll, Maldives', type:'VILLA', price:'€890', per:'/night', r:'5.0', img:'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=75', emoji:'🌴' },
-    { name:'Burj Al Arab', loc:'Dubai, UAE', type:'LUXURY', price:'€1,200', per:'/night', r:'4.8', img:'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=75', emoji:'🌃' },
-    { name:'Amangiri', loc:'Utah, USA', type:'DESERT', price:'€950', per:'/night', r:'4.9', img:'https://images.unsplash.com/photo-1596436889106-be35e843f974?w=600&q=75', emoji:'🏜️' },
-  ];
-  document.getElementById('hotels-row').innerHTML = hotels.map(h => `
-    <div class="hotel-card">
-      <div style="overflow:hidden;height:160px">
-        <img class="hotel-photo" src="${h.img}" alt="${h.name}" loading="lazy" />
-      </div>
-      <div class="hotel-body">
-        <div class="hotel-type">${h.type}</div>
-        <div class="hotel-name">${h.name}</div>
-        <div class="hotel-loc">📍 ${h.loc}</div>
-        <div class="hotel-foot">
-          <div class="hotel-price">${h.price}<small>${h.per}</small></div>
-          <button class="add-btn"
-            data-item-name="${h.name}"
-            data-item-price="${h.price}"
-            data-item-emoji="${h.emoji}"
-            data-original-text="Add +"
-          >Add +</button>
-        </div>
-      </div>
-    </div>`).join('');
+  // HOTELS - FETCHING FROM DATABASE
+  const hotelsRow = document.getElementById('hotels-row');
+  const btnPrev = document.getElementById('hotel-prev');
+  const btnNext = document.getElementById('hotel-next');
+
+  const updateArrows = () => {
+    if (!hotelsRow) return;
+    // Hide left arrow at start
+    if (hotelsRow.scrollLeft <= 10) {
+      btnPrev.classList.add('hidden');
+    } else {
+      btnPrev.classList.remove('hidden');
+    }
+    
+    // Hide right arrow at end
+    const maxScroll = hotelsRow.scrollWidth - hotelsRow.clientWidth;
+    if (hotelsRow.scrollLeft >= maxScroll - 10) {
+      btnNext.classList.add('hidden');
+    } else {
+      btnNext.classList.remove('hidden');
+    }
+  };
+
+  fetch('/hebergement/api/all')
+    .then(response => response.json())
+    .then(hotels => {
+      hotelsRow.innerHTML = hotels.map(h => `
+        <div class="hotel-card" data-id="${h.id}">
+          <div style="overflow:hidden;height:160px">
+            <img class="hotel-photo" src="${h.img}" alt="${h.name}" draggable="false" loading="lazy" />
+          </div>
+          <div class="hotel-body">
+            <div class="hotel-type">${h.type}</div>
+            <div class="hotel-name">${h.name}</div>
+            <div class="hotel-loc">📍 ${h.loc}</div>
+            <div class="hotel-foot">
+              <div class="hotel-price">${h.price}<small>${h.per}</small></div>
+              <button class="add-btn"
+                data-item-name="${h.name}"
+                data-item-price="${h.price}"
+                data-item-emoji="${h.emoji}"
+                data-original-text="Add +"
+              >Add +</button>
+            </div>
+          </div>
+        </div>`).join('');
+        
+      setTimeout(updateArrows, 100);
+      hotelsRow.addEventListener('scroll', () => {
+        requestAnimationFrame(updateArrows);
+      });
+    })
+    .catch(err => {
+      console.error('Failed to load hotels:', err);
+      hotelsRow.innerHTML = '<p>Unable to load luxury stays at the moment.</p>';
+    });
+
+  // Premium Drag to Scroll Logic
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+  let hasDragged = false;
+
+  hotelsRow.addEventListener('mousedown', (e) => {
+    isDown = true;
+    hasDragged = false;
+    hotelsRow.classList.add('active-drag');
+    startX = e.pageX - hotelsRow.offsetLeft;
+    scrollLeft = hotelsRow.scrollLeft;
+  });
+  hotelsRow.addEventListener('mouseleave', () => {
+    isDown = false;
+    hotelsRow.classList.remove('active-drag');
+  });
+  hotelsRow.addEventListener('mouseup', () => {
+    isDown = false;
+    hotelsRow.classList.remove('active-drag');
+  });
+  hotelsRow.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - hotelsRow.offsetLeft;
+    const walk = (x - startX) * 1.5; // Drag speed multiplier
+    if (Math.abs(walk) > 5) {
+      hasDragged = true;
+    }
+    hotelsRow.scrollLeft = scrollLeft - walk;
+  });
+
+  // Slider arrow clicks (scroll by 75% of view width for smooth continuum)
+  btnNext.addEventListener('click', () => {
+    hotelsRow.scrollBy({ left: hotelsRow.clientWidth * 0.75, behavior: 'smooth' });
+  });
+  btnPrev.addEventListener('click', () => {
+    hotelsRow.scrollBy({ left: -(hotelsRow.clientWidth * 0.75), behavior: 'smooth' });
+  });
+
+  // Navigate to Details Page when clicking a card
+  hotelsRow.addEventListener('click', (e) => {
+    // If we actively dragged, do not navigate
+    if (hasDragged) return;
+    
+    // Ignore clicks on the add-to-trip button itself
+    if (e.target.closest('.add-btn')) return;
+    
+    const card = e.target.closest('.hotel-card');
+    if (card) {
+      window.location.href = '/reservationhebergement/new?hebergement_id=' + card.dataset.id;
+    }
+  });
 
   // FLIGHTS
   const flights = [

@@ -580,25 +580,87 @@ img { display:block; }
 /* ═══════════════════════════════════
    HOTEL CARDS
 ═══════════════════════════════════ */
+.slider-wrapper {
+  position: relative;
+  width: calc(100% + 6rem);
+  margin-left: -3rem;
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
 .cards-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  display: flex !important;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding: 1rem 3rem 2.5rem 3rem;
+  scrollbar-width: none;
+}
+.cards-row::-webkit-scrollbar { display:none; }
+
+.cards-row.active-drag {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  cursor: grabbing;
+}
+.cards-row.active-drag .hotel-card {
+  transform: scale(0.98);
 }
 
+.slider-arrow {
+  position: absolute;
+  top: 42%;
+  transform: translateY(-50%);
+  width: 54px; height: 54px;
+  background: rgba(10,13,26,0.6);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--white);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex; align-items:center; justify-content:center;
+  backdrop-filter: blur(14px) saturate(180%);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.slider-arrow svg {
+  width: 20px; height: 20px;
+  stroke: currentColor;
+  transition: transform 0.3s;
+}
+.slider-arrow:hover {
+  background: var(--gold); color: var(--ink);
+  border-color: var(--gold);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 12px 40px rgba(201,168,76,0.4);
+}
+.slider-arrow:hover svg {
+  transform: scale(1.15);
+}
+.slider-arrow.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.slider-prev { left: 1.5rem; }
+.slider-next { right: 1.5rem; }
+
 .hotel-card {
+  flex: 0 0 calc(25% - 0.75rem);
+  min-width: 290px;
+  max-width: 340px;
+  scroll-snap-align: center;
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.12);
   backdrop-filter: blur(24px) saturate(160%);
   border-radius: 18px;
   overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.3s;
+  cursor: grab;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s var(--ease), border-color 0.3s;
 }
 .hotel-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.3);
-  border-color: rgba(201,168,76,0.35);
+  transform: translateY(-12px);
+  box-shadow: 0 35px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(201,168,76,0.35);
+  border-color: rgba(201,168,76,0.4);
 }
 .hotel-photo {
   width: 100%;

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Réserver la Suite — Travelia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="hotel.css?v=14" />
+  
+  <!-- GSAP for 2.5D animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  
+  <!-- 2.5D Image Scene Wrapper -->
+  <div id="scene-wrapper">
+    <div id="scene">
+      <!-- Layer 1: the outside view behind the door -->
+      <div id="view-layer"></div>
+      
+      <!-- Layer 2: the room wall with a CSS hole cut out -->
+      <div id="wall-layer"></div>
+      
+      <!-- Layer 3: the door cropped exactly from the room image -->
+      <div id="door-layer">
+        <div class="door-shadow"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-logo" onclick="window.location.href='travelia.html'" style="cursor:pointer;">
+      <div class="nav-logo-mark">T</div>
+      <span class="nav-logo-text">Travelia</span>
+    </div>
+    <a href="travelia.html" class="back-link">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Retour aux explorations
+    </a>
+  </nav>
+
+  <!-- Initial Hotel Details -->
+  <main class="page-container" id="details-container">
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Création de la scène...</p>
+    </div>
+  </main>
+
+  <!-- Reservation Panel containing the user's booking work -->
+  <div id="reservation-panel" class="res-panel">
+    <div class="res-panel-header">
+      <h2>Finalisez votre réservation</h2>
+      <button id="close-btn" class="close-panel">✕</button>
+    </div>
+    <!-- Dynamically loads the Symfony /reservationhebergement/new route -->
+    <iframe id="res-iframe" src="" frameborder="0"></iframe>
+  </div>
+
+  <script src="hotel-canvas.js?v=14"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    // Right-align the card since the door is on the left
+    document.querySelector('.page-container').style.left = 'auto';
+    document.querySelector('.page-container').style.right = '0';
+
+    if (id) {
+      fetch('/hebergement/api/' + id)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('details-container').innerHTML = `
+            <div class="master-card" style="transform:translateX(40px)">
+              <div class="info-pane">
+                <div class="loc-text">📍 ${data.loc}</div>
+                <h1 class="hotel-h1">${data.name}</h1>
+                
+                <div class="specs-grid">
+                   <div class="spec-box">
+                     <div class="s-label">Capacité</div>
+                     <div class="s-val">${data.capacite} Invités</div>
+                   </div>
+                   <div class="spec-box">
+                     <div class="s-label">Tarif</div>
+                     <div class="s-val">${data.price} <small>${data.per}</small></div>
+                   </div>
+                </div>
+                
+                <div class="amenities-blk">
+                  <h3>Équipements exclusifs</h3>
+                  <p>${data.equipements || 'Piscine privée, Vue imprenable, Design contemporain'}</p>
+                </div>
+                
+                <div class="actions-blk">
+                  <button class="reserve-btn glow-btn" onclick="startDoorAnimation('${data.id}')">
+                    RÉSERVER ✦
+                  </button>
+                  <p class="reserve-secured">Accès immersif à votre suite</p>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          setTimeout(() => {
+            const card = document.querySelector('.master-card');
+            card.classList.add('visible');
+            card.style.transform = 'translateX(0)';
+          }, 50);
+        });
+    } else {
+      document.getElementById('details-container').innerHTML = `<h2 style="color:white;text-align:center;">Hotel not found.</h2>`;
+    }
+  </script>
+</body>
+</html>

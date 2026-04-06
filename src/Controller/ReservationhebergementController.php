@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Reservationhebergement;
+use App\Entity\Hebergement;
 use App\Form\ReservationhebergementType;
 use App\Repository\ReservationhebergementRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +27,13 @@ final class ReservationhebergementController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reservationhebergement = new Reservationhebergement();
+        
+        $hebergementId = $request->query->get('hebergement_id');
+        $hebergement = null;
+        if ($hebergementId) {
+            $hebergement = $entityManager->getRepository(Hebergement::class)->find($hebergementId);
+        }
+        
         $form = $this->createForm(ReservationhebergementType::class, $reservationhebergement);
         $form->handleRequest($request);
 
@@ -33,12 +41,13 @@ final class ReservationhebergementController extends AbstractController
             $entityManager->persist($reservationhebergement);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_reservationhebergement_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_paiement_new', ['reservation_id' => $reservationhebergement->getIdReservationHebergement()]);
         }
 
         return $this->render('reservationhebergement/new.html.twig', [
             'reservationhebergement' => $reservationhebergement,
             'form' => $form,
+            'hebergement' => $hebergement,
         ]);
     }
 

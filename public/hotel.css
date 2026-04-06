@@ -1,0 +1,234 @@
+:root {
+  --gold: #c9a84c;
+  --gold2: #e8c97a;
+  --ink: #050814;
+  --white: #ffffff;
+  --serif: 'Cormorant Garamond', serif;
+  --sans: 'Inter', sans-serif;
+  --grotesk: 'Space Grotesk', sans-serif;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* 
+     IMAGE PATHS 
+     We are now using the two static photos you provided!
+     Make sure you save them exactly as named below in your 'public/images/' folder.
+  */
+  --door-bg: url('/images/door.jpg');
+  --view-bg: url('/images/view.jpg');
+
+  /* 
+     DOOR COORDINATES 
+     These are tailored to precisely cut out the door from the white wall photo.
+  */
+  --d-left: 60.5%;
+  --d-right: 77.2%;
+  --d-top: 11%;
+  --d-bot: 91.5%;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--ink);
+  color: var(--white);
+  overflow: hidden; 
+}
+
+#view-layer {
+  position: fixed; inset: 0;
+  background-image: var(--view-bg);
+  background-size: 100% 100%; /* Stretch it to fit FULL screen */
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2; 
+}
+
+/* ── 2.5D SCENE ARCHITECTURE ── */
+#scene-wrapper {
+  position: fixed; inset: 0;
+  perspective: 1200px;
+  overflow: hidden;
+  z-index: 0;
+  background: transparent; /* No more black layer hiding the pool! */
+}
+#scene {
+  position: absolute;
+  transform-style: preserve-3d;
+  /* Centered perfectly as a 16:9 ratio to safely hold your background images without ratio distortion */
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+@media (min-aspect-ratio: 16/9) { #scene { width: 100vw; height: 56.25vw; } }
+@media (max-aspect-ratio: 16/9) { #scene { width: 177.77vh; height: 100vh; } }
+
+#wall-layer, #door-layer {
+  position: absolute; inset: 0;
+  background-image: var(--door-bg);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+#wall-layer {
+  /* Advanced Clip-path that draws the whole screen but slices a perfect hole out exactly where the door is */
+  clip-path: polygon(
+    0% 0%, 100% 0%, 100% 100%, 0% 100%, 
+    0% 50%, 
+    var(--d-left) 50%, 
+    var(--d-left) var(--d-bot), 
+    var(--d-right) var(--d-bot), 
+    var(--d-right) var(--d-top), 
+    var(--d-left) var(--d-top), 
+    var(--d-left) 50%, 
+    0% 50%
+  );
+}
+
+#door-layer {
+  /* Clips ONLY the exact pixels of the door from the image */
+  clip-path: polygon(
+    var(--d-left) var(--d-top), 
+    var(--d-right) var(--d-top), 
+    var(--d-right) var(--d-bot), 
+    var(--d-left) var(--d-bot)
+  );
+  /* The hinges are on the right edge of your door */
+  transform-origin: var(--d-right) 50%; 
+}
+
+.door-shadow {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.5), transparent);
+  opacity: 0;
+}
+
+/* ── UI OVERLAYS ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4rem;
+  z-index: 100;
+  background: linear-gradient(to bottom, rgba(5,8,20,0.8), transparent);
+}
+
+.nav-logo { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+.nav-logo-mark {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--ink);
+  font-family: var(--serif); font-size: 1.1rem; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-text { font-family: var(--grotesk); font-size: 1.15rem; font-weight: 600; }
+
+.back-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.05em; text-decoration: none;
+  transition: all 0.3s;
+}
+.back-link:hover { color: var(--gold2); transform: translateX(-4px); }
+
+.page-container {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 50%; 
+  z-index: 10;
+  display: flex; align-items: center;
+  padding: 0 4rem;
+  justify-content: flex-start; /* Move the card to the left wall */
+}
+
+.loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: var(--gold); font-family: var(--serif); font-size: 1.5rem; font-style: italic; }
+
+.master-card {
+  width: 100%; max-width: 500px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(25px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+  opacity: 0;
+  transition: opacity 1s var(--ease), transform 1s var(--ease);
+}
+.master-card.visible {
+  opacity: 1;
+  transform: translateX(0) !important;
+}
+
+.info-pane { padding: 3rem; display: flex; flex-direction: column; justify-content: center; }
+.loc-text { font-size: 0.85rem; color: rgba(0,0,0,0.6); letter-spacing: 0.05em; margin-bottom: 0.8rem; text-transform: uppercase; font-weight: 600; }
+.hotel-h1 { font-family: var(--serif); font-size: 3.5rem; font-weight: 600; line-height: 1.1; margin-bottom: 2rem; color: #111; }
+
+.specs-grid { display: flex; gap: 2rem; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.1); }
+.spec-box { display: flex; flex-direction: column; gap: 0.4rem; }
+.s-label { font-size: 0.75rem; color: rgba(0,0,0,0.5); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+.s-val { font-family: var(--serif); font-size: 1.5rem; color: #222; font-weight: 600;}
+.s-val small { font-family: var(--sans); font-size: 0.8rem; color: rgba(0,0,0,0.5); }
+
+.amenities-blk h3 { font-family: var(--grotesk); font-size: 0.9rem; font-weight: 700; color: #111; margin-bottom: 1rem; }
+.amenities-blk p { font-size: 0.85rem; line-height: 1.6; color: rgba(0,0,0,0.7); margin-bottom: 2rem; }
+
+.actions-blk { display: flex; flex-direction: column; gap: 0.8rem; }
+.reserve-btn {
+  width: 100%;
+  padding: 1.1rem;
+  background: #111;
+  color: #fff;
+  font-size: 0.95rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  border-radius: 8px;
+  border: none; cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+.glow-btn {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.glow-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+.reserve-secured { text-align: center; font-size: 0.75rem; color: rgba(0,0,0,0.5); font-weight: 500; }
+
+/* Reservation Iframe Slide-out Panel */
+.res-panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 50%;
+  min-width: 500px;
+  background: rgba(248, 249, 250, 0.95); 
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  transform: translateX(100%);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -20px 0 50px rgba(0,0,0,0.5);
+  border-left: 1px solid rgba(255,255,255,0.5);
+}
+.res-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: transparent;
+  color: inherit;
+}
+.close-panel {
+  background: none; border: none;
+  color: var(--white);
+  font-size: 1.25rem; font-weight: bold;
+  cursor: pointer;
+  opacity: 0.6; transition: opacity 0.3s;
+}
+.close-panel:hover { opacity: 1; color: var(--gold); }
+#res-iframe {
+  flex: 1;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .page-container { width: 100%; padding: 0 2rem; justify-content: center; left: 0 !important; right: auto !important; }
+  .res-panel { width: 100%; min-width: 0; }
+}

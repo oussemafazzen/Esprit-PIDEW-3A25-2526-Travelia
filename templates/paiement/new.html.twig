@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paiement Sécurisé — Travelia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="{{ asset('hotel.css') }}?v=17" />
+    
+    <style>
+        body {
+            background-image: var(--view-bg);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-container {
+            width: 90%;
+            max-width: 650px;
+            background: transparent; /* Crystal clear as requested */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 5rem;
+            color: #fff;
+            animation: fadeIn 1s ease-out;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .payment-header h1 {
+            font-family: var(--serif);
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .payment-header p {
+            font-family: var(--grotesk);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            opacity: 0.7;
+        }
+
+        .summary-box {
+            background: rgba(255,255,255,0.05); /* Very thin ghost layer */
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-family: var(--grotesk);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.6);
+        }
+        .summary-row b { color: #fff; font-weight: 600; }
+
+        .total-row {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-row .label { font-family: var(--grotesk); font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 2px; }
+        .total-row .price { font-family: var(--serif); font-size: 3rem; color: #fff; line-height: 1; }
+
+        .form-glass { display: flex; flex-direction: column; gap: 2.5rem; }
+        .form-group label {
+            color: rgba(255,255,255,0.9); font-family: var(--grotesk); font-size: 0.75rem; 
+            text-transform: uppercase; letter-spacing: 3px; display: block; margin-bottom: 1rem; font-weight: 700;
+        }
+        .form-group input, .form-group select {
+            width: 100%; padding: 1.3rem; border-radius: 12px;
+            background: rgba(255,255,255,0.08); /* Transparent input */
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #fff; font-family: var(--sans); font-size: 1.1rem;
+            transition: all 0.4s var(--ease);
+        }
+        .form-group input:focus, .form-group select:focus {
+            background: rgba(255,255,255,0.15); border-color: #fff; outline: none; transform: scale(1.01);
+        }
+        .form-group select option { background: #fff; color: #000; }
+
+        .payment-btn {
+            margin-top: 2rem; width: 100%; padding: 1.5rem;
+            background: #fff;
+            color: #000; border: none; border-radius: 15px;
+            font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 4px;
+            cursor: pointer; transition: all 0.4s var(--ease);
+        }
+        .payment-btn:hover { 
+            transform: translateY(-5px); 
+            background: var(--gold2);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+        }
+        /* SUCCESS MODAL CRYSTAL STYLE */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(20px);
+            display: none; /* Controlled by JS */
+            align-items: center; justify-content: center;
+            z-index: 2000;
+            animation: fadeInOverlay 0.5s ease;
+        }
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+        .success-modal {
+            width: 90%; max-width: 500px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            padding: 4rem 3rem;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.4);
+            animation: modalPop 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        @keyframes modalPop { 
+            from { opacity: 0; transform: scale(0.8) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+
+        .success-icon {
+            width: 80px; height: 80px;
+            background: #fff; color: #000;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 2.5rem;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .success-modal h2 { font-family: var(--serif); font-size: 2.5rem; margin-bottom: 1.5rem; letter-spacing: -1px; }
+        .success-modal p { font-family: var(--sans); font-size: 1rem; line-height: 1.6; opacity: 0.9; margin-bottom: 2.5rem; }
+        .success-modal b { color: var(--gold2); font-weight: 600; }
+
+        .modal-btn {
+            background: #fff; color: #000;
+            padding: 1.2rem 3rem; border: none; border-radius: 50px;
+            font-family: var(--grotesk); font-weight: 800; font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; transition: 0.4s var(--ease);
+        }
+        .modal-btn:hover { background: var(--gold2); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay" id="success-modal-overlay">
+        <div class="success-modal">
+            <div class="success-icon">✓</div>
+            <h2>Félicitations !</h2>
+            <p>
+                Votre séjour au <b>{{ reservation.idHebergement.nom|default('Hébergement') }}</b> a été réglé avec succès. <br><br>
+                Nous vous attendons avec impatience à la réception le <b>{{ reservation.dateDebut|date('d/m/Y') }}</b>.
+            </p>
+            <button class="modal-btn" onclick="window.location.href='/travelia.html'">Découvrir plus</button>
+        </div>
+    </div>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>Paiement Final</h1>
+            <p>Sécurisez votre séjour d'exception</p>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-row">
+                <span>Hébergement</span>
+                <b>{{ reservation.idHebergement.nom|default('Suite Executive') }}</b>
+            </div>
+            <div class="total-row">
+                <span class="label">Total à régler</span>
+                <span class="price">€{{ form.vars.value.montant }}</span>
+            </div>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'form-glass', 'id': 'payment-form'}}) }}
+            <div class="form-group" style="display:none;">
+                {{ form_label(form.datePaiement) }}
+                {{ form_widget(form.datePaiement) }}
+            </div>
+            <div class="form-group" style="display:none;">
+                {{ form_label(form.montant) }}
+                {{ form_widget(form.montant) }}
+            </div>
+            <div class="form-group" style="display:none;">
+                {{ form_label(form.idReservation) }}
+                {{ form_widget(form.idReservation) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.methodePaiement, 'Méthode de Paiement') }}
+                {{ form_widget(form.methodePaiement) }}
+            </div>
+
+            <button type="submit" class="payment-btn">Finaliser le règlement</button>
+        {{ form_end(form) }}
+
+        <div class="secure-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+            Terminal Sécurisé et Crypté
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stay on page to show the luxury modal
+            
+            const form = this;
+            const formData = new FormData(form);
+
+            // Send via AJAX so we can stay on this page to show the modal!
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if(response.ok) {
+                    // Show the crystal success modal!
+                    document.getElementById('success-modal-overlay').style.display = 'flex';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

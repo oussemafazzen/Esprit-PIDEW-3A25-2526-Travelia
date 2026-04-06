@@ -39,6 +39,9 @@ class Hebergement
     #[ORM\Column(name: 'tarif_par_nuit')]
     private ?float $tarifParNuit = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageUrl = null;
+
     public function getIdHebergement(): ?int
     {
         return $this->idHebergement;
@@ -129,6 +132,17 @@ class Hebergement
     public function setTarifParNuit(float $tarifParNuit): static
     {
         $this->tarifParNuit = $tarifParNuit;
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): static
+    {
+        $this->imageUrl = $imageUrl;
         return $this;
     }
 

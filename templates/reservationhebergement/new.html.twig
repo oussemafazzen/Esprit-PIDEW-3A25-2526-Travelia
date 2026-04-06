@@ -1,9 +1,267 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Réserver la Suite — Travelia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="{{ asset('hotel.css') }}?v=16" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-{% block title %}New Reservationhebergement{% endblock %}
+  <style>
+/* 
+  Custom Glassmorphism form precisely engineered to float over the Unsplash/beach images organically.
+*/
+.res-panel-custom {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 50%;
+  min-width: 520px;
+  background: transparent; /* Totally clear as requested */
+  z-index: 1000;
+  transform: translateX(100%);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(255,255,255,0.2); 
+  color: #fff; /* White text for better contrast against the pool sky/water */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.res-panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 2.5rem 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.res-panel-header h2 { font-family: var(--serif); font-size: 2.4rem; font-weight: 500; color: #fff; }
+.close-panel { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+.close-panel:hover { transform: rotate(90deg); color: var(--gold); }
 
-{% block body %}
-    <h1>Create new Reservationhebergement</h1>
-    {{ include('reservationhebergement/_form.html.twig') }}
-    <a href="{{ path('app_reservationhebergement_index') }}">back to list</a>
-{% endblock %}
+.form-wrapper {
+  padding: 3rem; overflow-y: auto; flex: 1;
+}
+
+.form-glass { display: flex; flex-direction: column; gap: 2rem; }
+.form-group label {
+  color: rgba(255,255,255,0.8); font-family: var(--grotesk); font-size: 0.75rem; 
+  text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 0.8rem; font-weight: 700;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 1.2rem; border-radius: 12px;
+  background: rgba(255,255,255,0.1); /* Super light translucent highlight */
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; font-family: var(--sans); font-size: 1.05rem;
+  transition: all 0.4s var(--ease);
+}
+.form-group input:focus, .form-group select:focus {
+  background: rgba(255,255,255,0.2); border-color: #fff; outline: none; transform: translateX(5px);
+}
+.form-group select option { background: #fff; color: #000; }
+
+.form-submit-btn {
+  margin-top: 1.5rem; width: 100%; padding: 1.4rem;
+  background: #fff;
+  color: #000; border: none; border-radius: 12px;
+  font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+  cursor: pointer; transition: all 0.4s var(--ease);
+}
+.form-submit-btn:hover { transform: scale(1.02); background: var(--gold); color: #000; }
+
+@media (max-width: 900px) {
+  .page-container { width: 100%; padding: 0 2rem; justify-content: center; left: 0 !important; right: auto !important; }
+  .res-panel-custom { width: 100%; min-width: 0; }
+}
+  </style>
+</head>
+<body>
+  
+  <!-- The pool view stays crisp, fixed, and full-screen in the background -->
+  <div id="view-layer"></div>
+  
+  <div id="scene-wrapper">
+    <div id="scene">
+      <div id="wall-layer"></div>
+      <div id="door-layer"><div class="door-shadow"></div></div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-logo" onclick="window.location.href='/travelia.html'" style="cursor:pointer;">
+      <div class="nav-logo-mark">T</div>
+      <span class="nav-logo-text">Travelia</span>
+    </div>
+    <a href="/travelia.html" class="back-link">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Retour aux explorations
+    </a>
+  </nav>
+
+  <main class="page-container" id="details-container" style="left: 0; right: auto;">
+    {% if hebergement %}
+      <div class="master-card visible" style="transform:translateX(0)">
+        <div class="info-pane">
+          <div class="loc-text">📍 {{ hebergement.ville }}, {{ hebergement.pays }}</div>
+          <h1 class="hotel-h1">{{ hebergement.nom }}</h1>
+          
+          <div class="specs-grid">
+             <div class="spec-box">
+               <div class="s-label">Capacité</div>
+               <div class="s-val">{{ hebergement.capacite }} Invités</div>
+             </div>
+             <div class="spec-box">
+               <div class="s-label">Tarif</div>
+               <div class="s-val">€{{ hebergement.tarifParNuit }} <small>/nuit</small></div>
+             </div>
+          </div>
+          
+          <div class="amenities-blk">
+            <h3>Équipements exclusifs</h3>
+            <p>{{ hebergement.equipements }}</p>
+          </div>
+          
+          <div class="actions-blk">
+            <button class="reserve-btn glow-btn" onclick="openDoorWorkflow()">
+              RÉSERVER ✦
+            </button>
+            <p class="reserve-secured">Accès immersif à votre suite</p>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="master-card visible">
+        <div class="info-pane">
+          <h1 class="hotel-h1">Hébergement Introuvable</h1>
+        </div>
+      </div>
+    {% endif %}
+  </main>
+
+  <!-- NATIVE SYMFONY FORM INTEGRATION (No iFrame) -->
+  <div id="reservation-panel" class="res-panel-custom">
+    <div class="res-panel-header">
+      <h2>Finalisez votre réservation</h2>
+      <button id="close-btn" class="close-panel">✕</button>
+    </div>
+    
+    <div class="form-wrapper">
+      {{ form_start(form, {'attr': {'class': 'form-glass'}}) }}
+        <div class="form-group">
+            {{ form_label(form.dateDebut) }}
+            {{ form_widget(form.dateDebut) }}
+            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.dateDebut) }}</div>
+        </div>
+        <div class="form-group">
+            {{ form_label(form.dateFin) }}
+            {{ form_widget(form.dateFin) }}
+            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.dateFin) }}</div>
+        </div>
+        <div class="form-group">
+            {{ form_label(form.nombrePersonnes) }}
+            {{ form_widget(form.nombrePersonnes) }}
+            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.nombrePersonnes) }}</div>
+        </div>
+        <div class="form-group" style="display:none;">
+            {{ form_label(form.statut) }}
+            {{ form_widget(form.statut, { 'attr': {'value': 'En attente'} }) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.idClient) }}
+            {{ form_widget(form.idClient) }}
+            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.idClient) }}</div>
+        </div>
+        <div class="form-group" style="display:none;">
+            {{ form_label(form.idHebergement) }}
+            {{ form_widget(form.idHebergement) }}
+            <div style="color: #ffaaaa; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.idHebergement) }}</div>
+        </div>
+        
+        <button class="form-submit-btn">{{ button_label|default('Confirmer la réservation') }}</button>
+      {{ form_end(form) }}
+    </div>
+  </div>
+
+  <script>
+    /* Use the exact center of the door (averaging 60.5 and 77.2) for a perfect zoom-in */
+    gsap.set("#scene", { transformOrigin: "68.85% 50%" }); 
+
+    let isAnimating = false;
+
+    function openDoorWorkflow() {
+        if(isAnimating) return;
+        isAnimating = true;
+
+        const masterCard = document.querySelector('.master-card');
+        const resPanel = document.getElementById('reservation-panel');
+        const nav = document.querySelector('.nav');
+
+        // Automatically select the correct Hebergement in the dropdown if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const hebergementId = urlParams.get('hebergement_id');
+        const selectBox = document.querySelector('select[name="reservationhebergement[idHebergement]"]');
+        if(hebergementId && selectBox) {
+            selectBox.value = hebergementId;
+            // Optionally, make it readonly or disabled
+            selectBox.style.pointerEvents = 'none';
+            selectBox.style.opacity = '0.7';
+        }
+
+        const tl = gsap.timeline();
+
+        if (masterCard) tl.to(masterCard, { opacity: 0, x: -50, scale: 0.95, duration: 0.6, ease: "power2.inOut" }, 0);
+        if (nav) tl.to(nav, { opacity: 0, y: -20, duration: 0.6, ease: "power2.inOut" }, 0);
+
+        tl.to("#door-layer", { rotateY: -105, duration: 2.5, ease: "power3.inOut" }, 0.2);
+        tl.to(".door-shadow", { opacity: 1, duration: 2.0 }, 0.2);
+
+        /* 
+           Now that the pool is NOT inside the scene, we can freely scale the room massively (scale: 6)
+           so the camera literally flies THROUGH the exact door opening! 
+        */
+        tl.to("#scene", { scale: 6, x: "-18%", duration: 3.5, ease: "power2.inOut" }, 0.8);
+        
+        /* Gently fade out the remaining wall edges at the very end of the flight just in case */
+        tl.to(["#wall-layer", "#door-layer", ".door-shadow", ".master-card", ".nav"], { opacity: 0, duration: 1.5, ease: "power2.in" }, 2.0);
+
+        tl.to(resPanel, { x: 0, duration: 1.0, ease: "power3.out" }, 3.0);
+
+        document.getElementById('close-btn').onclick = () => {
+            const rev = gsap.timeline();
+            rev.to(resPanel, { x: '100%', duration: 0.6, ease: "power2.in" })
+               .to(["#wall-layer", "#door-layer"], { opacity: 1, duration: 0.8 }, 0.2)
+               .to("#scene", { scale: 1, x: 0, Math: 0, duration: 2.5, ease: "power2.inOut" }, 0.4)
+               .to(".door-shadow", { opacity: 0, duration: 2 }, 0.4)
+               .to("#door-layer", { rotateY: 0, duration: 2, ease: "power3.inOut" }, 0.8)
+               .to([masterCard, nav], { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "power2.out" }, 2.0)
+               .eventCallback("onComplete", () => { isAnimating = false; });
+        };
+    }
+
+    // Logic to keep the door OPEN if the form was submitted but had validation errors!
+    {% if form.vars.submitted and not form.vars.valid %}
+        window.onload = () => {
+            // Force the form panel open
+            document.getElementById('reservation-panel').style.transform = 'translateX(0)';
+            gsap.set(".master-card", { opacity: 0, x: -50 });
+            gsap.set(".nav", { opacity: 0, y: -20 });
+            gsap.set("#door-layer", { rotateY: -105 });
+            gsap.set(".door-shadow", { opacity: 1 });
+            gsap.set(["#wall-layer", "#door-layer", ".door-shadow", ".master-card", ".nav"], { opacity: 0 });
+            gsap.set("#scene", { scale: 6, x: "-18%" });
+
+            // Bind the close button manually to let the user go back
+            document.getElementById('close-btn').onclick = () => {
+                const rev = gsap.timeline();
+                rev.to('#reservation-panel', { x: '100%', duration: 0.6, ease: "power2.in" })
+                   .to(["#wall-layer", "#door-layer"], { opacity: 1, duration: 0.8 }, 0.2)
+                   .to("#scene", { scale: 1, x: 0, duration: 2.5, ease: "power2.inOut" }, 0.4)
+                   .to(".door-shadow", { opacity: 0, duration: 2 }, 0.4)
+                   .to("#door-layer", { rotateY: 0, duration: 2, ease: "power3.inOut" }, 0.8)
+                   .to([".master-card", ".nav"], { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.6, ease: "power2.out" }, 2.0)
+                   .eventCallback("onComplete", () => { isAnimating = false; });
+            };
+        };
+    {% endif %}
+  </script>
+</body>
+</html>

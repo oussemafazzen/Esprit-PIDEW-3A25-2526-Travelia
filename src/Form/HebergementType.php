@@ -20,6 +20,7 @@ class HebergementType extends AbstractType
             ->add('capacite')
             ->add('equipements')
             ->add('tarifParNuit')
+            ->add('imageUrl')
         ;
     }
 
