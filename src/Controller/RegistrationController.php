@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Intl\Countries;
 
 class RegistrationController extends AbstractController
 {
@@ -28,6 +29,12 @@ class RegistrationController extends AbstractController
                     $form->get('password')->getData()
                 )
             );
+
+            // Convert ISO country code to full name
+            $countryCode = $user->getNationalite();
+            if ($countryCode && strlen($countryCode) === 2) {
+                $user->setNationalite(Countries::getName($countryCode, 'fr'));
+            }
 
             // Default role is USER, status is ACTIF (set in Entity)
 

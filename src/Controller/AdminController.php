@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Intl\Countries;
 
 #[Route('/admin')]
 class AdminController extends AbstractController
@@ -17,7 +18,27 @@ class AdminController extends AbstractController
     public function dashboard(ClientRepository $clientRepository): Response
     {
         // Statistics for the dashboard
-        $nationalityStats = $clientRepository->getNationalityStats();
+        $rawNationalityStats = $clientRepository->getNationalityStats();
+        
+        // Unify nationality names and merge counts (e.g. TN and Tunisie -> Tunisie)
+        $nationalityStats = [];
+        foreach ($rawNationalityStats as $stat) {
+            $name = $stat['nationalite'];
+            // If it's an ISO code, translate it
+            if (strlen($name) === 2 && ($fullName = Countries::getName(strtoupper($name), 'fr'))) {
+                $name = $fullName;
+            }
+            
+            if (!isset($nationalityStats[$name])) {
+                $nationalityStats[$name] = 0;
+            }
+            $nationalityStats[$name] += $stat['count'];
+        }
+        
+        // Sort and limit again after merge
+        arsort($nationalityStats);
+        $nationalityStats = array_slice($nationalityStats, 0, 5, true);
+
         $ageGroupStats = $clientRepository->getAgeGroupStats();
         $totalClients = $clientRepository->count([]);
 
@@ -76,7 +97,13 @@ class AdminController extends AbstractController
             $client->setPrenom($request->request->get('prenom', $client->getPrenom()));
             $client->setEmail($request->request->get('email', $client->getEmail()));
             $client->setTelephone($request->request->get('telephone', $client->getTelephone() ?? ""));
-            $client->setNationalite($request->request->get('nationalite', $client->getNationalite() ?? ""));
+            
+            // Handle nationality conversion if possible
+            $nat = $request->request->get('nationalite', $client->getNationalite());
+            if ($nat && strlen($nat) === 2 && ($fName = Countries::getName(strtoupper($nat), 'fr'))) {
+                $nat = $fName;
+            }
+            $client->setNationalite($nat);
             
             $entityManager->flush();
 

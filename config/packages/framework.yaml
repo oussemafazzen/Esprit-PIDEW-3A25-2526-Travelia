@@ -17,6 +17,12 @@ framework:
     php_errors:
         log: true
 
+    rate_limiter:
+        security.login_throttling.main:
+            policy: 'fixed_window'
+            limit: 3
+            interval: '30 seconds'
+
 when@test:
     framework:
         test: true
