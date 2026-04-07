@@ -1,0 +1,514 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats des vols - Travelia{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+
+    <style>
+        .payment-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 7000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(3, 7, 18, 0.45);
+            backdrop-filter: blur(10px);
+        }
+
+        .payment-modal-overlay.active {
+            display: flex;
+        }
+
+        .payment-modal-box {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(26px) saturate(160%);
+            -webkit-backdrop-filter: blur(26px) saturate(160%);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+            padding: 30px 28px 24px;
+            color: #fff;
+        }
+
+        .payment-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .payment-modal-title {
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 4vw, 3.3rem);
+            font-weight: 500;
+            line-height: 1;
+            color: #fff;
+        }
+
+        .payment-modal-close {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .payment-modal-close:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: scale(1.04);
+        }
+
+        .payment-summary {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .payment-summary-card {
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.07);
+            padding: 16px 18px;
+        }
+
+        .payment-summary-label {
+            display: block;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.54);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .payment-summary-value {
+            color: #fff;
+            font-size: 1.04rem;
+            font-weight: 700;
+        }
+
+        .payment-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .payment-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .payment-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .payment-field label {
+            color: rgba(255,255,255,0.92);
+            font-weight: 700;
+            font-size: 0.98rem;
+        }
+
+        .payment-field input,
+        .payment-field select {
+            width: 100%;
+            min-height: 56px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            padding: 0 18px;
+            outline: none;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .payment-field input::placeholder {
+            color: rgba(255,255,255,0.36);
+        }
+
+        .payment-field input:focus,
+        .payment-field select:focus {
+            border-color: rgba(201, 168, 76, 0.45);
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+        }
+
+        .payment-field option {
+            color: #111;
+        }
+
+        .payment-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .payment-cancel-btn {
+            min-width: 160px;
+            height: 56px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .payment-submit-btn {
+            min-width: 180px;
+            height: 56px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #c9a84c, #e8c97a);
+            color: #111827;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(201, 168, 76, 0.28);
+        }
+
+        @media (max-width: 720px) {
+            .payment-modal-box {
+                padding: 22px 16px 18px;
+                border-radius: 22px;
+            }
+
+            .payment-summary,
+            .payment-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .payment-cancel-btn,
+            .payment-submit-btn {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<canvas id="live-canvas"></canvas>
+
+<nav class="nav" id="nav">
+    <div class="nav-logo">
+        <div class="nav-logo-mark">T</div>
+        <span class="nav-logo-text">Travelia</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ path('app_home') }}" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Hotels</a>
+        <a href="{{ path('app_flights_search') }}" class="nav-link active">Flights</a>
+        <a href="#" class="nav-link">Activities</a>
+        <a href="#" class="nav-link">Reviews</a>
+        <a href="{{ path('app_user_reservations') }}" class="nav-link">Mes réservations</a>
+    </div>
+
+    <a href="#" class="trip-btn">
+        <span class="trip-icon">✦</span>
+        Sign in
+    </a>
+</nav>
+
+<div class="flights-results-page">
+    <section class="flights-results-wrapper">
+        <div class="flights-results-header">
+            <span class="flights-results-tag">✦ Flights</span>
+            <h1 class="flights-results-title">Available <span>Flights</span></h1>
+
+            <p class="flights-results-subtitle">
+                {% if destination %}Destination : {{ destination }}{% endif %}
+                {% if date_depart %} • Départ : {{ date_depart|date('d/m/Y') }}{% endif %}
+                {% if date_arrivee %} • Arrivée : {{ date_arrivee|date('d/m/Y') }}{% endif %}
+                {% if type_transport %} • Transport : {{ type_transport|capitalize }}{% endif %}
+                {% if passagers %} • {{ passagers }} passager(s){% endif %}
+            </p>
+        </div>
+
+        <div class="flights-results-list">
+            {% if flights is not empty %}
+                {% for flight in flights %}
+                    <div class="premium-flight-card">
+                        <div class="premium-flight-left">
+                            <div class="premium-flight-icon">
+                                {% set transport = (flight.typeTransport ?? 'avion')|lower %}
+                                {% if transport == 'train' %}
+                                    🚆
+                                {% elseif transport == 'bus' %}
+                                    🚌
+                                {% elseif transport == 'bateau' %}
+                                    ⛴
+                                {% else %}
+                                    ✈
+                                {% endif %}
+                            </div>
+
+                            <div class="premium-flight-meta">
+                                <h3>{{ flight.reference }}</h3>
+                                <p>
+                                    {% if flight.dateDepart %}
+                                        {{ flight.dateDepart|date('d/m/Y H:i') }}
+                                    {% else %}
+                                        Horaire à confirmer
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="premium-flight-center">
+                            <div class="premium-flight-route">
+                                <div class="premium-flight-city">
+                                    <strong>{{ flight.depart ?? 'TUN' }}</strong>
+                                    <span>Départ</span>
+                                </div>
+
+                                <div class="premium-flight-line-wrap">
+                                    <span class="premium-flight-line"></span>
+                                    <span class="premium-flight-plane">
+                                        {% if transport == 'train' %}
+                                            🚆
+                                        {% elseif transport == 'bus' %}
+                                            🚌
+                                        {% elseif transport == 'bateau' %}
+                                            ⛴
+                                        {% else %}
+                                            ✈
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                <div class="premium-flight-city">
+                                    <strong>{{ destination ?: (flight.arrivee ?? 'Destination') }}</strong>
+                                    <span>Arrivée</span>
+                                </div>
+                            </div>
+
+                            <div class="premium-flight-info">
+                                {% if flight.dateDepart %}
+                                    <span>Départ : {{ flight.dateDepart|date('d M Y - H:i') }}</span>
+                                {% endif %}
+
+                                {% if flight.dateArrivee %}
+                                    <span>Arrivée : {{ flight.dateArrivee|date('d M Y - H:i') }}</span>
+                                {% elseif date_arrivee %}
+                                    <span>Arrivée souhaitée : {{ date_arrivee|date('d/m/Y') }}</span>
+                                {% endif %}
+
+                                <span class="premium-flight-badge">
+                                    {{ flight.typeTransport ?? type_transport ?? 'avion' }}
+                                </span>
+
+                                {% if destination %}
+                                    <span class="premium-flight-badge">
+                                        {{ destination }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="premium-flight-right">
+                            <div class="premium-flight-price">
+                                {{ flight.prix ?? '--' }} DT
+                            </div>
+
+                            <button
+                                type="button"
+                                class="premium-flight-book-btn js-open-payment-modal"
+                                data-billet-id="{{ flight.id }}"
+                                data-reservation-id="{{ reservation_id }}"
+                                data-reference="{{ flight.reference }}"
+                                data-price="{{ flight.prix ?? '--' }}"
+                                data-depart="{{ flight.depart ?? 'TUN' }}"
+                                data-arrivee="{{ destination ?: (flight.arrivee ?? 'Destination') }}"
+                                data-transport="{{ flight.typeTransport ?? type_transport ?? 'avion' }}">
+                                Choisir
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="premium-flight-empty">
+                    <h3>Aucun vol trouvé</h3>
+                    <p>Essayez une autre destination ou une autre date.</p>
+                    <a href="{{ path('app_flights_search') }}" class="premium-flight-back-btn">
+                        Retour à la recherche
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+<div class="payment-modal-overlay" id="paymentModal">
+    <div class="payment-modal-box">
+        <div class="payment-modal-header">
+            <h2 class="payment-modal-title">Paiement du billet</h2>
+            <button type="button" class="payment-modal-close" id="closePaymentModal">✕</button>
+        </div>
+
+        <div class="payment-summary">
+            <div class="payment-summary-card">
+                <span class="payment-summary-label">Référence</span>
+                <span class="payment-summary-value" id="paymentReference">-</span>
+            </div>
+
+            <div class="payment-summary-card">
+                <span class="payment-summary-label">Prix</span>
+                <span class="payment-summary-value" id="paymentPrice">-</span>
+            </div>
+
+            <div class="payment-summary-card">
+                <span class="payment-summary-label">Trajet</span>
+                <span class="payment-summary-value" id="paymentRoute">-</span>
+            </div>
+
+            <div class="payment-summary-card">
+                <span class="payment-summary-label">Transport</span>
+                <span class="payment-summary-value" id="paymentTransport">-</span>
+            </div>
+        </div>
+
+        <form id="paymentForm" method="post" action="{{ path('app_flights_payment_submit') }}">
+            <input type="hidden" name="billet_id" id="paymentBilletId">
+            <input type="hidden" name="reservation_id" id="paymentReservationId">
+            <input type="hidden" name="selected_price" id="paymentSelectedPrice">
+
+            <div class="payment-form-grid">
+                <div class="payment-field full">
+                    <label for="paymentMethod">Mode de paiement</label>
+                    <select id="paymentMethod" name="payment_method" required>
+                        <option value="">Choisir</option>
+                        <option value="carte">Carte bancaire</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="virement">Virement</option>
+                    </select>
+                </div>
+
+                <div class="payment-field full">
+                    <label for="cardName">Nom du titulaire</label>
+                    <input type="text" id="cardName" name="card_name" placeholder="Nom complet" required>
+                </div>
+
+                <div class="payment-field full">
+                    <label for="cardNumber">Numéro de carte</label>
+                    <input type="text" id="cardNumber" name="card_number" placeholder="1234 5678 9012 3456" required>
+                </div>
+
+                <div class="payment-field">
+                    <label for="cardExpiry">Date d’expiration</label>
+                    <input type="text" id="cardExpiry" name="card_expiry" placeholder="MM/AA" required>
+                </div>
+
+                <div class="payment-field">
+                    <label for="cardCvv">CVV</label>
+                    <input type="text" id="cardCvv" name="card_cvv" placeholder="123" required>
+                </div>
+            </div>
+
+            <div class="payment-actions">
+                <button type="button" class="payment-cancel-btn" id="cancelPaymentBtn">
+                    Annuler
+                </button>
+
+                <button type="submit" class="payment-submit-btn">
+                    Payer maintenant
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        (function () {
+            const modal = document.getElementById('paymentModal');
+            const closeBtn = document.getElementById('closePaymentModal');
+            const cancelBtn = document.getElementById('cancelPaymentBtn');
+
+            const referenceEl = document.getElementById('paymentReference');
+            const priceEl = document.getElementById('paymentPrice');
+            const routeEl = document.getElementById('paymentRoute');
+            const transportEl = document.getElementById('paymentTransport');
+
+            const billetIdInput = document.getElementById('paymentBilletId');
+            const reservationIdInput = document.getElementById('paymentReservationId');
+            const selectedPriceInput = document.getElementById('paymentSelectedPrice');
+
+            const openButtons = document.querySelectorAll('.js-open-payment-modal');
+
+            function openModal(data) {
+                referenceEl.textContent = data.reference || '-';
+                priceEl.textContent = (data.price || '--') + ' DT';
+                routeEl.textContent = (data.depart || '-') + ' → ' + (data.arrivee || '-');
+                transportEl.textContent = data.transport || '-';
+
+                billetIdInput.value = data.billetId || '';
+                reservationIdInput.value = data.reservationId || '';
+                selectedPriceInput.value = data.price || '';
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            openButtons.forEach((button) => {
+                button.addEventListener('click', function () {
+                    openModal({
+                        billetId: this.dataset.billetId,
+                        reservationId: this.dataset.reservationId,
+                        reference: this.dataset.reference,
+                        price: this.dataset.price,
+                        depart: this.dataset.depart,
+                        arrivee: this.dataset.arrivee,
+                        transport: this.dataset.transport
+                    });
+                });
+            });
+
+            closeBtn.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
+{% endblock %}

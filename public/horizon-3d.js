@@ -24,6 +24,156 @@
   function rand(a, b) { return a + Math.random() * (b - a); }
   function randInt(a, b) { return Math.floor(rand(a, b)); }
 
+  // ─── HELPER: One-click booking from landing cards ───
+  window.quickBookAction = (dest, price) => {
+    const sDest = document.getElementById('s-dest');
+    const sDate = document.getElementById('s-date');
+    const typedDest = sDest ? sDest.value.trim() : '';
+    const dateVal = sDate ? sDate.value : '';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const rid = urlParams.get('rid') || '';
+
+    // VALIDATION: Only mandatory if NOT in "Add Billet to Existing" mode (rid)
+    if (!rid && (!typedDest || !dateVal)) {
+      if (!typedDest) {
+        document.getElementById('sf-dest').style.borderRadius = '12px';
+        document.getElementById('sf-dest').style.border = '1px solid rgba(239,68,68,0.5)';
+        document.getElementById('sf-dest').style.background = 'rgba(239,68,68,0.06)';
+      } else {
+        document.getElementById('sf-dest').style.border = '';
+        document.getElementById('sf-dest').style.background = '';
+      }
+
+      if (!dateVal) {
+        document.getElementById('sf-when').style.borderRadius = '12px';
+        document.getElementById('sf-when').style.border = '1px solid rgba(239,68,68,0.5)';
+        document.getElementById('sf-when').style.background = 'rgba(239,68,68,0.06)';
+      } else {
+        document.getElementById('sf-when').style.border = '';
+        document.getElementById('sf-when').style.background = '';
+      }
+      
+      const err = document.getElementById('search-error');
+      if (err) {
+        err.textContent = '⚠ Veuillez renseigner la destination et la date avant de réserver.';
+        err.style.display = 'block';
+        setTimeout(() => { err.style.display = 'none'; }, 3500);
+      }
+      
+      // Smooth scroll back to top search bar
+      document.getElementById('scroll-wrap').scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Clear any previous errors
+    if (document.getElementById('sf-dest')) {
+      document.getElementById('sf-dest').style.border = '';
+      document.getElementById('sf-dest').style.background = '';
+    }
+    if (document.getElementById('sf-when')) {
+      document.getElementById('sf-when').style.border = '';
+      document.getElementById('sf-when').style.background = '';
+    }
+
+    const finalDest = typedDest || dest;
+    const finalDate = dateVal || new Date().toISOString().split('T')[0]; // Use today if no date picked in "Add Billet" mode
+    
+    console.log("Initiating QuickBook for:", finalDest, price, "Existing RID:", rid);
+
+    // 1. Create Billet (and auto-link to rid if present) via AJAX
+    fetch(`/reservation/quick-book?dest=${encodeURIComponent(finalDest)}&price=${encodeURIComponent(price)}&date=${encodeURIComponent(finalDate)}&rid=${rid}&ajax=1`, {
+      method: 'POST'
+    })
+    .then(r => {
+      if (!r.ok) throw new Error("Server error: " + r.status);
+      return r.json();
+    })
+    .then(data => {
+      console.log("AJAX Response:", data);
+      if (data.success) {
+        openPaymentModal(data);
+      } else {
+        alert("Erreur lors de la création de la réservation.");
+      }
+    })
+    .catch(err => {
+      console.error("QuickBook Fetch Error:", err);
+      alert("Impossible de contacter le serveur: " + err.message);
+    });
+  };
+
+  // ─── Modal Logic: Show/Hide the friend's Popup ───
+  window.openPaymentModal = (data) => {
+    console.log("Opening Modal with data:", data);
+    const modal = document.getElementById('paymentModal');
+    if (!modal) {
+      console.error("Critical: Modal #paymentModal not found!");
+      return;
+    }
+    
+    // Fill EXACT IDs from friend's work
+    document.getElementById('paymentReference').textContent = data.ref || '-';
+    document.getElementById('paymentPrice').textContent = (data.price || '--') + ' DT';
+    document.getElementById('paymentRoute').textContent = 'PAR → ' + (data.dest || '-');
+    document.getElementById('paymentTransport').textContent = 'Avion';
+
+    document.getElementById('paymentBilletId').value = data.billetId || '';
+    document.getElementById('paymentReservationId').value = data.reservationId || '';
+    document.getElementById('paymentSelectedPrice').value = data.price || '';
+    
+    // Reset position for GSAP
+    const modalBox = modal.querySelector('.payment-modal-box');
+    if (modalBox) {
+      gsap.set(modalBox, { scale: 0.9, opacity: 0, y: 20 });
+    }
+
+    // Force visibility
+    modal.classList.add('active');
+    modal.style.setProperty('display', 'flex', 'important');
+    document.body.style.overflow = 'hidden';
+
+    // Cinematic Entrance
+    if (modalBox) {
+      gsap.to(modalBox, {
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "expo.out",
+        delay: 0.1
+      });
+    }
+    
+    // Bind buttons
+    document.getElementById('closePaymentModal').onclick = closePaymentModal;
+    document.getElementById('cancelPaymentBtn').onclick = closePaymentModal;
+  };
+
+  window.closePaymentModal = () => {
+    const modal = document.getElementById('paymentModal');
+    if(modal) {
+      const modalBox = modal.querySelector('.payment-modal-box');
+      if (modalBox) {
+        gsap.to(modalBox, {
+          scale: 0.95,
+          opacity: 0,
+          y: 10,
+          duration: 0.3,
+          ease: "power2.in",
+          onComplete: () => {
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+          }
+        });
+      } else {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+      }
+    }
+    document.body.style.overflow = 'auto';
+  };
+
   // ─────────────────────────────────────────────
   //  SCENE 0 — AURORA BOREALIS (Hero)
   // ─────────────────────────────────────────────
@@ -377,9 +527,15 @@
 
   navLinks.forEach(link => {
     link.addEventListener('click', e => {
-      e.preventDefault();
-      const idx = parseInt(link.dataset.section);
-      scrollWrap.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+      // Don't intercept links that are meant for external navigation
+      if (link.dataset.ignoreScroll) return;
+      
+      const idxStr = link.dataset.section;
+      if (idxStr !== undefined) {
+        e.preventDefault();
+        const idx = parseInt(idxStr);
+        scrollWrap.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+      }
     });
   });
 
@@ -393,10 +549,11 @@
     chip.addEventListener('click', () => scrollWrap.scrollTo({ top: window.innerHeight, behavior: 'smooth' }));
   });
 
-  // Search
+  // Search — handled by validateAndExplore() in travelia.html
+  // This listener is kept only as a fallback; the onclick attr runs first.
   document.getElementById('search-go').addEventListener('click', () => {
-    const dest = document.getElementById('s-dest').value.trim();
-    if (dest) scrollWrap.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    // validateAndExplore() on the button handles validation + scroll to panel-2
+    // Nothing extra needed here.
   });
 
   // ─────────────────────────────────────────────
@@ -607,12 +764,15 @@
       <div class="flight-meta">
         <div class="flight-price">${f.price}</div>
         <div class="flight-seats">🔴 ${f.seats}</div>
-        <button class="add-btn"
-          data-item-name="${f.fromCity} → ${f.toCity}"
-          data-item-price="${f.price}"
-          data-item-emoji="${f.emoji}"
-          data-original-text="Book"
-        >Book</button>
+        <a href="javascript:void(0)" class="book-now-link"
+          onclick="quickBookAction('${f.toCity}', '${f.price}')"
+          style="display:inline-block; text-align:center; text-decoration:none;
+                 background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); color:var(--gold);
+                 padding:0.55rem 1.4rem; border-radius:100px; font-size:0.72rem; font-weight:700;
+                 text-transform:uppercase; letter-spacing:0.06em; cursor:pointer; transition:0.3s;"
+          onmouseover="this.style.background='var(--gold)'; this.style.color='var(--ink)';"
+          onmouseout="this.style.background='rgba(201,168,76,0.1)'; this.style.color='var(--gold)';"
+        >Book</a>
       </div>
     </div>`).join('');
 

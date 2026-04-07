@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="horizon.css?v=5" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
@@ -27,6 +29,9 @@
       <a href="#" class="nav-link" data-section="2">Flights</a>
       <a href="#" class="nav-link" data-section="3">Activities</a>
       <a href="#" class="nav-link" data-section="4">Reviews</a>
+      <a href="/reservation/mes-reservations" class="nav-link" data-ignore-scroll="true" 
+         onclick="window.location.href='/reservation/mes-reservations'; return true;"
+         style="color: #c9a84c; font-weight: 600; border-left: 1px solid rgba(201,168,76,0.3); padding-left: 1.4rem; margin-left: 0.4rem;">Mes Réservations</a>
     </div>
     <button class="trip-btn" id="trip-btn">
       <span class="trip-icon">✦</span>
@@ -74,23 +79,68 @@
         <div class="hero-eyebrow">✦ AI-Powered Travel Curation</div>
         <h1 class="hero-h1">Travel Beyond<br/><em>The Horizon.</em></h1>
         <p class="hero-lead">Discover the world's most extraordinary destinations,<br/>handpicked by AI and curated for you.</p>
-        <div class="search-glass">
-          <div class="search-field">
+        <div class="search-glass" id="search-glass">
+
+          <!-- WHERE: searchable country dropdown -->
+          <div class="search-field" id="sf-dest" style="position:relative; flex: 1.4;">
             <label>Where</label>
-            <input type="text" placeholder="Destination or hotel" id="s-dest"/>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <input type="text" id="s-dest" placeholder="Choisissez une destination..." autocomplete="off"
+                style="background:transparent; border:none; outline:none; color:inherit; font:inherit; width:100%; cursor:pointer;"
+                oninput="filterCountries(this.value)" onfocus="openDropdown()" />
+              <span style="opacity:0.4; font-size:0.7rem;">▾</span>
+            </div>
+            <!-- Dropdown -->
+            <div id="dest-dropdown" style="display:none; position:absolute; top:calc(100% + 10px); left:-1.5rem; right:-1rem;
+              background:rgba(10,14,30,0.97); border:1px solid rgba(201,168,76,0.2); border-radius:16px;
+              max-height:260px; overflow-y:auto; z-index:9999; box-shadow:0 20px 50px rgba(0,0,0,0.6);
+              backdrop-filter:blur(20px);">
+            </div>
           </div>
+
           <div class="search-sep"></div>
-          <div class="search-field">
-            <label>When</label>
-            <input type="text" placeholder="Dates"/>
+
+          <!-- WHEN: calendar icon date picker -->
+          <div class="search-field" id="sf-when" style="flex:0.8; cursor:pointer;" onclick="document.getElementById('s-date').showPicker ? document.getElementById('s-date').showPicker() : document.getElementById('s-date').click()">
+            <label style="pointer-events:none;">When</label>
+            <div style="display:flex; align-items:center; gap:0.6rem; pointer-events:none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6; flex-shrink:0;">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span id="s-date-display" style="font-size:0.92rem; opacity:0.5;">Choisir une date</span>
+            </div>
+            <input type="date" id="s-date" 
+              style="position:absolute; opacity:0; pointer-events:none; width:0; height:0;"
+              onchange="updateDateDisplay(this.value)" />
           </div>
+
           <div class="search-sep"></div>
-          <div class="search-field">
+
+          <!-- WHO: guest counter -->
+          <div class="search-field" id="sf-who" style="flex:0.7;">
             <label>Who</label>
-            <input type="text" placeholder="Guests"/>
+            <div style="display:flex; align-items:center; gap:0.7rem;">
+              <button type="button" onclick="changeGuests(-1)"
+                style="background:rgba(255,255,255,0.08); border:none; color:white; width:22px; height:22px; border-radius:50%; cursor:pointer; font-size:1rem; line-height:0; display:flex; align-items:center; justify-content:center; transition:0.2s;"
+                onmouseover="this.style.background='rgba(201,168,76,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">−</button>
+              <span id="s-guests" style="font-size:0.95rem; min-width:1rem; text-align:center;">1</span>
+              <button type="button" onclick="changeGuests(1)"
+                style="background:rgba(255,255,255,0.08); border:none; color:white; width:22px; height:22px; border-radius:50%; cursor:pointer; font-size:1rem; line-height:0; display:flex; align-items:center; justify-content:center; transition:0.2s;"
+                onmouseover="this.style.background='rgba(201,168,76,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">+</button>
+            </div>
           </div>
-          <button class="search-go" id="search-go">Explore</button>
+
+          <button class="search-go" id="search-go" onclick="validateAndExplore()">Explore</button>
         </div>
+
+        <!-- Validation error toast -->
+        <div id="search-error" style="display:none; margin-top:0.8rem; padding:0.6rem 1.2rem;
+          background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:100px;
+          color:#ef4444; font-size:0.78rem; font-weight:600; letter-spacing:0.03em; text-align:center;
+          animation: fadeIn 0.3s ease; backdrop-filter:blur(10px);">
+        </div>
+
+
         <div class="hero-chips">
           <span class="chip">🏝 Maldives</span>
           <span class="chip">🗻 Kyoto</span>
@@ -190,6 +240,254 @@
 
   </main>
 
-  <script src="horizon-3d.js?v=16"></script>
+  <script src="horizon-3d.js?v=22"></script>
+  <script>
+    // ─── DESTINATIONS ───────────────────────────────────────────
+    const COUNTRIES = [
+      'Afghanistan','Afrique du Sud','Albanie','Algérie','Allemagne','Andorre','Angola',
+      'Arabie saoudite','Argentine','Arménie','Australie','Autriche','Azerbaïdjan',
+      'Bahreïn','Bangladesh','Belgique','Bénin','Bhoutan','Biélorussie','Bolivie',
+      'Bosnie-Herzégovine','Botswana','Brésil','Bulgarie','Burkina Faso','Burundi',
+      'Cambodge','Cameroun','Canada','Chili','Chine','Chypre','Colombie','Corée du Sud',
+      'Costa Rica','Côte d\'Ivoire','Croatie','Cuba','Danemark','Égypte','Émirats arabes unis',
+      'Espagne','Estonie','États-Unis','Éthiopie','Finlande','France','Géorgie','Ghana',
+      'Grèce','Guatemala','Honduras','Hongrie','Inde','Indonésie','Iran','Irak','Irlande',
+      'Islande','Israël','Italie','Japon','Jordanie','Kazakhstan','Kenya','Koweit',
+      'Laos','Lettonie','Liban','Libye','Lituanie','Luxembourg','Malaisie','Maldives',
+      'Mali','Malte','Maroc','Maurice','Mexique','Moldavie','Monaco','Mongolie',
+      'Montenégro','Mozambique','Myanmar','Namibie','Népal','Nicaragua','Niger',
+      'Nigéria','Norvège','Nouvelle-Zélande','Oman','Ouganda','Ouzbékistan',
+      'Pakistan','Panama','Paraguay','Pérou','Philippines','Pologne','Portugal',
+      'Qatar','République dominicaine','Roumanie','Royaume-Uni','Russie','Rwanda',
+      'Sénégal','Serbie','Singapour','Slovaquie','Slovénie','Somalie','Soudan',
+      'Sri Lanka','Suède','Suisse','Syrie','Tadjikistan','Tanzanie','Thaïlande',
+      'Togo','Tunisie','Turquie','Ukraine','Uruguay','Venezuela','Vietnam','Yémen',
+      'Zambie','Zimbabwe',
+      // Popular destinations
+      'Bali','Dubaï','Santorini','Kyoto','Cancún','Patagonie','Machu Picchu',
+      'Serengeti','Amalfi','Cappadoce','Halong Bay','Marrakech','Reykjavik','Queenstown'
+    ].sort();
+
+    let dropdownOpen = false;
+
+    function renderDropdown(list) {
+      const dd = document.getElementById('dest-dropdown');
+      if (!list.length) { dd.style.display = 'none'; return; }
+      dd.innerHTML = list.map(c => `
+        <div onclick="selectCountry('${c}')"
+          style="padding:0.8rem 1.4rem; cursor:pointer; font-size:0.88rem; color:rgba(255,255,255,0.85);
+                 border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.2s;"
+          onmouseover="this.style.background='rgba(201,168,76,0.08)'; this.style.color='#c9a84c';"
+          onmouseout="this.style.background=''; this.style.color='rgba(255,255,255,0.85)';"
+        >${c}</div>`).join('');
+      dd.style.display = 'block';
+    }
+
+    function openDropdown() {
+      const v = document.getElementById('s-dest').value.trim();
+      renderDropdown(v ? COUNTRIES.filter(c => c.toLowerCase().includes(v.toLowerCase())) : COUNTRIES);
+      dropdownOpen = true;
+    }
+
+    function filterCountries(v) {
+      renderDropdown(COUNTRIES.filter(c => c.toLowerCase().includes(v.toLowerCase())));
+      clearFieldError('sf-dest');
+    }
+
+    function selectCountry(name) {
+      document.getElementById('s-dest').value = name;
+      document.getElementById('dest-dropdown').style.display = 'none';
+      clearFieldError('sf-dest');
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', e => {
+      if (!document.getElementById('sf-dest').contains(e.target)) {
+        document.getElementById('dest-dropdown').style.display = 'none';
+      }
+    });
+
+    // ─── DATE PICKER ────────────────────────────────────────────
+    // Set today as min
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('s-date').min = today;
+
+    function updateDateDisplay(val) {
+      const display = document.getElementById('s-date-display');
+      if (val) {
+        const d = new Date(val + 'T00:00:00');
+        display.textContent = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+        display.style.opacity = '1';
+        display.style.color = '#e8c97e';
+      }
+      clearFieldError('sf-when');
+    }
+
+    // ─── GUEST COUNTER ──────────────────────────────────────────
+    let guests = 1;
+    function changeGuests(delta) {
+      guests = Math.max(1, Math.min(20, guests + delta));
+      document.getElementById('s-guests').textContent = guests;
+    }
+
+    // ─── VALIDATION & EXPLORE ───────────────────────────────────
+    function setFieldError(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.borderRadius = '12px', el.style.border = '1px solid rgba(239,68,68,0.5)', el.style.background = 'rgba(239,68,68,0.06)';
+    }
+    function clearFieldError(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.border = '', el.style.background = '';
+    }
+
+    function showError(msg) {
+      const err = document.getElementById('search-error');
+      err.textContent = msg;
+      err.style.display = 'block';
+      setTimeout(() => { err.style.display = 'none'; }, 3500);
+    }
+
+    function validateAndExplore() {
+      const dest = document.getElementById('s-dest').value.trim();
+      const date = document.getElementById('s-date').value;
+      let valid = true;
+
+      if (!dest) {
+        setFieldError('sf-dest');
+        valid = false;
+      } else clearFieldError('sf-dest');
+
+      if (!date) {
+        setFieldError('sf-when');
+        valid = false;
+      } else clearFieldError('sf-when');
+
+      if (!valid) {
+        showError('⚠ Veuillez renseigner la destination et la date avant de continuer.');
+        return;
+      }
+
+      // All good – scroll to Flights
+      scrollToFlights();
+    }
+
+    // ─── SCROLL TO FLIGHTS ──────────────────────────────────────
+    function scrollToFlights() {
+      const scrollWrap = document.getElementById('scroll-wrap');
+      if (scrollWrap) {
+        scrollWrap.scrollTo({ top: 2 * window.innerHeight, behavior: 'smooth' });
+      } else {
+        const panel = document.getElementById('panel-2');
+        if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+  </script>
+  <style>
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+  </style>
+
+    <style>
+        /* Extract from friend's results.html.twig - Global Overlays */
+        .payment-modal-overlay {
+            position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 24px;
+            background: rgba(3, 7, 18, 0.7); backdrop-filter: blur(28px) saturate(180%);
+        }
+        .payment-modal-overlay.active { display: flex; }
+        .payment-modal-box {
+            width: min(660px, 94%); max-height: 88vh; overflow-y: auto; overflow-x: hidden; border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(10, 15, 30, 0.95);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.7); padding: 44px; color: #fff;
+            transform-origin: center;
+        }
+        .payment-modal-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+        .payment-modal-title { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 500; color: #fff; }
+        .payment-modal-close {
+            width: 44px; height: 44px; border: none; border-radius: 50%; cursor: pointer; color: #fff;
+            background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center;
+        }
+        .payment-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .payment-summary-card { border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); padding: 20px; }
+        .payment-summary-label { display: block; margin-bottom: 4px; color: rgba(255,255,255,0.4); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .payment-summary-value { color: #fff; font-size: 1.1rem; font-weight: 700; }
+        .payment-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .payment-field.full { grid-column: 1 / -1; }
+        .payment-field label { display: block; color: #fff; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; }
+        .payment-field input, .payment-field select {
+            width: 100%; height: 50px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1); color: #fff; padding: 0 16px; outline: none;
+        }
+        .payment-actions { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; margin-top: 30px; }
+        .payment-cancel-btn { height: 54px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; font-weight: 700; cursor: pointer; }
+        .payment-submit-btn { height: 54px; border: none; border-radius: 14px; background: #e8c97e; color: #000; font-weight: 800; cursor: pointer; }
+    </style>
+
+    <!-- FRIEND'S MODAL HTML MOVED TO END OF BODY -->
+    <div class="payment-modal-overlay" id="paymentModal">
+        <div class="payment-modal-box">
+            <div class="payment-modal-header">
+                <h2 class="payment-modal-title">Paiement du billet</h2>
+                <button type="button" class="payment-modal-close" id="closePaymentModal">✕</button>
+            </div>
+
+            <div class="payment-summary">
+                <div class="payment-summary-card">
+                    <span class="payment-summary-label">Référence</span>
+                    <span class="payment-summary-value" id="paymentReference">-</span>
+                </div>
+                <div class="payment-summary-card">
+                    <span class="payment-summary-label">Prix</span>
+                    <span class="payment-summary-value" id="paymentPrice">-</span>
+                </div>
+                <div class="payment-summary-card">
+                    <span class="payment-summary-label">Trajet</span>
+                    <span class="payment-summary-value" id="paymentRoute">-</span>
+                </div>
+                <div class="payment-summary-card">
+                    <span class="payment-summary-label">Transport</span>
+                    <span class="payment-summary-value" id="paymentTransport">-</span>
+                </div>
+            </div>
+
+            <form id="paymentForm" method="post" action="/vols/paiement">
+                <input type="hidden" name="billet_id" id="paymentBilletId">
+                <input type="hidden" name="reservation_id" id="paymentReservationId">
+                <input type="hidden" name="selected_price" id="paymentSelectedPrice">
+
+                <div class="payment-form-grid">
+                    <div class="payment-field full">
+                        <label for="paymentMethod">Mode de paiement</label>
+                        <select id="paymentMethod" name="payment_method" required>
+                            <option value="">Choisir</option>
+                            <option value="carte">Carte bancaire</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="virement">Virement</option>
+                        </select>
+                    </div>
+                    <div class="payment-field full">
+                        <label for="cardName">Nom du titulaire</label>
+                        <input type="text" id="cardName" name="card_name" placeholder="Nom complet" required>
+                    </div>
+                    <div class="payment-field full">
+                        <label for="cardNumber">Numéro de carte</label>
+                        <input type="text" id="cardNumber" name="card_number" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="payment-field">
+                        <label for="cardExpiry">Date d’expiration</label>
+                        <input type="text" id="cardExpiry" name="card_expiry" placeholder="MM/AA" required>
+                    </div>
+                    <div class="payment-field">
+                        <label for="cardCvv">CVV</label>
+                        <input type="text" id="cardCvv" name="card_cvv" placeholder="123" required>
+                    </div>
+                </div>
+
+                <div class="payment-actions">
+                    <button type="button" class="payment-cancel-btn" id="cancelPaymentBtn">Annuler</button>
+                    <button type="submit" class="payment-submit-btn">Payer maintenant</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

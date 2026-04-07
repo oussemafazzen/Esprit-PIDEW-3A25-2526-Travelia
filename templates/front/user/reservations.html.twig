@@ -1,0 +1,668 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations - Travelia{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+
+    <style>
+        /* =========================
+           FORM MODAL (NEW + EDIT)
+        ========================= */
+        .form-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 6000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(3, 7, 18, 0.40);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-modal-overlay.active {
+            display: flex;
+        }
+
+        .form-modal-box {
+            width: min(760px, 100%);
+            max-height: 88vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(26px) saturate(160%);
+            -webkit-backdrop-filter: blur(26px) saturate(160%);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+            padding: 30px 28px 24px;
+            color: #fff;
+        }
+
+        .form-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .form-modal-title {
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 4vw, 3.4rem);
+            font-weight: 500;
+            line-height: 1;
+            color: #fff;
+        }
+
+        .form-modal-close {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .form-modal-close:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: scale(1.04);
+        }
+
+        .form-modal-body {
+            width: 100%;
+        }
+
+        .form-modal-body form {
+            width: 100%;
+        }
+
+        .form-modal-body form > div {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .form-modal-body label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.92);
+            font-weight: 700;
+            font-size: 0.98rem;
+        }
+
+        .form-modal-body input,
+        .form-modal-body select,
+        .form-modal-body textarea {
+            width: 100%;
+            min-height: 56px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            padding: 0 18px;
+            outline: none;
+            box-sizing: border-box;
+            font-size: 1rem;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+
+        .form-modal-body textarea {
+            min-height: 120px;
+            padding: 14px 18px;
+            resize: vertical;
+        }
+
+        .form-modal-body input:focus,
+        .form-modal-body select:focus,
+        .form-modal-body textarea:focus {
+            border-color: rgba(201, 168, 76, 0.45);
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+        }
+
+        .form-modal-body option {
+            color: #111;
+        }
+
+        .form-modal-body button.premium-flight-book-btn {
+            min-width: 180px;
+        }
+
+        /* =========================
+           DELETE MODAL
+        ========================= */
+        .delete-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 7000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(3, 7, 18, 0.76);
+            backdrop-filter: blur(8px);
+        }
+
+        .delete-modal-overlay.is-open {
+            display: flex;
+        }
+
+        .delete-modal-box {
+            width: min(560px, 100%);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(180deg, rgba(4, 9, 28, 0.97), rgba(3, 8, 24, 0.99));
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+            padding: 34px 30px 28px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .delete-modal-icon {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 18px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffd54a;
+            font-size: 2.2rem;
+        }
+
+        .delete-modal-title {
+            margin: 0 0 12px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            font-weight: 500;
+            line-height: 1;
+            color: #ffffff;
+        }
+
+        .delete-modal-text {
+            margin: 0 auto;
+            max-width: 420px;
+            font-size: 1.02rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .delete-modal-actions {
+            margin-top: 28px;
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .delete-modal-cancel,
+        .delete-modal-confirm {
+            min-width: 160px;
+            height: 58px;
+            border-radius: 18px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .delete-modal-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .delete-modal-confirm {
+            background: linear-gradient(135deg, #b71c1c, #d32f2f);
+            color: #ffffff;
+            box-shadow: 0 12px 30px rgba(183, 28, 28, 0.28);
+        }
+
+        .delete-modal-cancel:hover,
+        .delete-modal-confirm:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            .form-modal-overlay,
+            .delete-modal-overlay {
+                padding: 14px;
+            }
+
+            .form-modal-box,
+            .delete-modal-box {
+                padding: 20px 16px;
+                border-radius: 22px;
+            }
+
+            .form-modal-title {
+                font-size: 2.2rem;
+            }
+
+            .form-modal-close {
+                width: 46px;
+                height: 46px;
+            }
+
+            .form-modal-body input,
+            .form-modal-body select,
+            .form-modal-body textarea {
+                min-height: 52px;
+            }
+
+            .form-modal-body button.premium-flight-book-btn,
+            .delete-modal-cancel,
+            .delete-modal-confirm {
+                width: 100%;
+            }
+
+            .delete-modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+{% set cityMap = {
+    'PAR': 'Paris',
+    'TUN': 'Tunis',
+    'NYC': 'New York',
+    'LON': 'London',
+    'ROM': 'Rome',
+    'MAD': 'Madrid',
+    'BER': 'Berlin',
+    'DXB': 'Dubai',
+    'IST': 'Istanbul',
+    'ALG': 'Alger',
+    'BAH': 'Bahreïn',
+    'BAK': 'Bakou'
+} %}
+
+<canvas id="live-canvas"></canvas>
+
+<nav class="nav" id="nav">
+    <div class="nav-logo">
+        <div class="nav-logo-mark">T</div>
+        <span class="nav-logo-text">Travelia</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ path('app_home') }}" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Hotels</a>
+        <a href="{{ path('app_flights_search') }}" class="nav-link">Flights</a>
+        <a href="#" class="nav-link">Activities</a>
+        <a href="#" class="nav-link">Reviews</a>
+        <a href="{{ path('app_user_reservations') }}" class="nav-link active">Mes réservations</a>
+    </div>
+
+    <a href="#" class="trip-btn">
+        <span class="trip-icon">✦</span>
+        Sign in
+    </a>
+</nav>
+
+<div class="reservations-page">
+    <section class="reservations-wrapper">
+        <div class="reservations-header">
+            <div class="reservations-tag">✦ Espace utilisateur</div>
+            <h1 class="reservations-title">
+                Mes <span>réservations</span>
+            </h1>
+            <p class="reservations-subtitle">
+                Consultez vos réservations et vos billets dans une interface moderne.
+            </p>
+
+            <div style="margin-top: 18px;">
+                <a href="{{ path('app_home') }}" class="premium-flight-book-btn" style="text-decoration: none;">
+                    + Nouvelle réservation
+                </a>
+            </div>
+        </div>
+
+        <div class="reservations-list">
+            {% if reservations is not empty %}
+                {% for reservation in reservations %}
+                    {% set reservationDestination = reservation.paysDestination ?? reservation.pays ?? '' %}
+                    {% set totalPrice = 0 %}
+
+                    {% for billet in reservation.billets %}
+                        {% set totalPrice = totalPrice + (billet.prix ?? 0) %}
+                    {% endfor %}
+
+                    <div class="reservation-box">
+                        <div class="reservation-left">
+                            <div class="reservation-icon">✈</div>
+
+                            <div class="reservation-meta">
+                                <h3>Réservation #{{ reservation.id }}</h3>
+                                <p>
+                                    {% if reservation.dateReservation %}
+                                        {{ reservation.dateReservation|date('d/m/Y') }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="reservation-center">
+                            {% if reservation.billets is not empty %}
+                                {% for billet in reservation.billets %}
+                                    {% set departCode = billet.villeDepart ?? billet.depart ?? 'TUN' %}
+                                    {% set arriveeCode = billet.villeArrivee ?? billet.arrivee ?? 'PAR' %}
+                                    {% set transportType = billet.typeTransport ?? 'avion' %}
+
+                                    <div class="reservation-route-block">
+                                        <div class="reservation-route">
+                                            <div class="reservation-city">
+                                                <strong>{{ cityMap[departCode] ?? departCode }}</strong>
+                                            </div>
+
+                                            <div class="reservation-line-wrap">
+                                                <div class="reservation-line"></div>
+                                                <div class="reservation-plane">
+                                                    {% if transportType|lower == 'train' %}
+                                                        🚆
+                                                    {% elseif transportType|lower == 'bus' %}
+                                                        🚌
+                                                    {% elseif transportType|lower == 'bateau' %}
+                                                        ⛴
+                                                    {% else %}
+                                                        ✈
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="reservation-city">
+                                                <strong>{{ cityMap[arriveeCode] ?? arriveeCode }}</strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="reservation-route-info">
+                                            {% if billet.dateDepart %}
+                                                <span>{{ billet.dateDepart|date('d M Y') }}</span>
+                                            {% endif %}
+
+                                            <span class="reservation-badge">
+                                                {{ transportType }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="reservation-empty">
+                                    Aucun billet
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="reservation-right" style="display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end; min-height:140px;">
+                            <div>
+                                <div class="reservation-price">
+                                    {% if totalPrice > 0 %}
+                                        {{ totalPrice }} DT
+                                    {% else %}
+                                        --
+                                    {% endif %}
+                                </div>
+
+                                {% if reservation.statut is defined and reservation.statut %}
+                                    <div class="reservation-status {{ reservation.statut|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e'}) }}">
+                                        {{ reservation.statut }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div style="margin-top: 16px; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+                                {% if reservationDestination %}
+                                    <a href="{{ path('app_flights_results', {
+                                        reservation_id: reservation.id,
+                                        destination: reservationDestination,
+                                        date_depart: reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '',
+                                        date_arrivee: '',
+                                        type_transport: '',
+                                        passagers: 1
+                                    }) }}" class="premium-flight-book-btn">
+                                        Choisir billet
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('app_flights_search') }}" class="premium-flight-book-btn">
+                                        Choisir billet
+                                    </a>
+                                {% endif %}
+
+                                <button
+                                    type="button"
+                                    class="premium-flight-book-btn js-open-edit-modal"
+                                    data-id="{{ reservation.id }}">
+                                    Modifier
+                                </button>
+
+                                <form id="delete-form-{{ reservation.id }}"
+                                      method="post"
+                                      action="{{ path('app_user_reservation_delete', {'id': reservation.id}) }}"
+                                      style="margin:0;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_reservation_' ~ reservation.id) }}">
+
+                                    <button type="button"
+                                            class="premium-flight-book-btn js-open-delete-modal"
+                                            data-form-id="delete-form-{{ reservation.id }}">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="reservation-box">
+                    <div class="reservation-left">
+                        <div class="reservation-icon">✈</div>
+                        <div class="reservation-meta">
+                            <h3>Aucune réservation</h3>
+                            <p>Vous n’avez pas encore de réservation enregistrée.</p>
+                        </div>
+                    </div>
+
+                    <div class="reservation-center">
+                        <div class="reservation-empty">
+                            Aucun billet
+                        </div>
+                    </div>
+
+                    <div class="reservation-right" style="display:flex; flex-direction:column; justify-content:flex-end; align-items:flex-end; min-height:140px;">
+                        <div class="reservation-price">--</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+<div class="form-modal-overlay" id="formModal">
+    <div class="form-modal-box">
+        <div class="form-modal-header">
+            <h2 class="form-modal-title" id="formModalTitle">Formulaire</h2>
+            <button type="button" class="form-modal-close" id="closeFormModal">✕</button>
+        </div>
+
+        <div class="form-modal-body" id="formModalContent"></div>
+    </div>
+</div>
+
+<div class="delete-modal-overlay" id="deleteModalOverlay" aria-hidden="true">
+    <div class="delete-modal-box" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <div class="delete-modal-icon">⚠</div>
+
+        <h2 class="delete-modal-title" id="deleteModalTitle">
+            Confirmer la suppression
+        </h2>
+
+        <p class="delete-modal-text">
+            Êtes-vous sûr de vouloir supprimer définitivement cet élément ?
+        </p>
+
+        <div class="delete-modal-actions">
+            <button type="button" class="delete-modal-cancel" id="deleteModalCancel">
+                Annuler
+            </button>
+
+            <button type="button" class="delete-modal-confirm" id="deleteModalConfirm">
+                Supprimer
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        (function () {
+            const formModal = document.getElementById('formModal');
+            const formModalContent = document.getElementById('formModalContent');
+            const formModalTitle = document.getElementById('formModalTitle');
+            const closeFormModal = document.getElementById('closeFormModal');
+
+            const newButton = document.querySelector('.js-open-new-modal');
+            const editButtons = document.querySelectorAll('.js-open-edit-modal');
+
+            const deleteModal = document.getElementById('deleteModalOverlay');
+            const deleteCancelBtn = document.getElementById('deleteModalCancel');
+            const deleteConfirmBtn = document.getElementById('deleteModalConfirm');
+            const deleteButtons = document.querySelectorAll('.js-open-delete-modal');
+
+            let activeDeleteFormId = null;
+
+            function openFormModal(title, url, formId) {
+                formModalTitle.textContent = title;
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        formModalContent.innerHTML = html;
+                        formModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+
+                        const form = document.getElementById(formId);
+
+                        if (form) {
+                            form.addEventListener('submit', function (e) {
+                                e.preventDefault();
+
+                                fetch(form.action, {
+                                    method: 'POST',
+                                    body: new FormData(form)
+                                })
+                                .then(response => response.text())
+                                .then(result => {
+                                    if (result === 'success') {
+                                        window.location.reload();
+                                    } else {
+                                        formModalContent.innerHTML = result;
+                                    }
+                                });
+                            });
+                        }
+                    });
+            }
+
+            function closeForm() {
+                formModal.classList.remove('active');
+                formModalContent.innerHTML = '';
+                document.body.style.overflow = '';
+            }
+
+            if (newButton) {
+                newButton.addEventListener('click', function () {
+                    openFormModal(
+                        'Nouvelle réservation',
+                        '{{ path('app_user_reservation_new') }}',
+                        'newReservationForm'
+                    );
+                });
+            }
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    openFormModal(
+                        'Modifier réservation',
+                        '/mes-reservations/' + this.dataset.id + '/edit',
+                        'editReservationForm'
+                    );
+                });
+            });
+
+            closeFormModal.addEventListener('click', closeForm);
+
+            formModal.addEventListener('click', function (e) {
+                if (e.target === formModal) {
+                    closeForm();
+                }
+            });
+
+            function openDeleteModal(formId) {
+                activeDeleteFormId = formId;
+                deleteModal.classList.add('is-open');
+                deleteModal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDeleteModal() {
+                activeDeleteFormId = null;
+                deleteModal.classList.remove('is-open');
+                deleteModal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const formId = this.getAttribute('data-form-id');
+                    openDeleteModal(formId);
+                });
+            });
+
+            deleteCancelBtn.addEventListener('click', closeDeleteModal);
+
+            deleteModal.addEventListener('click', function (event) {
+                if (event.target === deleteModal) {
+                    closeDeleteModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    if (formModal.classList.contains('active')) {
+                        closeForm();
+                    }
+
+                    if (deleteModal.classList.contains('is-open')) {
+                        closeDeleteModal();
+                    }
+                }
+            });
+
+            deleteConfirmBtn.addEventListener('click', function () {
+                if (!activeDeleteFormId) {
+                    return;
+                }
+
+                const form = document.getElementById(activeDeleteFormId);
+
+                if (form) {
+                    form.submit();
+                }
+            });
+        })();
+    </script>
+{% endblock %}

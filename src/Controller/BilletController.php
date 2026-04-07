@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Billet;
+use App\Entity\Reservation;
 use App\Form\BilletType;
 use App\Repository\BilletRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +27,16 @@ final class BilletController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $billet = new Billet();
+        
+        // Handle pre-selected reservation from 'Mes Réservations'
+        $reservationId = $request->query->get('reservation_id');
+        if ($reservationId) {
+            $reservation = $entityManager->getRepository(Reservation::class)->find($reservationId);
+            if ($reservation) {
+                $billet->setReservation($reservation);
+            }
+        }
+
         $form = $this->createForm(BilletType::class, $billet);
         $form->handleRequest($request);
 
@@ -33,7 +44,7 @@ final class BilletController extends AbstractController
             $entityManager->persist($billet);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_billet_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_user_reservations', [], Response::HTTP_SEE_OTHER);
         }
 
         // AJAX: return just the form fragment for the modal
@@ -75,7 +86,7 @@ final class BilletController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_billet_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_user_reservations', [], Response::HTTP_SEE_OTHER);
         }
 
         // AJAX: return just the form fragment for the modal
