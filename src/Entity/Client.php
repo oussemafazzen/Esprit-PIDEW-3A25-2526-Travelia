@@ -21,37 +21,45 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 150)]
-    #[Assert\NotBlank(message: "Le nom ne doit pas être vide")]
+    #[Assert\NotBlank(message: "Veuillez saisir votre nom.")]
+    #[Assert\Regex(
+        pattern: "/^[\p{L} \-\']++$/u",
+        message: "Le nom ne peut contenir que des lettres."
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 150)]
-    #[Assert\NotBlank(message: "Le prénom ne doit pas être vide")]
+    #[Assert\NotBlank(message: "Veuillez saisir votre prénom.")]
+    #[Assert\Regex(
+        pattern: "/^[\p{L} \-\']++$/u",
+        message: "Le prénom ne peut contenir que des lettres."
+    )]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 150, unique: true)]
-    #[Assert\NotBlank(message: "L'email ne doit pas être vide")]
-    #[Assert\Email(message: "L'email '{{ value }}' n'est pas un email valide.")]
+    #[Assert\NotBlank(message: "Veuillez saisir votre email.")]
+    #[Assert\Email(message: "Veuillez saisir un format d'email valide (ex: abc@abc.abc).")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le mot de passe ne doit pas être vide")]
-    #[Assert\Length(min: 8, minMessage: "Le mot de passe doit faire au moins {{ limit }} caractères")]
+    #[Assert\NotBlank(message: "Veuillez saisir un mot de passe.")]
+    #[Assert\Length(min: 8, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.")]
     #[Assert\Regex(
         pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/",
-        message: "Le mot de passe doit comporter au moins une lettre majuscule, une lettre minuscule et un chiffre"
+        message: "Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre."
     )]
     private ?string $password = null;
 
     #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: "Le téléphone ne doit pas être vide")]
+    #[Assert\NotBlank(message: "Veuillez saisir votre téléphone.")]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 150)]
-    #[Assert\NotBlank(message: "Veuillez sélectionner votre nationalité")]
+    #[Assert\NotBlank(message: "Veuillez sélectionner votre nationalité.")]
     private ?string $nationalite = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message: "Veuillez choisir votre date de naissance")]
+    #[Assert\NotBlank(message: "Veuillez saisir votre date de naissance.")]
     private ?\DateTimeInterface $date_naissance = null;
 
     #[ORM\Column(length: 50)]
@@ -96,7 +104,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
         return $this;
@@ -107,7 +115,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setPrenom(?string $prenom): static
     {
         $this->prenom = $prenom;
         return $this;
@@ -118,7 +126,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
         return $this;
@@ -189,7 +197,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->telephone;
     }
 
-    public function setTelephone(string $telephone): static
+    public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
         return $this;
@@ -200,7 +208,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nationalite;
     }
 
-    public function setNationalite(string $nationalite): static
+    public function setNationalite(?string $nationalite): static
     {
         $this->nationalite = $nationalite;
         return $this;
@@ -211,7 +219,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->date_naissance;
     }
 
-    public function setDateNaissance(\DateTimeInterface $date_naissance): static
+    public function setDateNaissance(?\DateTimeInterface $date_naissance): static
     {
         $this->date_naissance = $date_naissance;
         return $this;
