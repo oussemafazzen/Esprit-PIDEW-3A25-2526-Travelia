@@ -15,10 +15,56 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ReservationController extends AbstractController
 {
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
-    public function index(ReservationRepository $reservationRepository): Response
+    public function index(Request $request, ReservationRepository $reservationRepository): Response
     {
+        $search = trim((string) $request->query->get('search', ''));
+        $sort = (string) $request->query->get('sort', 'id');
+        $direction = strtoupper((string) $request->query->get('direction', 'DESC'));
+
+        $allowedSorts = [
+            'id' => 'r.id',
+            'date' => 'r.dateReservation',
+            'statut' => 'r.statut',
+            'paiement' => 'r.modalitesPaiement',
+            'client' => 'r.clientId',
+            'destination' => 'r.paysDestination',
+        ];
+
+        if (!isset($allowedSorts[$sort])) {
+            $sort = 'id';
+        }
+
+        if (!in_array($direction, ['ASC', 'DESC'], true)) {
+            $direction = 'DESC';
+        }
+
+        $qb = $reservationRepository->createQueryBuilder('r');
+
+        if ($search !== '') {
+            $expr = $qb->expr()->orX(
+                $qb->expr()->like('LOWER(r.statut)', ':q'),
+                $qb->expr()->like('LOWER(r.modalitesPaiement)', ':q'),
+                $qb->expr()->like('LOWER(r.paysDestination)', ':q')
+            );
+
+            if (ctype_digit($search)) {
+                $expr->add($qb->expr()->eq('r.id', ':idSearch'));
+                $expr->add($qb->expr()->eq('r.clientId', ':clientSearch'));
+                $qb->setParameter('idSearch', (int) $search);
+                $qb->setParameter('clientSearch', (int) $search);
+            }
+
+            $qb->andWhere($expr)
+                ->setParameter('q', '%' . mb_strtolower($search) . '%');
+        }
+
+        $qb->orderBy($allowedSorts[$sort], $direction);
+
         return $this->render('reservation/index.html.twig', [
-            'reservations' => $reservationRepository->findAll(),
+            'reservations' => $qb->getQuery()->getResult(),
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 
@@ -71,7 +117,7 @@ final class ReservationController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($reservation);
             $entityManager->flush();
         }

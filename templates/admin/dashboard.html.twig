@@ -223,12 +223,47 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .list-head h4 {
             font-family: var(--serif);
             font-size: 1.4rem;
             font-weight: 400;
+        }
+
+        .dashboard-filter-form {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr auto;
+            gap: 0.8rem;
+            width: 100%;
+        }
+
+        .dashboard-filter-input,
+        .dashboard-filter-select {
+            min-height: 46px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            padding: 0 14px;
+            outline: none;
+        }
+
+        .dashboard-filter-select option {
+            color: #111;
+        }
+
+        .dashboard-filter-btn {
+            min-height: 46px;
+            border: none;
+            border-radius: 14px;
+            background: var(--gold);
+            color: #111827;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 0 18px;
         }
 
         .booking-item {
@@ -306,6 +341,10 @@
             .graph-labels {
                 grid-template-columns: repeat(6, 1fr);
                 row-gap: 0.8rem;
+            }
+
+            .dashboard-filter-form {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -592,7 +631,37 @@
 
             <div class="bookings-list">
                 <div class="list-head">
-                    <h4>Réservations récentes</h4>
+                    <h4>Réservations</h4>
+
+                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
+                        <input
+                            type="text"
+                            name="reservation_search"
+                            value="{{ reservationSearch }}"
+                            placeholder="Rechercher réservation..."
+                            class="dashboard-filter-input"
+                        >
+
+                        <select name="reservation_sort" class="dashboard-filter-select">
+                            <option value="date" {{ reservationSort == 'date' ? 'selected' : '' }}>Trier par date</option>
+                            <option value="id" {{ reservationSort == 'id' ? 'selected' : '' }}>ID</option>
+                            <option value="statut" {{ reservationSort == 'statut' ? 'selected' : '' }}>Statut</option>
+                            <option value="paiement" {{ reservationSort == 'paiement' ? 'selected' : '' }}>Paiement</option>
+                            <option value="client" {{ reservationSort == 'client' ? 'selected' : '' }}>Client</option>
+                            <option value="destination" {{ reservationSort == 'destination' ? 'selected' : '' }}>Destination</option>
+                        </select>
+
+                        <select name="reservation_direction" class="dashboard-filter-select">
+                            <option value="DESC" {{ reservationDirection == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                            <option value="ASC" {{ reservationDirection == 'ASC' ? 'selected' : '' }}>Ascendant</option>
+                        </select>
+
+                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
+
+                        <input type="hidden" name="billet_search" value="{{ billetSearch }}">
+                        <input type="hidden" name="billet_sort" value="{{ billetSort }}">
+                        <input type="hidden" name="billet_direction" value="{{ billetDirection }}">
+                    </form>
                 </div>
 
                 {% for reservation in recentReservations %}
@@ -621,7 +690,38 @@
 
             <div class="bookings-list">
                 <div class="list-head">
-                    <h4>Billets récents</h4>
+                    <h4>Billets</h4>
+
+                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
+                        <input
+                            type="text"
+                            name="billet_search"
+                            value="{{ billetSearch }}"
+                            placeholder="Rechercher billet..."
+                            class="dashboard-filter-input"
+                        >
+
+                        <select name="billet_sort" class="dashboard-filter-select">
+                            <option value="depart" {{ billetSort == 'depart' ? 'selected' : '' }}>Trier par départ</option>
+                            <option value="id" {{ billetSort == 'id' ? 'selected' : '' }}>ID</option>
+                            <option value="transport" {{ billetSort == 'transport' ? 'selected' : '' }}>Transport</option>
+                            <option value="numero" {{ billetSort == 'numero' ? 'selected' : '' }}>Numéro</option>
+                            <option value="arrivee" {{ billetSort == 'arrivee' ? 'selected' : '' }}>Arrivée</option>
+                            <option value="prix" {{ billetSort == 'prix' ? 'selected' : '' }}>Prix</option>
+                            <option value="statut" {{ billetSort == 'statut' ? 'selected' : '' }}>Statut</option>
+                        </select>
+
+                        <select name="billet_direction" class="dashboard-filter-select">
+                            <option value="DESC" {{ billetDirection == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                            <option value="ASC" {{ billetDirection == 'ASC' ? 'selected' : '' }}>Ascendant</option>
+                        </select>
+
+                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
+
+                        <input type="hidden" name="reservation_search" value="{{ reservationSearch }}">
+                        <input type="hidden" name="reservation_sort" value="{{ reservationSort }}">
+                        <input type="hidden" name="reservation_direction" value="{{ reservationDirection }}">
+                    </form>
                 </div>
 
                 {% for billet in recentBillets %}

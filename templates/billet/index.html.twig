@@ -76,6 +76,41 @@
             box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
         }
 
+        .table-tools {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 14px;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-tools-input,
+        .table-tools-select {
+            min-height: 52px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            padding: 0 16px;
+            outline: none;
+        }
+
+        .table-tools-select option {
+            color: #111;
+        }
+
+        .table-tools-btn {
+            min-height: 52px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         .data-table-wrap {
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 18px;
@@ -153,6 +188,12 @@
             text-align: center;
             color: rgba(255,255,255,0.5);
         }
+
+        @media (max-width: 1200px) {
+            .table-tools {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -218,6 +259,34 @@
                 <h2>Liste des billets</h2>
                 <a href="{{ path('app_billet_new') }}" class="create-btn">+ Créer nouveau</a>
             </div>
+
+            <form method="get" action="{{ path('app_billet_index') }}" class="table-tools">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search|default('') }}"
+                    placeholder="Rechercher par transport, numéro, statut ou ID..."
+                    class="table-tools-input"
+                >
+
+                <select name="sort" class="table-tools-select">
+                    <option value="id" {{ sort == 'id' ? 'selected' : '' }}>Trier par ID</option>
+                    <option value="transport" {{ sort == 'transport' ? 'selected' : '' }}>Transport</option>
+                    <option value="numero" {{ sort == 'numero' ? 'selected' : '' }}>Numéro billet</option>
+                    <option value="depart" {{ sort == 'depart' ? 'selected' : '' }}>Date départ</option>
+                    <option value="arrivee" {{ sort == 'arrivee' ? 'selected' : '' }}>Date arrivée</option>
+                    <option value="prix" {{ sort == 'prix' ? 'selected' : '' }}>Prix</option>
+                    <option value="statut" {{ sort == 'statut' ? 'selected' : '' }}>Statut</option>
+                    <option value="reservation" {{ sort == 'reservation' ? 'selected' : '' }}>Réservation</option>
+                </select>
+
+                <select name="direction" class="table-tools-select">
+                    <option value="DESC" {{ direction == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                    <option value="ASC" {{ direction == 'ASC' ? 'selected' : '' }}>Ascendant</option>
+                </select>
+
+                <button type="submit" class="table-tools-btn">Appliquer</button>
+            </form>
 
             <div class="data-table-wrap">
                 <table class="data-table">
