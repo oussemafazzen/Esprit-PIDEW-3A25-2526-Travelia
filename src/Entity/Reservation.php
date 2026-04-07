@@ -19,12 +19,16 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\Column(name: 'date_reservation', type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message: 'La date de réservation est obligatoire.')]
+    #[Assert\NotNull(message: 'La date de réservation est obligatoire.')]
     #[Assert\Type(type: \DateTimeInterface::class, message: 'La date de réservation est invalide.')]
     private ?\DateTimeInterface $dateReservation = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
+    #[Assert\Choice(
+        choices: ['confirmé', 'en_attente', 'annulé'],
+        message: 'Le statut sélectionné est invalide.'
+    )]
     #[Assert\Length(
         min: 2,
         max: 255,
@@ -35,6 +39,10 @@ class Reservation
 
     #[ORM\Column(name: 'modalites_paiement', length: 255)]
     #[Assert\NotBlank(message: 'Les modalités de paiement sont obligatoires.')]
+    #[Assert\Choice(
+        choices: ['carte', 'especes', 'virement'],
+        message: 'Le mode de paiement sélectionné est invalide.'
+    )]
     #[Assert\Length(
         min: 2,
         max: 255,
@@ -44,7 +52,7 @@ class Reservation
     private ?string $modalitesPaiement = null;
 
     #[ORM\Column(name: 'id_client')]
-    #[Assert\NotBlank(message: 'Le client ID est obligatoire.')]
+    #[Assert\NotNull(message: 'Le client ID est obligatoire.')]
     #[Assert\Positive(message: 'Le client ID doit être un nombre positif.')]
     private ?int $clientId = null;
 

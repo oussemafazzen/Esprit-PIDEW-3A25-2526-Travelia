@@ -333,6 +333,7 @@
         <div class="reservations-list">
             {% if reservations is not empty %}
                 {% for reservation in reservations %}
+                    {% set reservationDestination = reservation.paysDestination ?? reservation.pays ?? '' %}
                     {% set totalPrice = 0 %}
 
                     {% for billet in reservation.billets %}
@@ -422,6 +423,23 @@
                             </div>
 
                             <div style="margin-top: 16px; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+                                {% if reservationDestination %}
+                                    <a href="{{ path('app_flights_results', {
+                                        reservation_id: reservation.id,
+                                        destination: reservationDestination,
+                                        date_depart: reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '',
+                                        date_arrivee: '',
+                                        type_transport: '',
+                                        passagers: 1
+                                    }) }}" class="premium-flight-book-btn">
+                                        Choisir billet
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('app_flights_search') }}" class="premium-flight-book-btn">
+                                        Choisir billet
+                                    </a>
+                                {% endif %}
+
                                 <button
                                     type="button"
                                     class="premium-flight-book-btn js-open-edit-modal"

@@ -18,6 +18,10 @@ class Billet
 
     #[ORM\Column(name: 'type_transport', length: 255)]
     #[Assert\NotBlank(message: 'Le type de transport est obligatoire.')]
+    #[Assert\Choice(
+        choices: ['avion', 'train', 'bus', 'bateau'],
+        message: 'Le type de transport sélectionné est invalide.'
+    )]
     private ?string $typeTransport = null;
 
     #[ORM\Column(name: 'numero_billet', length: 255)]
@@ -32,10 +36,16 @@ class Billet
 
     #[ORM\Column(name: 'date_depart', type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: 'La date de départ est obligatoire.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'La date de départ est invalide.')]
     private ?\DateTimeInterface $dateDepart = null;
 
     #[ORM\Column(name: 'date_arrivee', type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: 'La date d’arrivée est obligatoire.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'La date d’arrivée est invalide.')]
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: 'dateDepart',
+        message: 'La date d’arrivée doit être supérieure ou égale à la date de départ.'
+    )]
     private ?\DateTimeInterface $dateArrivee = null;
 
     #[ORM\Column]
@@ -45,6 +55,10 @@ class Billet
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
+    #[Assert\Choice(
+        choices: ['confirme', 'en_attente', 'annule'],
+        message: 'Le statut du billet est invalide.'
+    )]
     private ?string $statut = null;
 
     #[ORM\ManyToOne(inversedBy: 'billets')]

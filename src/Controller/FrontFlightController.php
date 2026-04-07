@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Billet;
+use App\Entity\Reservation;
 use App\Repository\BilletRepository;
+use App\Repository\ReservationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +28,7 @@ class FrontFlightController extends AbstractController
         $dateArrivee = trim((string) $request->query->get('date_arrivee', ''));
         $typeTransport = trim((string) $request->query->get('type_transport', ''));
         $passagers = (int) $request->query->get('passagers', 1);
+        $reservationId = (int) $request->query->get('reservation_id', 0);
 
         $billets = $billetRepository->findAvailableFlights($destination, $dateDepart, $typeTransport);
         $baseFlights = $billetRepository->normalizeBilletsForDisplay($billets);
@@ -45,8 +50,6 @@ class FrontFlightController extends AbstractController
         }
 
         $filteredFlights = array_values($filteredFlights);
-
-        // ✅ Générer plusieurs options avec prix différents
         $flightsWithOptions = $this->buildFlightVariants($filteredFlights);
 
         return $this->render('front/flights/results.html.twig', [
@@ -56,13 +59,65 @@ class FrontFlightController extends AbstractController
             'date_arrivee' => $dateArrivee,
             'type_transport' => $typeTransport,
             'passagers' => $passagers,
+            'reservation_id' => $reservationId,
         ]);
     }
 
-    /**
-     * Génère plusieurs variantes tarifaires à partir des billets trouvés
-     * sans modifier les autres pages.
-     */
+    #[Route('/vols/paiement', name: 'app_flights_payment_submit', methods: ['POST'])]
+    public function paymentSubmit(
+        Request $request,
+        BilletRepository $billetRepository,
+        ReservationRepository $reservationRepository,
+        EntityManagerInterface $em
+    ): Response {
+        $billetId = (int) $request->request->get('billet_id', 0);
+        $reservationId = (int) $request->request->get('reservation_id', 0);
+        $paymentMethod = trim((string) $request->request->get('payment_method', ''));
+        $selectedPrice = (float) $request->request->get('selected_price', 0);
+
+        if (!$billetId || !$reservationId || $paymentMethod === '') {
+            $this->addFlash('error', 'Paiement invalide.');
+            return $this->redirectToRoute('app_user_reservations');
+        }
+
+        /** @var Billet|null $billet */
+        $billet = $billetRepository->find($billetId);
+
+        /** @var Reservation|null $reservation */
+        $reservation = $reservationRepository->find($reservationId);
+
+        if (!$billet || !$reservation) {
+            $this->addFlash('error', 'Réservation ou billet introuvable.');
+            return $this->redirectToRoute('app_user_reservations');
+        }
+
+        if (method_exists($reservation, 'setModalitesPaiement')) {
+            $reservation->setModalitesPaiement($paymentMethod);
+        }
+
+        if (method_exists($reservation, 'setStatut')) {
+            $reservation->setStatut('confirmé');
+        }
+
+        if ($selectedPrice > 0 && method_exists($billet, 'setPrix')) {
+            $billet->setPrix($selectedPrice);
+        }
+
+        if (method_exists($billet, 'setReservation')) {
+            $billet->setReservation($reservation);
+        }
+
+        if (method_exists($billet, 'setStatut')) {
+            $billet->setStatut('confirmé');
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', 'Le billet a bien été ajouté à la réservation.');
+
+        return $this->redirectToRoute('app_user_reservations');
+    }
+
     private function buildFlightVariants(array $flights): array
     {
         $variants = [];
