@@ -33,6 +33,7 @@ class ClientRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+    
     /**
      * Search and sort clients
      */
