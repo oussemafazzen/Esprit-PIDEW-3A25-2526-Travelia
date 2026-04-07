@@ -1,0 +1,50 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Dashboard | Travelia Admin{% endblock %}
+
+{% block body %}
+<style>
+    .stats-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+    .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 2rem; border-radius: 20px; }
+    .stat-title { color: rgba(255,255,255,0.5); text-transform: uppercase; font-size: 0.8rem; font-weight: 600; letter-spacing:1px; margin-bottom: 1rem; }
+    .stat-value { font-size: 2.5rem; font-weight: 700; color: #fff; font-family:'Space Grotesk', sans-serif; }
+    .list-stat-row { display:flex; justify-content:space-between; padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .list-stat-row:last-child { border: none; padding-bottom: 0; }
+</style>
+
+<h1 style="font-family:'Cormorant Garamond', serif; font-size: 3rem; font-weight: 400; color: #fff; margin:0 0 0.5rem;">Général <em>Dashboard</em></h1>
+<p style="color: rgba(255,255,255,0.5); font-size: 1.1rem; margin-bottom: 3rem;">Statistiques des voyageurs et clients sur Travelia.</p>
+
+<div class="stats-grid">
+  <div class="stat-card">
+      <div class="stat-title">Total Voyageurs</div>
+      <div class="stat-value">{{ totalClients }}</div>
+  </div>
+  
+  <div class="stat-card" style="grid-row: span 2;">
+      <div class="stat-title">Répartition par Nationalité (Top 5)</div>
+      <div style="margin-top:1rem;">
+          {% for nat, count in nationalityStats %}
+          <div class="list-stat-row">
+              <span style="color:rgba(255,255,255,0.8);">{{ nat }}</span>
+              <strong style="color:#e8c97e;">{{ count }}</strong>
+          </div>
+          {% else %}
+          <p style="color:rgba(255,255,255,0.5);">Aucune donnée.</p>
+          {% endfor %}
+      </div>
+  </div>
+  
+  <div class="stat-card" style="grid-row: span 2;">
+      <div class="stat-title">Tranches d'âge</div>
+      <div style="margin-top:1rem;">
+          {% for range, count in ageGroupStats %}
+          <div class="list-stat-row">
+              <span style="color:rgba(255,255,255,0.8);">{{ range }} ans</span>
+              <strong style="color:#6ee7b7;">{{ count }}</strong>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</div>
+{% endblock %}

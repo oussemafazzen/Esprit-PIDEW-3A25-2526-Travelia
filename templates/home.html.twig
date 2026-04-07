@@ -33,11 +33,22 @@
          onclick="window.location.href='/reservation/mes-reservations'; return true;"
          style="color: #c9a84c; font-weight: 600; border-left: 1px solid rgba(201,168,76,0.3); padding-left: 1.4rem; margin-left: 0.4rem;">Mes Réservations</a>
     </div>
-    <button class="trip-btn" id="trip-btn">
-      <span class="trip-icon">✦</span>
-      Sign in
-      <span class="trip-badge" id="trip-badge" style="display:none;">0</span>
-    </button>
+    {% if app.user %}
+      <div style="display:flex; align-items:center; gap: 1.5rem;">
+          <a href="{{ path('app_profile') }}" class="nav-link" style="color: #c9a84c; display:flex; align-items:center; gap:0.5rem;">
+              <span class="trip-icon" style="font-size:1.1rem;">✦</span> {{ app.user.prenom }} {{ app.user.nom }}
+          </a>
+          {% if 'ROLE_ADMIN' in app.user.roles %}
+              <a href="{{ path('app_admin_dashboard') }}" class="nav-link" style="color: #6ee7b7; font-size:0.85rem; font-weight:600;">Admin</a>
+          {% endif %}
+          <a href="{{ path('app_logout') }}" class="trip-btn" style="padding: 0.6rem 1.2rem; font-size:0.8rem;">Déconnexion</a>
+      </div>
+    {% else %}
+        <div style="display:flex; align-items:center; gap: 1rem;">
+          <a href="{{ path('app_login') }}" class="nav-link" style="color:rgba(255,255,255,0.8); font-weight:600; text-transform:uppercase; font-size:0.75rem; letter-spacing:1px;">Connexion</a>
+          <a href="{{ path('app_register') }}" class="trip-btn" style="padding:0.6rem 1.4rem; font-size:0.8rem;">Inscription</a>
+        </div>
+    {% endif %}
   </nav>
 
   <!-- SIDEBAR -->
@@ -240,7 +251,7 @@
 
   </main>
 
-  <script src="horizon-3d.js?v=22"></script>
+  <script src="horizon-3d.js?v=24"></script>
   <script>
     // ─── DESTINATIONS ───────────────────────────────────────────
     const COUNTRIES = [

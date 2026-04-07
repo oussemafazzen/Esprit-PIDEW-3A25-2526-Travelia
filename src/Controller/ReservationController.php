@@ -52,7 +52,8 @@ final class ReservationController extends AbstractController
             $reservation->setPaysDestination($dest);
             $reservation->setStatut('En attente');
             $reservation->setModalitesPaiement('Carte');
-            $reservation->setClientId(1); // Simulation of logged user
+            $clientId = $this->getUser() ? $this->getUser()->getId() : 1;
+            $reservation->setClientId($clientId); // Wired to authenticated user
             $entityManager->persist($reservation);
         }
         

@@ -571,14 +571,18 @@
   const openSidebar = () => { sidebar.classList.add('open'); sidebarMask.classList.add('open'); };
   const closeSidebar = () => { sidebar.classList.remove('open'); sidebarMask.classList.remove('open'); };
 
-  document.getElementById('trip-btn').addEventListener('click', openSidebar);
+  const tripBtn = document.getElementById('trip-btn');
+  if (tripBtn) {
+      tripBtn.addEventListener('click', openSidebar);
+  }
+  
   document.getElementById('sidebar-x').addEventListener('click', closeSidebar);
   sidebarMask.addEventListener('click', closeSidebar);
 
   function parsePrice(str) { return parseInt((str || '').replace(/[^0-9]/g, '')) || 0; }
 
   function renderSidebar() {
-    tripBadge.textContent = tripItems.length;
+    if (tripBadge) tripBadge.textContent = tripItems.length;
     const empty = tripItems.length === 0;
     sidebarEmpty.style.display = empty ? 'block' : 'none';
     sidebarBottom.style.display = empty ? 'none' : 'block';

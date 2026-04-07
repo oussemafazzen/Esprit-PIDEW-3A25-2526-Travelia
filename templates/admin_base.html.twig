@@ -386,8 +386,7 @@
     
     <nav class="nav-menu">
       {% set route = app.request.attributes.get('_route') %}
-      {% set current_path = app.request.pathinfo %}
-      <a href="/admin.html" class="nav-item {% if current_path == '/admin.html' %}active{% endif %}">
+      <a href="{{ path('app_admin_dashboard') }}" class="nav-item {% if route == 'app_admin_dashboard' %}active{% endif %}">
         <span class="nav-icon">⬚</span>
         Dashboard
       </a>
@@ -409,13 +408,18 @@
         <span class="nav-icon">🛶</span>
         Activities
       </a>
-      <a href="#" class="nav-item">
+      <a href="{{ path('app_admin_travelers') }}" class="nav-item {% if route == 'app_admin_travelers' %}active{% endif %}">
         <span class="nav-icon">👥</span>
         Travelers
       </a>
       <a href="#" class="nav-item">
         <span class="nav-icon">🔧</span>
         Settings
+      </a>
+      
+      <a href="{{ path('app_home') }}" class="nav-item" style="color:red; margin-top:1rem;">
+        <span class="nav-icon" style="color:red;">✕</span>
+        Quitter
       </a>
     </nav>
 
