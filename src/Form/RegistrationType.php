@@ -47,6 +47,23 @@ class RegistrationType extends AbstractType
                 ],
                 'second_options' => ['label' => false, 'attr' => ['placeholder' => 'Répéter le mot de passe']],
             ])
+            ->add('phone_prefix', ChoiceType::class, [
+                'choices' => [
+                    'Tunisie (+216)' => '+216',
+                    'France (+33)' => '+33',
+                    'Maroc (+212)' => '+212',
+                    'Algérie (+213)' => '+213',
+                    'USA (+1)' => '+1',
+                    'UK (+44)' => '+44',
+                    'Allemagne (+49)' => '+49',
+                    'Italie (+39)' => '+39',
+                    'Espagne (+34)' => '+34',
+                    'Canada (+1)' => '+1',
+                ],
+                'mapped' => false,
+                'label' => false,
+                'attr' => ['class' => 'prefix-dropdown']
+            ])
             ->add('telephone', TelType::class, [
                 'attr' => ['placeholder' => 'Téléphone'],
                 'label' => false,

@@ -99,6 +99,21 @@
             <button class="trip-btn login-btn" type="submit" style="margin: 2rem auto 0; display: block; width: fit-content; padding: 1rem 4rem;">
                 Se Connecter
             </button>
+
+            <div style="margin: 1.5rem auto 0; width: fit-content;">
+                <button type="button" id="btn-face-login" class="trip-btn" style="background: rgba(255, 255, 255, 0.1); border: 1px solid var(--gold); color: #fff; padding: 0.8rem 2rem; font-size: 0.85rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-lock"></i> Connexion par reconnaissance faciale
+                </button>
+            </div>
+
+            <div id="camera-container" style="display: none; margin-top: 2rem; position: relative; border-radius: 16px; overflow: hidden; border: 2px solid var(--gold);">
+                <video id="video" width="100%" height="auto" autoplay muted style="display: block;"></video>
+                <canvas id="overlay" style="position: absolute; top: 0; left: 0;"></canvas>
+                <div id="camera-status" style="position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; background: rgba(0,0,0,0.5); padding: 5px; font-size: 0.8rem; color: #fff;">
+                    Initialisation...
+                </div>
+            </div>
+
             <div style="margin-top: 1.5rem; font-size: 0.8rem;">
                 <span style="opacity: 0.5;">Un nouveau compte ?</span>
                 <a href="{{ path('app_register') }}" style="color: var(--gold2); font-weight: 600;">S'inscrire</a>
@@ -106,4 +121,85 @@
         </form>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script>
+    (function() {
+        const initFaceLogin = () => {
+            const btnFaceLogin = document.getElementById('btn-face-login');
+            if (!btnFaceLogin || btnFaceLogin.getAttribute('data-face-init')) return;
+            btnFaceLogin.setAttribute('data-face-init', 'true');
+
+            const cameraContainer = document.getElementById('camera-container');
+            const video = document.getElementById('video');
+            const cameraStatus = document.getElementById('camera-status');
+            const inputEmail = document.getElementById('inputEmail');
+
+            const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/';
+
+            btnFaceLogin.addEventListener('click', async () => {
+                // No email required anymore
+                const confirmed = await showTraveliaConfirm('Souhaitez-vous utiliser la caméra pour la reconnaissance faciale ?');
+                
+                if (confirmed) {
+                    cameraContainer.style.display = 'block';
+                    cameraStatus.innerText = 'Chargement des modèles...';
+
+                    try {
+                        if (!faceapi.nets.ssdMobilenetv1.params) {
+                            await Promise.all([
+                                faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+                                faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                                faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                            ]);
+                        }
+
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                        video.srcObject = stream;
+
+                        cameraStatus.innerText = 'Identification en cours...';
+
+                        const checkFace = async () => {
+                            if (video.paused || video.ended) return;
+
+                            const detections = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
+                            if (detections) {
+                                cameraStatus.innerText = 'Recherche de correspondance...';
+                                
+                                // Call identification endpoint
+                                const response = await fetch('{{ path("api_face_identify") }}', {
+                                    method: 'POST',
+                                    body: JSON.stringify({ descriptor: Array.from(detections.descriptor) }),
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+
+                                const data = await response.json();
+                                if (data.success) {
+                                    cameraStatus.innerText = 'Utilisateur reconnu ! Redirection...';
+                                    cameraStatus.style.color = '#10b981';
+                                    window.location.href = data.redirect;
+                                    return;
+                                } else {
+                                    cameraStatus.innerText = 'Visage non reconnu.';
+                                    cameraStatus.style.color = '#ef4444';
+                                }
+                            }
+                            
+                            setTimeout(checkFace, 500); // Check every 500ms to avoid overloading
+                        };
+
+                        video.addEventListener('play', checkFace);
+
+                    } catch (err) {
+                        console.error(err);
+                        cameraStatus.innerText = 'Erreur d\'accès à la caméra ou modèles.';
+                    }
+                }
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', initFaceLogin);
+        document.addEventListener('turbo:load', initFaceLogin);
+    })();
+</script>
 {% endblock %}

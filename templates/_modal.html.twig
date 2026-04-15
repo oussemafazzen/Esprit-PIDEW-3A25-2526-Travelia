@@ -1,0 +1,91 @@
+<!-- Travelia Premium Modal -->
+<div id="travelia-modal" class="t-modal">
+    <div class="t-modal-content">
+        <h3 id="t-modal-title">Confirmation</h3>
+        <p id="t-modal-message"></p>
+        <div class="t-modal-actions">
+            <button id="t-modal-cancel" class="t-modal-btn cancel">Annuler</button>
+            <button id="t-modal-ok" class="t-modal-btn ok">OK</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .t-modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .t-modal.show { display: flex; opacity: 1; }
+    .t-modal-content {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(40px);
+        padding: 3rem;
+        border-radius: 24px;
+        max-width: 450px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+    .t-modal.show .t-modal-content { transform: translateY(0); }
+    #t-modal-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold2); margin-bottom: 1rem; font-weight: 300; }
+    #t-modal-message { color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 2.5rem; font-size: 0.95rem; }
+    .t-modal-actions { display: flex; gap: 1rem; justify-content: center; }
+    .t-modal-btn {
+        padding: 0.8rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 0.85rem;
+        border: none;
+    }
+    .t-modal-btn.cancel { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); }
+    .t-modal-btn.ok { background: var(--gold); color: #000; }
+    .t-modal-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+</style>
+
+<script>
+    function showTraveliaConfirm(message, title = "Confirmation") {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('travelia-modal');
+            const titleEl = document.getElementById('t-modal-title');
+            const messageEl = document.getElementById('t-modal-message');
+            const btnOk = document.getElementById('t-modal-ok');
+            const btnCancel = document.getElementById('t-modal-cancel');
+
+            if (!modal) {
+                console.error("Travelia modal NOT FOUND in DOM");
+                resolve(confirm(message));
+                return;
+            }
+
+            titleEl.innerText = title;
+            messageEl.innerText = message;
+            modal.classList.add('show');
+
+            const cleanup = (val) => {
+                modal.classList.remove('show');
+                btnOk.removeEventListener('click', okHandler);
+                btnCancel.removeEventListener('click', cancelHandler);
+                resolve(val);
+            };
+
+            const okHandler = () => cleanup(true);
+            const cancelHandler = () => cleanup(false);
+
+            btnOk.addEventListener('click', okHandler);
+            btnCancel.addEventListener('click', cancelHandler);
+        });
+    }
+</script>

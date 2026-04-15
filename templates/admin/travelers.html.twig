@@ -90,13 +90,13 @@
                         <div style="display: flex; gap: 0.8rem;">
                             <a href="{{ path('app_admin_client_edit', {id: client.id}) }}" class="action-btn">Edit</a>
                             
-                            <form method="post" action="{{ path('app_admin_client_toggle_status', {id: client.id}) }}" style="display: inline;" onsubmit="return confirm('Confirmer le changement de statut ?');">
+                            <form method="post" action="{{ path('app_admin_client_toggle_status', {id: client.id}) }}" style="display: inline;" class="confirm-form" data-message="Confirmer le changement de statut ?">
                                 <button type="submit" class="action-btn">
                                     {{ client.statut == 'ACTIF' ? 'Block' : 'Unblock' }}
                                 </button>
                             </form>
 
-                            <form method="post" action="{{ path('app_admin_client_delete', {id: client.id}) }}" style="display: inline;" onsubmit="return confirm('Attention: Cette action est irréversible. Confirmer la suppression ?');">
+                            <form method="post" action="{{ path('app_admin_client_delete', {id: client.id}) }}" style="display: inline;" class="confirm-form" data-message="Attention: Cette action est irréversible. Confirmer la suppression ?" data-title="Attention">
                                 <button type="submit" class="action-btn delete">Delete</button>
                             </form>
                         </div>
@@ -112,4 +112,31 @@
         </tbody>
       </table>
     </div>
+
+    <script>
+        (function() {
+            const initConfirmForms = () => {
+                const forms = document.querySelectorAll('.confirm-form');
+                forms.forEach(form => {
+                    // Prevent duplicate listeners
+                    if (form.getAttribute('data-confirm-init')) return;
+                    form.setAttribute('data-confirm-init', 'true');
+
+                    form.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const message = form.getAttribute('data-message');
+                        const title = form.getAttribute('data-title') || 'Confirmation';
+                        
+                        const confirmed = await showTraveliaConfirm(message, title);
+                        if (confirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', initConfirmForms);
+            document.addEventListener('turbo:load', initConfirmForms);
+        })();
+    </script>
 {% endblock %}

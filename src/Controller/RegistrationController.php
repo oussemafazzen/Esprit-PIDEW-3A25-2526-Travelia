@@ -22,6 +22,11 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Combine phone prefix and number
+            $phonePrefix = $form->get('phone_prefix')->getData();
+            $phoneNumber = $form->get('telephone')->getData();
+            $user->setTelephone($phonePrefix . ' ' . $phoneNumber);
+
             // Encode the password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -40,6 +45,17 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+
+            // Save face encoding if provided
+            $faceEncoding = $request->request->get('face_encoding');
+            if ($faceEncoding) {
+                $faceData = new \App\Entity\FaceData();
+                $faceData->setUser($user);
+                $faceData->setFaceEncoding($faceEncoding);
+                $faceData->setFaceToken(bin2hex(random_bytes(16)));
+                $entityManager->persist($faceData);
+                $entityManager->flush();
+            }
 
             // Redirect to login after successful registration
             return $this->redirectToRoute('app_login');
