@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification — Travelia{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .login-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 3.5rem;
+        max-width: 550px;
+        margin: 120px auto;
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
+    .login-title {
+        font-family: var(--serif);
+        font-size: 2.2rem;
+        font-weight: 300;
+        margin-bottom: 0.8rem;
+        color: var(--gold2);
+    }
+    .login-lead {
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    .code-input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        color: var(--gold2);
+        font-size: 2.5rem;
+        letter-spacing: 0.8rem;
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .code-input:focus {
+        border-color: var(--gold);
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+    }
+    .login-btn {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .alert-error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="panel" style="display: block; overflow-y: auto;">
+    <div class="login-card">
+        <h1 class="login-title">Vérification du code</h1>
+        <p class="login-lead">
+            Un code de confirmation a été envoyé à <strong>{{ email }}</strong>. <br/>
+            Veuillez le saisir ci-dessous pour continuer.
+        </p>
+
+        <form method="post">
+            {% for message in app.flashes('error') %}
+                <div class="alert-error">{{ message }}</div>
+            {% endfor %}
+
+            <div class="form-group">
+                <input type="text" name="code" class="code-input" maxlength="6" pattern="\d{6}" required autofocus placeholder="000000">
+                <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 1rem;">
+                    Vous n'avez pas reçu le code ? <a href="{{ path('app_forgot_password_request') }}" style="color: var(--gold2);">Renvoyer</a>
+                </p>
+            </div>
+
+            <button class="trip-btn login-btn" type="submit" style="margin: 2rem auto 0; display: block; width: fit-content; padding: 1rem 4rem;">
+                Vérifier le code
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}

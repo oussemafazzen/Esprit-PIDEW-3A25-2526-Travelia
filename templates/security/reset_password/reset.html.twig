@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau mot de passe — Travelia{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .login-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 3.5rem;
+        max-width: 550px;
+        margin: 120px auto;
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
+    .login-title {
+        font-family: var(--serif);
+        font-size: 2.2rem;
+        font-weight: 300;
+        margin-bottom: 0.8rem;
+        color: var(--gold2);
+    }
+    .login-lead {
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+    .form-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .form-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        color: #fff;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+    .form-input:focus {
+        border-color: var(--gold);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .login-btn {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .alert-error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<section class="panel" style="display: block; overflow-y: auto;">
+    <div class="login-card">
+        <h1 class="login-title">Nouveau mot de passe</h1>
+        <p class="login-lead">
+            Veuillez choisir un nouveau mot de passe sécurisé pour votre compte Travelia.
+        </p>
+
+        <form method="post">
+            {% for message in app.flashes('error') %}
+                <div class="alert-error">{{ message }}</div>
+            {% endfor %}
+
+            <div class="form-group">
+                <label class="form-label">Nouveau mot de passe</label>
+                <input type="password" name="password" class="form-input" required autofocus placeholder="••••••••">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Confirmer le mot de passe</label>
+                <input type="password" name="confirm_password" class="form-input" required placeholder="••••••••">
+            </div>
+
+            <button class="trip-btn login-btn" type="submit" style="margin: 2rem auto 0; display: block; width: fit-content; padding: 1rem 4rem;">
+                Réinitialiser le mot de passe
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}

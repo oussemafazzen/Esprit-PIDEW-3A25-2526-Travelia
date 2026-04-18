@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0c0c0c; color: #ffffff; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 16px; margin-top: 50px; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { color: #d4af37; font-size: 28px; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
+        .content { line-height: 1.6; font-size: 16px; }
+        .code-container { text-align: center; margin: 40px 0; padding: 30px; background: rgba(212, 175, 55, 0.1); border: 1px dashed #d4af37; border-radius: 12px; }
+        .code { font-size: 48px; font-weight: bold; letter-spacing: 12px; color: #d4af37; }
+        .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #666; }
+        .welcome { text-align: center; margin-bottom: 30px; }
+        .welcome h2 { color: #fff; font-family: serif; font-weight: 300; font-size: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Travelia</h1>
+        </div>
+        <div class="welcome">
+            <h2>Bienvenue dans l'univers Travelia</h2>
+        </div>
+        <div class="content">
+            <p>Bonjour {{ user.prenom }},</p>
+            <p>Merci d'avoir choisi Travelia. Nous sommes ravis de vous compter parmi nos membres privilégiés.</p>
+            <p>Afin de finaliser votre inscription et activer votre compte, veuillez utiliser le code de vérification suivant :</p>
+            
+            <div class="code-container">
+                <div class="code">{{ code }}</div>
+            </div>
+            
+            <p>Saisissez ce code sur la page de vérification pour commencer votre voyage avec nous.</p>
+            <p>Cordialement,<br>L'équipe Travelia Luxury Travel</p>
+        </div>
+        <div class="footer">
+            &copy; 2026 Travelia Luxury Travel. Tous droits réservés.
+        </div>
+    </div>
+</body>
+</html>
