@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'paiement')]
@@ -21,6 +22,8 @@ class Paiement
     private ?float $montant = null;
 
     #[ORM\Column(name: 'methode_paiement', length: 255)]
+    #[Assert\NotBlank(message: "La méthode de paiement est obligatoire.")]
+    #[Assert\Choice(choices: ["Visa", "MasterCard", "American express", "PayPal"], message: "Méthode invalide. Veuillez choisir parmi : Visa, MasterCard, American express, PayPal.")]
     private ?string $methodePaiement = null;
 
     #[ORM\Column(name: 'id_reservation')]

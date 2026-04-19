@@ -12,17 +12,22 @@
     <style>
         body {
             background-image: var(--view-bg);
-            background-size: 100% 100%;
+            background-size: cover;
             background-attachment: fixed;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
+            padding: 3rem 0;
+            box-sizing: border-box;
+            overflow-y: auto;
+            box-sizing: border-box;
         }
 
         .payment-container {
             width: 90%;
             max-width: 650px;
+            margin: auto;
             background: transparent; /* Crystal clear as requested */
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 30px;
@@ -119,6 +124,60 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
 
+        /* ── Currency Converter ── */
+        .currency-converter {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .currency-label {
+            font-family: var(--grotesk);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 0.8rem;
+        }
+        .currency-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .currency-select {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            font-family: var(--grotesk);
+            font-size: 0.85rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+        }
+        .currency-select:focus { outline: none; border-color: #fff; background: rgba(255,255,255,0.15); }
+        .currency-select option { background: #1a1a2e; color: #fff; }
+        .currency-result {
+            font-family: var(--serif);
+            font-size: 2rem;
+            color: #fff;
+            white-space: nowrap;
+            min-width: 130px;
+            text-align: right;
+            transition: all 0.4s ease;
+        }
+        .currency-loading {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            font-family: var(--grotesk);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+
         .secure-badge {
             display: flex;
             align-items: center;
@@ -205,7 +264,32 @@
             </div>
             <div class="total-row">
                 <span class="label">Total à régler</span>
-                <span class="price">€{{ form.vars.value.montant }}</span>
+                <span class="price" id="base-price">€{{ form.vars.value.montant }}</span>
+            </div>
+
+            <!-- Live Currency Converter -->
+            <div class="currency-converter">
+                <div class="currency-label">🌍 Convertir le montant</div>
+                <div class="currency-row">
+                    <select class="currency-select" id="currency-select">
+                        <option value="EUR" selected>🇪🇺 EUR — Euro</option>
+                        <option value="USD">🇺🇸 USD — Dollar</option>
+                        <option value="GBP">🇬🇧 GBP — Livre Sterling</option>
+                        <option value="TND">🇹🇳 TND — Dinar Tunisien</option>
+                        <option value="MAD">🇲🇦 MAD — Dirham Marocain</option>
+                        <option value="DZD">🇩🇿 DZD — Dinar Algérien</option>
+                        <option value="SAR">🇸🇦 SAR — Riyal Saoudien</option>
+                        <option value="AED">🇦🇪 AED — Dirham EAU</option>
+                        <option value="JPY">🇯🇵 JPY — Yen Japonais</option>
+                        <option value="CAD">🇨🇦 CAD — Dollar Canadien</option>
+                        <option value="CHF">🇨🇭 CHF — Franc Suisse</option>
+                        <option value="CNY">🇨🇳 CNY — Yuan Chinois</option>
+                        <option value="BRL">🇧🇷 BRL — Réal Brésilien</option>
+                        <option value="TRY">🇹🇷 TRY — Livre Turque</option>
+                        <option value="INR">🇮🇳 INR — Roupie Indienne</option>
+                    </select>
+                    <div class="currency-result" id="currency-result">€{{ form.vars.value.montant }}</div>
+                </div>
             </div>
         </div>
 
@@ -228,6 +312,44 @@
                 {{ form_widget(form.methodePaiement) }}
             </div>
 
+            <!-- Dynamic Card Fields -->
+            <div id="dynamic-card-fields" style="display: none; animation: fadeIn 0.5s ease;">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Numéro de carte</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" name="dummy_card">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Expiration</label>
+                        <input type="text" placeholder="MM/AA" maxlength="5" name="dummy_exp">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>CVC</label>
+                        <input type="text" placeholder="123" maxlength="4" name="dummy_cvc">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nom sur la carte</label>
+                    <input type="text" placeholder="Nom complet" name="dummy_name">
+                </div>
+            </div>
+
+            <!-- Dynamic PayPal Fields -->
+            <div id="dynamic-paypal-fields" style="display: none; animation: fadeIn 0.5s ease;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                    <p style="font-family: var(--sans); font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">Connectez-vous à PayPal pour finaliser</p>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Email PayPal</label>
+                    <input type="email" placeholder="votre.email@exemple.com" name="dummy_paypal_email">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" placeholder="••••••••" name="dummy_paypal_password">
+                </div>
+            </div>
+
             <button type="submit" class="payment-btn">Finaliser le règlement</button>
         {{ form_end(form) }}
 
@@ -238,6 +360,7 @@
     </div>
 
     <script>
+<<<<<<< HEAD
         document.getElementById('payment-form').addEventListener('submit', function(e) {
             e.preventDefault(); // Stay on page to show the luxury modal
             
@@ -254,6 +377,102 @@
                     document.getElementById('success-modal-overlay').style.display = 'flex';
                 }
             });
+=======
+        function initPaymentDynamics() {
+            const methodSelect = document.getElementById('paiement_methodePaiement');
+            const cardFields = document.getElementById('dynamic-card-fields');
+            const paypalFields = document.getElementById('dynamic-paypal-fields');
+
+            if (!methodSelect) return;
+
+            function updateUI() {
+                const method = methodSelect.value;
+                if (method === 'Visa' || method === 'MasterCard' || method === 'American express') {
+                    cardFields.style.display = 'block';
+                    paypalFields.style.display = 'none';
+                } else if (method === 'PayPal') {
+                    cardFields.style.display = 'none';
+                    paypalFields.style.display = 'block';
+                } else {
+                    cardFields.style.display = 'none';
+                    paypalFields.style.display = 'none';
+                }
+            }
+
+            methodSelect.addEventListener('change', updateUI);
+            updateUI(); // initial run
+        }
+
+        // Initialize on first load
+        initPaymentDynamics();
+
+        // ── Currency Converter (rates injected by PHP Controller, no client API call) ──
+        const BASE_AMOUNT = {{ form.vars.value.montant }};
+
+        // Rates fetched server-side by PaiementController::fetchExchangeRates()
+        const exchangeRates = {{ exchangeRates|json_encode|raw }};
+
+        const currencySymbols = {
+            EUR: '€', USD: '$', GBP: '£', TND: 'TND ', MAD: 'MAD ',
+            DZD: 'DZD ', SAR: '﷼', AED: 'AED ', JPY: '¥', CAD: 'CA$',
+            CHF: 'CHF ', CNY: '¥', BRL: 'R$', TRY: '₺', INR: '₹'
+        };
+
+        function updateConvertedAmount() {
+            const select = document.getElementById('currency-select');
+            const resultEl = document.getElementById('currency-result');
+            const currency = select.value;
+            const rate = exchangeRates[currency];
+            if (!rate) { resultEl.textContent = 'N/A'; return; }
+            const converted = (BASE_AMOUNT * rate).toFixed(2);
+            const symbol = currencySymbols[currency] || (currency + ' ');
+            resultEl.style.opacity = '0';
+            setTimeout(() => {
+                resultEl.textContent = symbol + Number(converted).toLocaleString('fr-FR');
+                resultEl.style.opacity = '1';
+            }, 200);
+        }
+
+        document.getElementById('currency-select').addEventListener('change', updateConvertedAmount);
+        // Run once on page load so the EUR amount is displayed immediately
+        updateConvertedAmount();
+
+        document.body.addEventListener('submit', function(e) {
+            if (e.target && e.target.id === 'payment-form') {
+                e.preventDefault(); // Stay on page to show the luxury modal or errors!
+                
+                const form = e.target;
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                }).then(async response => {
+                    if(response.redirected) {
+                        // Success redirection!
+                        document.getElementById('success-modal-overlay').style.display = 'flex';
+                        return;
+                    }
+                    
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newForm = doc.getElementById('payment-form');
+                    
+                    if (newForm && (response.status === 422 || newForm.innerHTML.includes('rgba(255,0,0,0.1)'))) {
+                        // Found constraint errors! Replace the form and re-init JS
+                        form.replaceWith(newForm);
+                        initPaymentDynamics();
+                    } else if (response.ok && newForm && !html.includes('success-modal-overlay')) {
+                        document.getElementById('success-modal-overlay').style.display = 'flex';
+                    } else {
+                        document.getElementById('success-modal-overlay').style.display = 'flex';
+                    }
+                }).catch(err => {
+                    console.error('Error submitting form:', err);
+                });
+            }
+>>>>>>> 1b76abe (feat: add dynamic payment method fields+ currency converter API for the payment of the reservation of hotels)
         });
     </script>
 </body>
