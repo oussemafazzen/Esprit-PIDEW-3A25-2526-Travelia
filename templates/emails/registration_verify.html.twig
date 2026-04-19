@@ -2,41 +2,51 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0c0c0c; color: #ffffff; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 0 auto; padding: 40px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 16px; margin-top: 50px; }
-        .logo { text-align: center; margin-bottom: 30px; }
-        .logo h1 { color: #d4af37; font-size: 28px; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
-        .content { line-height: 1.6; font-size: 16px; }
-        .code-container { text-align: center; margin: 40px 0; padding: 30px; background: rgba(212, 175, 55, 0.1); border: 1px dashed #d4af37; border-radius: 12px; }
-        .code { font-size: 48px; font-weight: bold; letter-spacing: 12px; color: #d4af37; }
-        .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #666; }
-        .welcome { text-align: center; margin-bottom: 30px; }
-        .welcome h2 { color: #fff; font-family: serif; font-weight: 300; font-size: 24px; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f4; color: #333333; margin: 0; padding: 0; }
+        .wrapper { width: 100%; background-color: #f4f4f4; padding: 40px 0; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .header { background-color: #1a1a1a; padding: 40px; text-align: center; }
+        .logo { color: #d4af37; font-size: 32px; letter-spacing: 6px; text-transform: uppercase; margin: 0; font-weight: bold; }
+        .content { padding: 40px; line-height: 1.8; font-size: 16px; color: #444444; }
+        .welcome-text { font-size: 24px; color: #1a1a1a; margin-bottom: 20px; font-weight: 300; }
+        .code-block { text-align: center; margin: 30px 0; padding: 30px; background-color: #faf7ed; border: 2px solid #d4af37; border-radius: 12px; }
+        .code-label { font-size: 12px; text-transform: uppercase; color: #888888; letter-spacing: 2px; margin-bottom: 10px; }
+        .code-value { font-size: 48px; font-weight: bold; letter-spacing: 12px; color: #d4af37; display: block; margin-top: 10px; }
+        .footer { padding: 30px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee; }
+        .btn { display: inline-block; padding: 15px 35px; background-color: #d4af37; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <h1>Travelia</h1>
-        </div>
-        <div class="welcome">
-            <h2>Bienvenue dans l'univers Travelia</h2>
-        </div>
-        <div class="content">
-            <p>Bonjour {{ user.prenom }},</p>
-            <p>Merci d'avoir choisi Travelia. Nous sommes ravis de vous compter parmi nos membres privilégiés.</p>
-            <p>Afin de finaliser votre inscription et activer votre compte, veuillez utiliser le code de vérification suivant :</p>
-            
-            <div class="code-container">
-                <div class="code">{{ code }}</div>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <div class="logo">Travelia</div>
             </div>
-            
-            <p>Saisissez ce code sur la page de vérification pour commencer votre voyage avec nous.</p>
-            <p>Cordialement,<br>L'équipe Travelia Luxury Travel</p>
-        </div>
-        <div class="footer">
-            &copy; 2026 Travelia Luxury Travel. Tous droits réservés.
+            <div class="content">
+                <div class="welcome-text">Bienvenue dans l'univers Travelia, {{ user.prenom }}</div>
+                
+                <p>Merci d'avoir choisi Travelia. Nous sommes ravis de vous compter parmi nos membres privilégiés.</p>
+                
+                <p>Afin de finaliser votre inscription et activer votre compte, veuillez utiliser le code de vérification suivant :</p>
+                
+                <div class="code-block">
+                    <div class="code-label">Votre Code de Vérification</div>
+                    <div class="code-value">{{ code }}</div>
+                </div>
+                
+                <p>Saisissez ce code sur la page de vérification de notre site pour commencer votre voyage avec nous.</p>
+                
+                <p style="margin-top: 40px;">
+                    Cordialement,<br>
+                    <strong>L'équipe Travelia Luxury Travel</strong>
+                </p>
+            </div>
+            <div class="footer">
+                &copy; 2026 Travelia Luxury Travel. Tous droits réservés.<br>
+                Ceci est un e-mail automatique, merci de ne pas y répondre.
+            </div>
         </div>
     </div>
 </body>

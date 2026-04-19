@@ -24,7 +24,9 @@ security:
             logout:
                 path: app_logout
                 target: app_home
-            custom_authenticator: App\Security\AppAuthenticator
+            custom_authenticator:
+                - App\Security\AppAuthenticator
+                - App\Security\GoogleAuthenticator
             login_throttling: true
             remember_me:
                 secret: '%kernel.secret%'

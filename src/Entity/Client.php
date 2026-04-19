@@ -50,16 +50,13 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $password = null;
 
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: "Veuillez saisir votre téléphone.")]
+    #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
 
-    #[ORM\Column(length: 150)]
-    #[Assert\NotBlank(message: "Veuillez sélectionner votre nationalité.")]
+    #[ORM\Column(length: 150, nullable: true)]
     private ?string $nationalite = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message: "Veuillez saisir votre date de naissance.")]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_naissance = null;
 
     #[ORM\Column(length: 50)]
