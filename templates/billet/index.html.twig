@@ -76,6 +76,35 @@
             box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
         }
 
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.95rem 1.5rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.04);
+            color: var(--gold2);
+            border: 1px solid rgba(201, 168, 76, 0.35);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+        }
+
         .table-tools {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr auto;
@@ -257,7 +286,11 @@
         <section class="content-card">
             <div class="section-header">
                 <h2>Liste des billets</h2>
-                <a href="{{ path('app_billet_new') }}" class="create-btn">+ Créer nouveau</a>
+                <div class="header-actions">
+                    <a href="{{ path('app_billet_export_pdf') }}" class="export-btn">Exporter PDF</a>
+                    <a href="{{ path('app_billet_export_excel') }}" class="export-btn">Exporter Excel</a>
+                    <a href="{{ path('app_billet_new') }}" class="create-btn">+ Créer nouveau</a>
+                </div>
             </div>
 
             <form method="get" action="{{ path('app_billet_index') }}" class="table-tools">
@@ -292,7 +325,6 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Transport</th>
                             <th>Numéro billet</th>
                             <th>Date départ</th>
@@ -307,7 +339,6 @@
                     {% for billet in billets %}
                         {% set statutClass = billet.statut|lower starts with 'confirm' ? 'confirme' : 'attente' %}
                         <tr>
-                            <td>{{ billet.id }}</td>
                             <td>{{ billet.typeTransport }}</td>
                             <td>{{ billet.numeroBillet }}</td>
                             <td>{{ billet.dateDepart ? billet.dateDepart|date('Y-m-d') : '' }}</td>
@@ -324,7 +355,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="9" class="empty-state">Aucun billet trouvé.</td>
+                            <td colspan="8" class="empty-state">Aucun billet trouvé.</td>
                         </tr>
                     {% endfor %}
                     </tbody>

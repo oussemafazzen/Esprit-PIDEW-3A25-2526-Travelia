@@ -1,0 +1,370 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement du billet - Travelia{% endblock %}
+
+{% block body %}
+<style>
+    .payment-page {
+        min-height: 100vh;
+        color: #fff;
+        background-image:
+            linear-gradient(rgba(5, 15, 35, 0.72), rgba(5, 15, 35, 0.82)),
+            url('{{ asset('images/avion.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        padding: 56px 20px;
+    }
+
+    .payment-card {
+        max-width: 720px;
+        margin: 0 auto;
+        border-radius: 28px;
+        padding: 32px 28px;
+        background: rgba(10, 22, 52, 0.78);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+    }
+
+    .payment-title {
+        margin: 0 0 12px;
+        font-size: 40px;
+        font-family: 'Cormorant Garamond', serif;
+    }
+
+    .payment-subtitle {
+        margin: 0 0 24px;
+        color: rgba(255,255,255,0.78);
+    }
+
+    .payment-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .payment-summary-item {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .payment-summary-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(255,255,255,0.62);
+        margin-bottom: 6px;
+    }
+
+    .payment-summary-value {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .payment-form {
+        display: grid;
+        gap: 16px;
+    }
+
+    .payment-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .payment-field input,
+    .payment-field select {
+        width: 100%;
+        min-height: 54px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(18, 30, 62, 0.88);
+        color: #ffffff;
+        padding: 0 16px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .payment-field input:focus {
+        border-color: #d9b84f;
+        box-shadow: 0 0 0 3px rgba(217, 184, 79, 0.14);
+    }
+
+    .payment-select {
+        width: 100%;
+        min-height: 54px;
+        border-radius: 18px;
+        border: 1px solid rgba(217, 184, 79, 0.18);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+            rgba(18, 30, 62, 0.88);
+        color: #ffffff;
+        padding: 0 52px 0 16px;
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.04),
+            0 10px 24px rgba(0,0,0,0.16);
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        background-image:
+            linear-gradient(45deg, transparent 50%, #d9b84f 50%),
+            linear-gradient(135deg, #d9b84f 50%, transparent 50%),
+            linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        background-position:
+            calc(100% - 22px) calc(50% - 3px),
+            calc(100% - 16px) calc(50% - 3px),
+            0 0;
+        background-size:
+            6px 6px,
+            6px 6px,
+            100% 100%;
+        background-repeat: no-repeat;
+    }
+
+    .payment-select:hover {
+        border-color: rgba(217, 184, 79, 0.38);
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.05),
+            0 14px 30px rgba(0,0,0,0.22);
+    }
+
+    .payment-select:focus {
+        border-color: #d9b84f;
+        box-shadow:
+            0 0 0 3px rgba(217, 184, 79, 0.14),
+            0 14px 30px rgba(0,0,0,0.22);
+    }
+
+    .payment-select option {
+        background: rgba(18, 30, 62, 0.98);
+        color: #ffffff;
+    }
+
+    .payment-actions {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .payment-method-fields {
+        display: grid;
+        gap: 14px;
+    }
+
+    .payment-method-section {
+        display: none;
+        gap: 14px;
+        padding: 18px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .payment-method-section.is-active {
+        display: grid;
+    }
+
+    .payment-note {
+        margin: 0;
+        color: rgba(255,255,255,0.84);
+        line-height: 1.6;
+    }
+
+    .payment-errors {
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(140, 16, 52, 0.28);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #fff;
+    }
+
+    .payment-errors ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+    .payment-btn,
+    .payment-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 180px;
+        min-height: 54px;
+        padding: 0 20px;
+        border-radius: 16px;
+        border: none;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .payment-btn {
+        cursor: pointer;
+        background: linear-gradient(135deg, #d4af37, #e4c96e);
+        color: #111;
+    }
+
+    .payment-link {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    @media (max-width: 700px) {
+        .payment-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-btn,
+        .payment-link {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="payment-page">
+    <div class="payment-card">
+        <h1 class="payment-title">Paiement du billet</h1>
+        <p class="payment-subtitle">Vérifiez les détails du vol puis confirmez le paiement.</p>
+
+        {% if payment_errors is defined and payment_errors is not empty %}
+            <div class="payment-errors">
+                <ul>
+                    {% for error in payment_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="payment-summary">
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Trajet</div>
+                <div class="payment-summary-value">{{ payment.origin_code }} → {{ payment.destination_code }}</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Référence</div>
+                <div class="payment-summary-value">{{ payment.reference }}</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Destination</div>
+                <div class="payment-summary-value">{{ payment.destination }}</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Prix</div>
+                <div class="payment-summary-value">{{ payment.selected_price }} TND</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Départ</div>
+                <div class="payment-summary-value">{{ payment.selected_date_depart ?: 'Non définie' }}</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Offre</div>
+                <div class="payment-summary-value">{{ payment.offer_label ?: 'Standard' }}</div>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ path('app_flights_payment_submit') }}" class="payment-form">
+            <input type="hidden" name="billet_id" value="{{ payment.billet_id }}">
+            <input type="hidden" name="reservation_id" value="{{ payment.reservation_id }}">
+            <input type="hidden" name="selected_price" value="{{ payment.selected_price }}">
+            <input type="hidden" name="selected_date_depart" value="{{ payment.selected_date_depart }}">
+            <input type="hidden" name="selected_date_arrivee" value="{{ payment.selected_date_arrivee }}">
+            <input type="hidden" name="destination" value="{{ payment.destination }}">
+
+            <div class="payment-field">
+                <label for="payment_method">Mode de paiement</label>
+                <select id="payment_method" name="payment_method" class="payment-select">
+                    <option value="carte" {{ (payment.payment_method|default('carte')) == 'carte' ? 'selected' : '' }}>Carte bancaire</option>
+                    <option value="virement" {{ (payment.payment_method|default('carte')) == 'virement' ? 'selected' : '' }}>Virement bancaire</option>
+                    <option value="especes" {{ (payment.payment_method|default('carte')) == 'especes' ? 'selected' : '' }}>Espèces</option>
+                </select>
+            </div>
+
+            <div class="payment-method-fields">
+                <div class="payment-method-section" data-method-section="carte">
+                    <div class="payment-field">
+                        <label for="cardholder_name">Nom du titulaire</label>
+                        <input type="text" id="cardholder_name" name="cardholder_name" value="{{ payment.cardholder_name|default('') }}">
+                    </div>
+                    <div class="payment-field">
+                        <label for="card_number">Numéro de carte</label>
+                        <input type="text" id="card_number" name="card_number" inputmode="numeric" value="{{ payment.card_number|default('') }}">
+                    </div>
+                    <div class="payment-field">
+                        <label for="expiry_date">Date d'expiration</label>
+                        <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/AA" value="{{ payment.expiry_date|default('') }}">
+                    </div>
+                    <div class="payment-field">
+                        <label for="cvv">CVV</label>
+                        <input type="password" id="cvv" name="cvv" inputmode="numeric" value="{{ payment.cvv|default('') }}">
+                    </div>
+                </div>
+
+                <div class="payment-method-section" data-method-section="virement">
+                    <div class="payment-field">
+                        <label for="bank_name">Nom de la banque</label>
+                        <input type="text" id="bank_name" name="bank_name" value="{{ payment.bank_name|default('') }}">
+                    </div>
+                    <div class="payment-field">
+                        <label for="iban_or_rib">IBAN / RIB</label>
+                        <input type="text" id="iban_or_rib" name="iban_or_rib" value="{{ payment.iban_or_rib|default('') }}">
+                    </div>
+                    <div class="payment-field">
+                        <label for="account_holder_name">Nom du titulaire du compte</label>
+                        <input type="text" id="account_holder_name" name="account_holder_name" value="{{ payment.account_holder_name|default('') }}">
+                    </div>
+                </div>
+
+                <div class="payment-method-section" data-method-section="especes">
+                    <p class="payment-note">Paiement en espèces à l'agence. Votre réservation sera confirmée après règlement sur place.</p>
+                </div>
+            </div>
+
+            <div class="payment-actions">
+                <button type="submit" class="payment-btn">Payer maintenant</button>
+                <a href="{{ path('app_flights_search', { reservation_id: payment.reservation_id }) }}" class="payment-link">Retour aux vols</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const paymentMethodSelect = document.getElementById('payment_method');
+        const sections = document.querySelectorAll('[data-method-section]');
+
+        function updatePaymentMethodFields() {
+            const method = paymentMethodSelect.value || 'carte';
+
+            sections.forEach((section) => {
+                const isActive = section.getAttribute('data-method-section') === method;
+                section.classList.toggle('is-active', isActive);
+            });
+        }
+
+        if (paymentMethodSelect) {
+            paymentMethodSelect.addEventListener('change', updatePaymentMethodFields);
+            updatePaymentMethodFields();
+        }
+    })();
+</script>
+{% endblock %}

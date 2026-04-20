@@ -6,9 +6,13 @@ use App\Entity\Billet;
 use App\Form\BilletType;
 use App\Repository\BilletRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Snappy\Pdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/billet')]
@@ -69,6 +73,88 @@ final class BilletController extends AbstractController
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction,
+        ]);
+    }
+
+    #[Route('/export/excel', name: 'app_billet_export_excel', methods: ['GET'])]
+    public function exportExcel(BilletRepository $billetRepository): StreamedResponse
+    {
+        // We build the spreadsheet in memory, then Symfony streams the file
+        // directly to the browser for download in the admin area.
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Billets');
+
+        $headers = [
+            'Type transport',
+            'Numéro billet',
+            'Date départ',
+            'Date arrivée',
+            'Prix',
+            'Statut',
+            'Réservation liée',
+        ];
+
+        foreach ($headers as $index => $header) {
+            $column = chr(ord('A') + $index);
+            $sheet->setCellValue($column . '1', $header);
+        }
+
+        $row = 2;
+        foreach ($billetRepository->findBy([], ['id' => 'DESC']) as $billet) {
+            $sheet->setCellValue("A{$row}", $billet->getTypeTransport() ?? '');
+            $sheet->setCellValue("B{$row}", $billet->getNumeroBillet() ?? '');
+            $sheet->setCellValue("C{$row}", $billet->getDateDepart()?->format('Y-m-d H:i') ?? '');
+            $sheet->setCellValue("D{$row}", $billet->getDateArrivee()?->format('Y-m-d H:i') ?? '');
+            $sheet->setCellValue("E{$row}", $billet->getPrix() ?? '');
+            $sheet->setCellValue("F{$row}", $billet->getStatut() ?? '');
+            $sheet->setCellValue("G{$row}", $billet->getReservation()?->getId() ?? '');
+            ++$row;
+        }
+
+        foreach (range('A', 'G') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $response = new StreamedResponse(function () use ($spreadsheet): void {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        });
+
+        $filename = 'billets-' . (new \DateTime())->format('Y-m-d-His') . '.xlsx';
+
+        $response->headers->set(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
+    }
+
+    #[Route('/export/pdf', name: 'app_billet_export_pdf', methods: ['GET'])]
+    public function exportPdf(BilletRepository $billetRepository, Pdf $pdf): Response
+    {
+        // We export the same business data as the Excel file to keep the admin
+        // reports consistent across formats.
+        $billets = $billetRepository->findBy([], ['id' => 'DESC']);
+
+        // Twig generates a clean printable HTML view first.
+        $html = $this->renderView('billet/pdf.html.twig', [
+            'billets' => $billets,
+            'generatedAt' => new \DateTime(),
+        ]);
+
+        // Snappy delegates the HTML-to-PDF conversion to wkhtmltopdf.
+        $output = $pdf->getOutputFromHtml($html);
+
+        $filename = 'billets-' . (new \DateTime())->format('Y-m-d-His') . '.pdf';
+
+        // Symfony returns the binary PDF response so the browser downloads it.
+        return new Response($output, Response::HTTP_OK, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
 

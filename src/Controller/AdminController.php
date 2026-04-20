@@ -20,11 +20,7 @@ final class AdminController extends AbstractController
         $reservations = $reservationRepository->findAll();
         $billets = $billetRepository->findAll();
 
-        /*
-         * =========================
-         * STATISTIQUES GLOBALES
-         * =========================
-         */
+       
 
         $totalRevenue = 0.0;
         foreach ($billets as $billet) {
@@ -72,11 +68,7 @@ final class AdminController extends AbstractController
             ? round(($confirmedBillets / $totalBillets) * 100, 1)
             : 0;
 
-        /*
-         * =========================
-         * GRAPHE PAR MOIS
-         * =========================
-         */
+        
 
         $labels = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUI', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
         $chartData = array_fill(0, 12, 0);
@@ -90,12 +82,7 @@ final class AdminController extends AbstractController
             }
         }
 
-        /*
-         * =========================
-         * RECHERCHE + TRI RÉSERVATIONS
-         * =========================
-         */
-
+        
         $reservationSearch = trim((string) $request->query->get('reservation_search', ''));
         $reservationSort = (string) $request->query->get('reservation_sort', 'date');
         $reservationDirection = strtoupper((string) $request->query->get('reservation_direction', 'DESC'));
@@ -160,12 +147,7 @@ final class AdminController extends AbstractController
 
         $recentReservations = array_slice($filteredReservations, 0, 10);
 
-        /*
-         * =========================
-         * RECHERCHE + TRI BILLETS
-         * =========================
-         */
-
+       
         $billetSearch = trim((string) $request->query->get('billet_search', ''));
         $billetSort = (string) $request->query->get('billet_sort', 'depart');
         $billetDirection = strtoupper((string) $request->query->get('billet_direction', 'DESC'));

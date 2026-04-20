@@ -6,11 +6,10 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
     <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 
     <style>
-        /* =========================
-           FORM MODAL (NEW + EDIT)
-        ========================= */
         .form-modal-overlay {
             position: fixed;
             inset: 0;
@@ -76,6 +75,10 @@
             transform: scale(1.04);
         }
 
+        .js-open-new-modal {
+            display: none !important;
+        }
+
         .form-modal-body {
             width: 100%;
         }
@@ -134,9 +137,153 @@
             min-width: 180px;
         }
 
-        /* =========================
-           DELETE MODAL
-        ========================= */
+        .flatpickr-calendar {
+            background: rgba(17, 25, 40, 0.82) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+            border-radius: 22px !important;
+            overflow: hidden !important;
+            color: #fff !important;
+            padding: 10px !important;
+        }
+
+        .flatpickr-months,
+        .flatpickr-weekdays,
+        .flatpickr-days,
+        .dayContainer,
+        .flatpickr-rContainer,
+        .flatpickr-month {
+            background: transparent !important;
+        }
+
+        .flatpickr-current-month,
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: #fff !important;
+            background: transparent !important;
+            font-weight: 700;
+        }
+
+        span.flatpickr-weekday {
+            background: transparent !important;
+            color: rgba(255,255,255,0.60) !important;
+            font-weight: 600;
+        }
+
+        .flatpickr-day {
+            color: #fff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            background: transparent !important;
+        }
+
+        .flatpickr-day:hover {
+            background: rgba(255,255,255,0.08) !important;
+        }
+
+        .flatpickr-day.today {
+            border: 1px solid rgba(215, 184, 90, 0.55) !important;
+            color: #f2d47a !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: linear-gradient(135deg, #d7b85a, #e7c86e) !important;
+            color: #111 !important;
+            box-shadow: 0 6px 18px rgba(201, 168, 76, 0.25);
+        }
+
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            color: rgba(255,255,255,0.24) !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            fill: rgba(255,255,255,0.85) !important;
+            color: rgba(255,255,255,0.85) !important;
+        }
+
+        .flatpickr-prev-month:hover svg,
+        .flatpickr-next-month:hover svg {
+            fill: #f2d47a !important;
+        }
+
+        .choices {
+            margin-bottom: 0 !important;
+        }
+
+        .choices__inner {
+            min-height: 56px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            background: rgba(255,255,255,0.08) !important;
+            color: #fff !important;
+            padding: 13px 48px 13px 18px !important;
+            font-size: 1rem !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03) !important;
+        }
+
+        .is-focused .choices__inner,
+        .is-open .choices__inner {
+            border-color: rgba(201, 168, 76, 0.45) !important;
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08) !important;
+        }
+
+        .choices[data-type*="select-one"]::after {
+            border-color: rgba(255,255,255,0.85) transparent transparent !important;
+            right: 18px !important;
+            margin-top: -2px !important;
+        }
+
+        .choices[data-type*="select-one"].is-open::after {
+            border-color: transparent transparent rgba(255,255,255,0.85) !important;
+            margin-top: -7px !important;
+        }
+
+        .choices__list--single {
+            padding: 0 !important;
+            color: #fff !important;
+        }
+
+        .choices__placeholder {
+            color: rgba(255,255,255,0.45) !important;
+            opacity: 1 !important;
+        }
+
+        .choices__list--dropdown,
+        .choices__list[aria-expanded] {
+            margin-top: 8px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            background: rgba(17, 25, 40, 0.92) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35) !important;
+            overflow: hidden !important;
+        }
+
+        .choices__list--dropdown .choices__item,
+        .choices__list[aria-expanded] .choices__item {
+            color: #fff !important;
+            padding: 12px 16px !important;
+            font-size: 0.98rem !important;
+            background: transparent !important;
+        }
+
+        .choices__list--dropdown .choices__item--selectable.is-highlighted,
+        .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+            background: rgba(215, 184, 90, 0.18) !important;
+            color: #f5d77c !important;
+        }
+
+        .choices__item--disabled {
+            color: rgba(255,255,255,0.35) !important;
+        }
+
         .delete-modal-overlay {
             position: fixed;
             inset: 0;
@@ -357,8 +504,8 @@
                         <div class="reservation-center">
                             {% if reservation.billets is not empty %}
                                 {% for billet in reservation.billets %}
-                                    {% set departCode = billet.villeDepart ?? billet.depart ?? 'TUN' %}
-                                    {% set arriveeCode = billet.villeArrivee ?? billet.arrivee ?? 'PAR' %}
+                                    {% set departCode = 'TUN' %}
+                                    {% set arriveeCode = reservation.paysDestination ?? reservation.pays ?? 'Destination' %}
                                     {% set transportType = billet.typeTransport ?? 'avion' %}
 
                                     <div class="reservation-route-block">
@@ -423,29 +570,11 @@
                             </div>
 
                             <div style="margin-top: 16px; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-                                {% if reservationDestination %}
-                                    <a href="{{ path('app_flights_results', {
-                                        reservation_id: reservation.id,
-                                        destination: reservationDestination,
-                                        date_depart: reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '',
-                                        date_arrivee: '',
-                                        type_transport: '',
-                                        passagers: 1
-                                    }) }}" class="premium-flight-book-btn">
-                                        Choisir billet
-                                    </a>
-                                {% else %}
-                                    <a href="{{ path('app_flights_search') }}" class="premium-flight-book-btn">
-                                        Choisir billet
-                                    </a>
-                                {% endif %}
-
-                                <button
-                                    type="button"
-                                    class="premium-flight-book-btn js-open-edit-modal"
-                                    data-id="{{ reservation.id }}">
+                                <a
+                                    href="{{ path('app_user_reservation_edit', {'id': reservation.id}) }}"
+                                    class="premium-flight-book-btn">
                                     Modifier
-                                </button>
+                                </a>
 
                                 <form id="delete-form-{{ reservation.id }}"
                                       method="post"
@@ -526,6 +655,8 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <script>
         (function () {
@@ -535,7 +666,6 @@
             const closeFormModal = document.getElementById('closeFormModal');
 
             const newButton = document.querySelector('.js-open-new-modal');
-            const editButtons = document.querySelectorAll('.js-open-edit-modal');
 
             const deleteModal = document.getElementById('deleteModalOverlay');
             const deleteCancelBtn = document.getElementById('deleteModalCancel');
@@ -543,6 +673,69 @@
             const deleteButtons = document.querySelectorAll('.js-open-delete-modal');
 
             let activeDeleteFormId = null;
+
+            function initTraveliaDatepickers(scope = document) {
+                const inputs = scope.querySelectorAll('.js-travelia-datepicker');
+
+                inputs.forEach((input) => {
+                    if (input.dataset.flatpickrInit === '1') {
+                        return;
+                    }
+
+                    input.dataset.flatpickrInit = '1';
+
+                    if (typeof flatpickr === 'undefined') {
+                        console.error('Flatpickr non chargé');
+                        return;
+                    }
+
+                    flatpickr(input, {
+                        dateFormat: 'Y-m-d',
+                        altInput: true,
+                        altFormat: 'd/m/Y',
+                        allowInput: false,
+                        clickOpens: true,
+                        disableMobile: true,
+                        minDate: 'today',
+                        monthSelectorType: 'static',
+                        onReady: function(selectedDates, dateStr, instance) {
+                            instance.input.setAttribute('readonly', 'readonly');
+
+                            if (instance.altInput) {
+                                instance.altInput.setAttribute('readonly', 'readonly');
+                                instance.altInput.setAttribute('placeholder', 'Choisir une date');
+                                instance.altInput.classList.add('form-control');
+                            }
+                        }
+                    });
+                });
+            }
+
+            function initTraveliaStatusSelect(scope = document) {
+                const selects = scope.querySelectorAll('.js-travelia-status');
+
+                selects.forEach((select) => {
+                    if (select.dataset.choicesInit === '1') {
+                        return;
+                    }
+
+                    select.dataset.choicesInit = '1';
+
+                    if (typeof Choices === 'undefined') {
+                        console.error('Choices non chargé');
+                        return;
+                    }
+
+                    new Choices(select, {
+                        searchEnabled: false,
+                        itemSelectText: '',
+                        shouldSort: false,
+                        allowHTML: false,
+                        placeholder: true,
+                        removeItemButton: false
+                    });
+                });
+            }
 
             function openFormModal(title, url, formId) {
                 formModalTitle.textContent = title;
@@ -553,6 +746,9 @@
                         formModalContent.innerHTML = html;
                         formModal.classList.add('active');
                         document.body.style.overflow = 'hidden';
+
+                        initTraveliaDatepickers(formModalContent);
+                        initTraveliaStatusSelect(formModalContent);
 
                         const form = document.getElementById(formId);
 
@@ -570,6 +766,8 @@
                                         window.location.reload();
                                     } else {
                                         formModalContent.innerHTML = result;
+                                        initTraveliaDatepickers(formModalContent);
+                                        initTraveliaStatusSelect(formModalContent);
                                     }
                                 });
                             });
@@ -592,16 +790,6 @@
                     );
                 });
             }
-
-            editButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    openFormModal(
-                        'Modifier réservation',
-                        '/mes-reservations/' + this.dataset.id + '/edit',
-                        'editReservationForm'
-                    );
-                });
-            });
 
             closeFormModal.addEventListener('click', closeForm);
 

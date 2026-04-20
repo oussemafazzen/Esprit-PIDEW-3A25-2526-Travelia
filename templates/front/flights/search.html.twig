@@ -6,6 +6,226 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
     <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        .flights-search-shell {
+            width: 100%;
+            max-width: 1180px;
+        }
+
+        .flight-errors-top {
+            margin-bottom: 14px;
+            color: #ffbcbc;
+            font-size: 13px;
+        }
+
+        .flight-errors-top ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .flights-search-bar {
+            display: grid !important;
+            grid-template-columns: 1.6fr 1fr 0.6fr auto !important;
+            align-items: center !important;
+            width: 100%;
+            min-height: 118px;
+            border-radius: 28px;
+            overflow: hidden;
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+        }
+
+        .flight-search-field {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            text-align: left !important;
+            gap: 6px;
+            min-width: 0;
+            min-height: 118px;
+            padding: 18px 24px !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .flight-search-field--small {
+            border-right: none;
+            min-width: 110px;
+        }
+
+        .flight-search-field > div {
+            width: 100%;
+        }
+
+        .flight-search-field label {
+            margin: 0;
+            text-align: left !important;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.46);
+            font-weight: 700;
+        }
+
+        .flight-search-input {
+            width: 100%;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: #ffffff !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            font-family: inherit;
+            text-align: left !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .flight-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.30);
+        }
+
+        .flatpickr-calendar {
+            background: rgba(17, 25, 40, 0.82) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+            border-radius: 22px !important;
+            overflow: hidden !important;
+            color: #fff !important;
+            padding: 10px !important;
+        }
+
+        .flatpickr-months,
+        .flatpickr-weekdays,
+        .flatpickr-days,
+        .dayContainer,
+        .flatpickr-rContainer,
+        .flatpickr-month {
+            background: transparent !important;
+        }
+
+        .flatpickr-current-month,
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: #fff !important;
+            background: transparent !important;
+            font-weight: 700;
+        }
+
+        span.flatpickr-weekday {
+            background: transparent !important;
+            color: rgba(255,255,255,0.60) !important;
+            font-weight: 600;
+        }
+
+        .flatpickr-day {
+            color: #fff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            background: transparent !important;
+        }
+
+        .flatpickr-day:hover {
+            background: rgba(255,255,255,0.08) !important;
+        }
+
+        .flatpickr-day.today {
+            border: 1px solid rgba(215, 184, 90, 0.55) !important;
+            color: #f2d47a !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: linear-gradient(135deg, #d7b85a, #e7c86e) !important;
+            color: #111 !important;
+            box-shadow: 0 6px 18px rgba(201, 168, 76, 0.25);
+        }
+
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            color: rgba(255,255,255,0.24) !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            fill: rgba(255,255,255,0.85) !important;
+            color: rgba(255,255,255,0.85) !important;
+        }
+
+        .flatpickr-prev-month:hover svg,
+        .flatpickr-next-month:hover svg {
+            fill: #f2d47a !important;
+        }
+
+        .flight-search-field ul {
+            margin: 3px 0 0 0;
+            padding: 0;
+            list-style: none;
+            color: #ffbcbc;
+            font-size: 12px;
+            line-height: 1.35;
+            text-align: left !important;
+        }
+
+        .flights-search-btn {
+            align-self: center;
+            justify-self: center;
+            width: 120px !important;
+            min-width: 120px;
+            height: 60px !important;
+            margin: 0 14px !important;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #c9a84c, #e8c97a);
+            color: #0a0d1a;
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(201, 168, 76, 0.34);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .flights-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(201, 168, 76, 0.42);
+        }
+
+        @media (max-width: 980px) {
+            .flights-search-bar {
+                grid-template-columns: 1fr;
+                min-height: auto;
+                border-radius: 22px;
+            }
+
+            .flight-search-field {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                min-height: auto;
+                padding: 18px 20px !important;
+            }
+
+            .flight-search-field--small {
+                border-bottom: none;
+            }
+
+            .flights-search-btn {
+                width: calc(100% - 20px) !important;
+                margin: 10px !important;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -48,19 +268,37 @@
         </p>
 
         <div class="flights-search-shell">
-            <form method="get" action="{{ path('app_flights_results') }}" class="flights-search-bar">
+            {% if not form.vars.valid %}
+                <div class="flight-errors-top">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {
+                action: path('app_flights_search'),
+                method: 'GET',
+                attr: {
+                    class: 'flights-search-bar',
+                    novalidate: 'novalidate'
+                }
+            }) }}
+
+                {% if reservation_id is defined and reservation_id %}
+                    <input type="hidden" name="reservation_id" value="{{ reservation_id }}">
+                {% endif %}
 
                 <div class="flight-search-field flight-search-field--destination">
-                    <label>Where</label>
-                    <input
-                        type="text"
-                        name="destination"
-                        id="destination-input"
-                        placeholder="Choisissez ou tapez un pays"
-                        list="countries-list"
-                        autocomplete="off"
-                        required
-                    >
+                    <label for="{{ form.destination.vars.id }}">Where</label>
+                    {{ form_widget(form.destination, {
+                        attr: {
+                            id: 'destination-input',
+                            class: 'flight-search-input',
+                            placeholder: 'Choisissez ou tapez un pays',
+                            list: 'countries-list',
+                            autocomplete: 'off'
+                        }
+                    }) }}
+                    {{ form_errors(form.destination) }}
 
                     <datalist id="countries-list">
                         <option value="Afghanistan">
@@ -218,45 +456,75 @@
                     </datalist>
                 </div>
 
-                <div class="flight-search-divider"></div>
-
                 <div class="flight-search-field">
-                    <label>Date départ</label>
-                    <input type="date" name="date_depart" required>
+                    <label for="{{ form.dateDepart.vars.id }}">Date départ</label>
+                    {{ form_widget(form.dateDepart, {
+                        attr: {
+                            class: 'flight-search-input js-travelia-datepicker',
+                            autocomplete: 'off'
+                        }
+                    }) }}
+                    {{ form_errors(form.dateDepart) }}
                 </div>
-
-                <div class="flight-search-divider"></div>
-
-                <div class="flight-search-field">
-                    <label>Date arrivée</label>
-                    <input type="date" name="date_arrivee">
-                </div>
-
-                <div class="flight-search-divider"></div>
-
-                <div class="flight-search-field">
-                    <label>Transport</label>
-                    <select name="type_transport" class="flight-search-select">
-                        <option value="">Tous</option>
-                        <option value="avion">Avion</option>
-                        <option value="train">Train</option>
-                        <option value="bus">Bus</option>
-                        <option value="bateau">Bateau</option>
-                    </select>
-                </div>
-
-                <div class="flight-search-divider"></div>
 
                 <div class="flight-search-field flight-search-field--small">
-                    <label>Who</label>
-                    <input type="number" name="passagers" min="1" value="1">
+                    <label for="{{ form.passagers.vars.id }}">Who</label>
+                    {{ form_widget(form.passagers, {
+                        attr: {
+                            class: 'flight-search-input',
+                            placeholder: '1',
+                            min: '1'
+                        }
+                    }) }}
+                    {{ form_errors(form.passagers) }}
                 </div>
 
                 <button type="submit" class="flights-search-btn">
                     Explore
                 </button>
-            </form>
+
+            {{ form_end(form) }}
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof flatpickr === 'undefined') {
+                return;
+            }
+
+            document.querySelectorAll('.js-travelia-datepicker').forEach((input) => {
+                if (input.dataset.flatpickrInit === '1') {
+                    return;
+                }
+
+                input.dataset.flatpickrInit = '1';
+
+                flatpickr(input, {
+                    dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd/m/Y',
+                    allowInput: false,
+                    clickOpens: true,
+                    disableMobile: true,
+                    minDate: 'today',
+                    monthSelectorType: 'static',
+                    onReady: function (selectedDates, dateStr, instance) {
+                        instance.input.setAttribute('readonly', 'readonly');
+
+                        if (instance.altInput) {
+                            instance.altInput.setAttribute('readonly', 'readonly');
+                            instance.altInput.setAttribute('placeholder', 'Choisir une date');
+                            instance.altInput.classList.add('flight-search-input');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

@@ -4,18 +4,16 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Form\ReservationType;
-use App\Repository\ClientRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class UserReservationController extends AbstractController
+final class UserReservationController extends AbstractController
 {
-    #[Route('/mes-reservations', name: 'app_user_reservations')]
+    #[Route('/mes-reservations', name: 'app_user_reservations', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
         $reservations = $reservationRepository->findBy([], ['id' => 'DESC']);
@@ -25,109 +23,105 @@ class UserReservationController extends AbstractController
         ]);
     }
 
-    #[Route('/mes-reservations/new', name: 'app_user_reservation_new')]
-    public function new(
-        Request $request,
-        EntityManagerInterface $em,
-        ClientRepository $clientRepository
-    ): Response {
+    #[Route('/mes-reservations/new', name: 'app_user_reservation_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
         $reservation = new Reservation();
 
-        $form = $this->createForm(ReservationType::class, $reservation);
+        $form = $this->createForm(ReservationType::class, $reservation, [
+            'action' => $this->generateUrl('app_user_reservation_new'),
+            'method' => 'POST',
+            'attr' => [
+                'id' => 'newReservationForm'
+            ]
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $client = null;
-
-            /*
-             * 1) Si l’utilisateur connecté possède déjà un client lié, on l’utilise
-             */
-            $user = $this->getUser();
-            if ($user && method_exists($user, 'getClient')) {
-                $linkedClient = $user->getClient();
-                if ($linkedClient) {
-                    $client = $linkedClient;
-                }
+            if (!$reservation->getStatut()) {
+                $reservation->setStatut('en_attente');
             }
 
-            /*
-             * 2) Sinon on essaie de récupérer le client envoyé par le formulaire
-             *    (client ou clientId selon la structure de ton form)
-             */
-            if (!$client) {
-                $postedData = $request->request->all('reservation');
-
-                $postedClientId = $postedData['client'] ?? $postedData['clientId'] ?? null;
-
-                if (is_numeric($postedClientId)) {
-                    $client = $clientRepository->find((int) $postedClientId);
-                }
+            if (!$reservation->getModalitesPaiement()) {
+                $reservation->setModalitesPaiement('carte');
             }
 
-            /*
-             * 3) Si toujours rien, on prend le premier client existant
-             *    pour éviter l’erreur FK pendant le test
-             */
-            if (!$client) {
-                $client = $clientRepository->findOneBy([]);
+            if (!$reservation->getClientId()) {
+                $reservation->setClientId(51);
             }
 
-            /*
-             * 4) Si aucun client n’existe dans la table client, on bloque proprement
-             */
-            if (!$client) {
-                $form->addError(new FormError('Aucun client valide trouvé dans la base de données.'));
-            } else {
-                if (method_exists($reservation, 'setClient')) {
-                    $reservation->setClient($client);
-                } elseif (method_exists($reservation, 'setClientId') && method_exists($client, 'getId')) {
-                    $reservation->setClientId($client->getId());
-                }
+            if (!$reservation->getPaysDestination()) {
+                $reservation->setPaysDestination('Non défini');
             }
 
             if ($form->isValid()) {
-                if (method_exists($reservation, 'setDateReservation') && !$reservation->getDateReservation()) {
-                    $reservation->setDateReservation(new \DateTime());
-                }
-
-                if (method_exists($reservation, 'setStatut') && !$reservation->getStatut()) {
-                    $reservation->setStatut('confirmé');
-                }
-
                 $em->persist($reservation);
                 $em->flush();
 
-                return new Response('success');
+                return $this->redirectToRoute('app_flights_search');
             }
         }
 
-        return $this->render('front/user/_new_form.html.twig', [
+        return $this->render('reservation/_form.html.twig', [
             'form' => $form->createView(),
+            'button_label' => 'Créer',
         ]);
     }
 
-    #[Route('/mes-reservations/{id}/edit', name: 'app_user_reservation_edit')]
-    public function edit(Reservation $reservation, Request $request, EntityManagerInterface $em): Response
+    #[Route('/mes-reservations/{id}/edit', name: 'app_user_reservation_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(ReservationType::class, $reservation);
+        $form = $this->createForm(ReservationType::class, $reservation, [
+            'action' => $this->generateUrl('app_user_reservation_edit', [
+                'id' => $reservation->getId()
+            ]),
+            'method' => 'POST',
+            'attr' => [
+                'id' => 'editReservationForm'
+            ]
+        ]);
+
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
+        if ($form->isSubmitted()) {
+            if (!$reservation->getStatut()) {
+                $reservation->setStatut('en_attente');
+            }
 
-            return new Response('success');
+            if (!$reservation->getModalitesPaiement()) {
+                $reservation->setModalitesPaiement('carte');
+            }
+
+            if (!$reservation->getClientId()) {
+                $reservation->setClientId(51);
+            }
+
+            if (!$reservation->getPaysDestination()) {
+                $reservation->setPaysDestination('Non défini');
+            }
+
+            if ($form->isValid()) {
+                return $this->redirectToRoute('app_flights_search', [
+                    'reservation_id' => $reservation->getId(),
+                    'destination' => $reservation->getPaysDestination() ?? '',
+                    'date_depart' => $reservation->getDateReservation()?->format('Y-m-d'),
+                    'passagers' => 1,
+                ]);
+            }
         }
 
-        return $this->render('front/user/_edit_form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('front/user/edit.html.twig', [
             'reservation' => $reservation,
+            'form' => $form->createView(),
+            'button_label' => 'Voir les vols disponibles',
         ]);
     }
 
-    #[Route('/mes-reservations/{id}/delete', name: 'app_user_reservation_delete', methods: ['POST'])]
-    public function delete(Reservation $reservation, Request $request, EntityManagerInterface $em): Response
+    #[Route('/mes-reservations/{id}', name: 'app_user_reservation_delete', methods: ['POST'])]
+    public function delete(Request $request, Reservation $reservation, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete_reservation_' . $reservation->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete_reservation_' . $reservation->getId(), (string) $request->request->get('_token'))) {
             $em->remove($reservation);
             $em->flush();
         }
