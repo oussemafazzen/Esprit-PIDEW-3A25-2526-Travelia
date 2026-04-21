@@ -6,6 +6,7 @@ use App\Entity\Reservation;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Knp\Snappy\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ReservationController extends AbstractController
 {
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
-    public function index(Request $request, ReservationRepository $reservationRepository): Response
+    public function index(Request $request, ReservationRepository $reservationRepository, PaginatorInterface $paginator): Response
     {
         $search = trim((string) $request->query->get('search', ''));
         $sort = (string) $request->query->get('sort', 'id');
@@ -65,8 +66,17 @@ final class ReservationController extends AbstractController
 
         $qb->orderBy($allowedSorts[$sort], $direction);
 
+        $calendarReservations = $reservationRepository->findBy([], ['dateReservation' => 'ASC', 'id' => 'DESC']);
+
+        $reservations = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            5
+        );
+
         return $this->render('reservation/index.html.twig', [
-            'reservations' => $qb->getQuery()->getResult(),
+            'reservations' => $reservations,
+            'calendarReservations' => $calendarReservations,
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction,

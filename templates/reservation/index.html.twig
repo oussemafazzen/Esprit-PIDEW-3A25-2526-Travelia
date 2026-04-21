@@ -91,6 +91,37 @@
             justify-content: flex-end;
         }
 
+        .view-toggle {
+            display: inline-flex;
+            gap: 0.5rem;
+            padding: 0.35rem;
+            border: 1px solid rgba(201, 168, 76, 0.22);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .view-toggle-btn {
+            min-height: 42px;
+            padding: 0 1rem;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: rgba(255,255,255,0.62);
+            cursor: pointer;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .view-toggle-btn.active,
+        .view-toggle-btn:hover {
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.18);
+        }
+
         .export-btn {
             display: inline-flex;
             align-items: center;
@@ -208,6 +239,28 @@
             color: #f59e0b;
         }
 
+        .status-pill.retarde {
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
+        }
+
+        .status-pill.annule {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+        }
+
+        .billet-status-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+
+        .billet-status-summary .status-pill {
+            padding: 0.32rem 0.62rem;
+            font-size: 0.62rem;
+        }
+
         .action-group {
             display: flex;
             gap: 0.6rem;
@@ -261,6 +314,262 @@
             color: rgba(255,255,255,0.5);
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .pagination span,
+        .pagination a {
+            min-width: 42px;
+            height: 42px;
+            padding: 0 0.85rem;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.72);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .pagination .current {
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            border-color: rgba(201, 168, 76, 0.6);
+            color: #111;
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.18);
+        }
+
+        .pagination a:hover {
+            border-color: rgba(201, 168, 76, 0.45);
+            color: var(--gold2);
+        }
+
+        .admin-calendar-panel[hidden],
+        .admin-table-panel[hidden] {
+            display: none;
+        }
+
+        .admin-calendar-panel {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+            gap: 1.4rem;
+        }
+
+        .admin-calendar-card,
+        .admin-calendar-details {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            background: rgba(255,255,255,0.03);
+            padding: 1.4rem;
+        }
+
+        .admin-calendar-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .admin-calendar-kicker {
+            margin: 0 0 0.45rem;
+            color: var(--gold2);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .admin-calendar-title {
+            margin: 0;
+            font-family: var(--serif);
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .admin-calendar-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .admin-calendar-nav {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.15rem;
+            transition: all 0.2s ease;
+        }
+
+        .admin-calendar-nav:hover {
+            background: rgba(201, 168, 76, 0.18);
+            color: var(--gold2);
+        }
+
+        .admin-calendar-month {
+            min-width: 145px;
+            text-align: center;
+            color: rgba(255,255,255,0.82);
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+
+        .admin-calendar-weekdays,
+        .admin-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.45rem;
+        }
+
+        .admin-calendar-weekdays {
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-calendar-weekdays span {
+            color: rgba(255,255,255,0.42);
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .admin-calendar-day {
+            position: relative;
+            min-height: 72px;
+            padding: 0.65rem;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.025);
+            color: rgba(255,255,255,0.76);
+            cursor: default;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .admin-calendar-day.is-muted {
+            opacity: 0.34;
+        }
+
+        .admin-calendar-day.is-today {
+            border-color: rgba(232, 201, 122, 0.42);
+        }
+
+        .admin-calendar-day.has-reservation {
+            cursor: pointer;
+            border-color: rgba(201, 168, 76, 0.44);
+            background: linear-gradient(145deg, rgba(201, 168, 76, 0.20), rgba(255,255,255,0.04));
+        }
+
+        .admin-calendar-day.has-reservation:hover,
+        .admin-calendar-day.is-selected {
+            transform: translateY(-2px);
+            border-color: rgba(232, 201, 122, 0.72);
+            background: linear-gradient(145deg, rgba(201, 168, 76, 0.32), rgba(255,255,255,0.06));
+        }
+
+        .admin-calendar-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 0.84rem;
+        }
+
+        .admin-calendar-day.is-today .admin-calendar-number {
+            background: rgba(232, 201, 122, 0.16);
+            color: var(--gold2);
+        }
+
+        .admin-calendar-count {
+            position: absolute;
+            right: 0.5rem;
+            bottom: 0.5rem;
+            min-width: 28px;
+            height: 28px;
+            padding: 0 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .admin-calendar-details-title {
+            margin: 0 0 1rem;
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .admin-calendar-empty {
+            color: rgba(255,255,255,0.52);
+            line-height: 1.6;
+        }
+
+        .admin-calendar-reservation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .admin-calendar-reservation {
+            padding: 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.035);
+        }
+
+        .admin-calendar-reservation-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .admin-calendar-reservation-head strong {
+            color: var(--gold2);
+        }
+
+        .admin-calendar-reservation-meta {
+            display: grid;
+            gap: 0.45rem;
+            color: rgba(255,255,255,0.74);
+            font-size: 0.86rem;
+        }
+
+        .admin-calendar-reservation-meta span {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        .admin-calendar-reservation-meta b {
+            color: rgba(255,255,255,0.44);
+            font-weight: 700;
+        }
+
         @media (max-width: 1200px) {
             .data-table-wrap {
                 overflow-x: auto;
@@ -273,10 +582,38 @@
             .table-tools {
                 grid-template-columns: 1fr;
             }
+
+            .admin-calendar-panel {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    {% set billetStatusLabels = {
+        'confirme': 'Confirmé',
+        'confirmed': 'Confirmé',
+        'retarde': 'Retardé',
+        'annule': 'Annulé',
+        'en_attente': 'En attente'
+    } %}
+    {% set adminCalendarItems = [] %}
+    {% for reservation in calendarReservations|default([]) %}
+        {% if reservation.dateReservation %}
+            {% set adminCalendarItems = adminCalendarItems|merge([{
+                id: reservation.id,
+                date: reservation.dateReservation|date('Y-m-d'),
+                displayDate: reservation.dateReservation|date('Y-m-d'),
+                client: reservation.clientId ?? '',
+                destination: reservation.paysDestination ?? 'Non défini',
+                status: reservation.statut ?? '',
+                payment: reservation.modalitesPaiement ?? '',
+                billets: reservation.billets|length,
+                billetStatuses: reservation.billets|map(billet => billet.statut)|join(', '),
+                showUrl: path('app_reservation_show', {'id': reservation.id})
+            }]) %}
+        {% endif %}
+    {% endfor %}
 
     <aside class="app-sidebar">
         <div class="logo-area">
@@ -348,12 +685,17 @@
             <div class="section-header">
                 <h2>Liste des réservations</h2>
                 <div class="header-actions">
+                    <div class="view-toggle" aria-label="Changer de vue">
+                        <button type="button" class="view-toggle-btn active" data-admin-view="table">Table</button>
+                        <button type="button" class="view-toggle-btn" data-admin-view="calendar">Calendrier</button>
+                    </div>
                     <a href="{{ path('app_reservation_export_pdf') }}" class="export-btn">Exporter PDF</a>
                     <a href="{{ path('app_reservation_export_excel') }}" class="export-btn">Exporter Excel</a>
                     <a href="{{ path('app_reservation_new') }}" class="create-btn">+ Créer nouveau</a>
                 </div>
             </div>
 
+            <div class="admin-table-panel" id="adminReservationTablePanel">
             <form method="get" action="{{ path('app_reservation_index') }}" class="table-tools">
                 <input
                     type="text"
@@ -404,7 +746,22 @@
                             </td>
                             <td>{{ reservation.modalitesPaiement }}</td>
                             <td>{{ reservation.clientId }}</td>
-                            <td>{{ reservation.paysDestination }}</td>
+                            <td>
+                                {{ reservation.paysDestination }}
+
+                                {% if reservation.billets is not empty %}
+                                    <div class="billet-status-summary" aria-label="Statuts des billets">
+                                        {% for billet in reservation.billets %}
+                                            {% if billet.statut %}
+                                                {% set billetStatusKey = billet.statut|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e', 'Ã©':'e', 'Ã¨':'e', 'Ãª':'e'}) %}
+                                                <span class="status-pill {{ billetStatusKey }}">
+                                                    {{ billetStatusLabels[billetStatusKey]|default(billet.statut) }}
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </td>
                             <td>
                                 <div class="action-group">
                                     <a class="action-btn" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
@@ -427,10 +784,297 @@
                     </tbody>
                 </table>
             </div>
+
+            {{ knp_pagination_render(reservations) }}
+            </div>
+
+            <div class="admin-calendar-panel" id="adminReservationCalendarPanel" hidden>
+                <div class="admin-calendar-card">
+                    <div class="admin-calendar-top">
+                        <div>
+                            <p class="admin-calendar-kicker">Vue calendrier</p>
+                            <h3 class="admin-calendar-title">Réservations par date</h3>
+                        </div>
+
+                        <div class="admin-calendar-actions" aria-label="Navigation du calendrier">
+                            <button type="button" class="admin-calendar-nav" id="adminCalendarPrev" aria-label="Mois précédent">&lsaquo;</button>
+                            <div class="admin-calendar-month" id="adminCalendarMonth"></div>
+                            <button type="button" class="admin-calendar-nav" id="adminCalendarNext" aria-label="Mois suivant">&rsaquo;</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-calendar-weekdays" aria-hidden="true">
+                        <span>Lun</span>
+                        <span>Mar</span>
+                        <span>Mer</span>
+                        <span>Jeu</span>
+                        <span>Ven</span>
+                        <span>Sam</span>
+                        <span>Dim</span>
+                    </div>
+
+                    <div class="admin-calendar-grid" id="adminReservationCalendarGrid"></div>
+                </div>
+
+                <aside class="admin-calendar-details" id="adminReservationCalendarDetails">
+                    <h3 class="admin-calendar-details-title">Détails</h3>
+                    <p class="admin-calendar-empty">Sélectionnez une date dorée pour afficher les réservations de tous les clients.</p>
+                </aside>
+            </div>
+
+            <script type="application/json" id="admin-reservation-calendar-data">{{ adminCalendarItems|json_encode|raw }}</script>
         </section>
     </main>
 
     {{ include('partials/delete_modal.html.twig') }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tablePanel = document.getElementById('adminReservationTablePanel');
+            const calendarPanel = document.getElementById('adminReservationCalendarPanel');
+            const viewButtons = document.querySelectorAll('[data-admin-view]');
+            const dataElement = document.getElementById('admin-reservation-calendar-data');
+            const calendarGrid = document.getElementById('adminReservationCalendarGrid');
+            const calendarMonth = document.getElementById('adminCalendarMonth');
+            const calendarPrev = document.getElementById('adminCalendarPrev');
+            const calendarNext = document.getElementById('adminCalendarNext');
+            const calendarDetails = document.getElementById('adminReservationCalendarDetails');
+            const calendarReservations = dataElement ? JSON.parse(dataElement.textContent || '[]') : [];
+            const reservationsByDate = calendarReservations.reduce((groups, reservation) => {
+                if (!reservation.date) {
+                    return groups;
+                }
+
+                if (!groups[reservation.date]) {
+                    groups[reservation.date] = [];
+                }
+
+                groups[reservation.date].push(reservation);
+                return groups;
+            }, {});
+
+            let currentCalendarDate = new Date();
+            let selectedCalendarDate = null;
+
+            function setAdminView(view) {
+                if (!tablePanel || !calendarPanel) {
+                    return;
+                }
+
+                tablePanel.hidden = view !== 'table';
+                calendarPanel.hidden = view !== 'calendar';
+
+                viewButtons.forEach((button) => {
+                    const isActive = button.dataset.adminView === view;
+                    button.classList.toggle('active', isActive);
+                    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+            }
+
+            viewButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    setAdminView(button.dataset.adminView);
+                });
+            });
+
+            function padDatePart(value) {
+                return String(value).padStart(2, '0');
+            }
+
+            function createDate(year, month, day) {
+                return new Date(year, month, day);
+            }
+
+            function toDateKey(date) {
+                return [
+                    date.getFullYear(),
+                    padDatePart(date.getMonth() + 1),
+                    padDatePart(date.getDate())
+                ].join('-');
+            }
+
+            function formatDate(dateKey) {
+                const parts = dateKey.split('-').map(Number);
+                const date = createDate(parts[0], parts[1] - 1, parts[2]);
+
+                return new Intl.DateTimeFormat('fr-FR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                }).format(date);
+            }
+
+            function renderCalendarDetails(dateKey) {
+                if (!calendarDetails) {
+                    return;
+                }
+
+                const items = reservationsByDate[dateKey] || [];
+                calendarDetails.innerHTML = '';
+
+                const title = document.createElement('h3');
+                title.className = 'admin-calendar-details-title';
+                title.textContent = items.length > 0 ? formatDate(dateKey) : 'Détails';
+                calendarDetails.appendChild(title);
+
+                if (items.length === 0) {
+                    const empty = document.createElement('p');
+                    empty.className = 'admin-calendar-empty';
+                    empty.textContent = calendarReservations.length > 0
+                        ? 'Sélectionnez une date dorée pour afficher les réservations de tous les clients.'
+                        : 'Aucune réservation datée à afficher dans le calendrier.';
+                    calendarDetails.appendChild(empty);
+                    return;
+                }
+
+                const list = document.createElement('div');
+                list.className = 'admin-calendar-reservation-list';
+
+                items.forEach((reservation) => {
+                    const card = document.createElement('article');
+                    card.className = 'admin-calendar-reservation';
+
+                    const head = document.createElement('div');
+                    head.className = 'admin-calendar-reservation-head';
+
+                    const heading = document.createElement('strong');
+                    heading.textContent = 'Réservation #' + reservation.id;
+
+                    const link = document.createElement('a');
+                    link.className = 'action-btn';
+                    link.href = reservation.showUrl;
+                    link.textContent = 'Voir';
+
+                    head.appendChild(heading);
+                    head.appendChild(link);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'admin-calendar-reservation-meta';
+
+                    [
+                        ['Date', reservation.displayDate || reservation.date],
+                        ['Client', reservation.client || '-'],
+                        ['Destination', reservation.destination || 'Non défini'],
+                        ['Statut', reservation.status || '-'],
+                        ['Paiement', reservation.payment || '-'],
+                        ['Billets', reservation.billets || 0],
+                        ['Statuts billets', reservation.billetStatuses || '-']
+                    ].forEach(([label, value]) => {
+                        const row = document.createElement('span');
+                        const labelElement = document.createElement('b');
+                        const valueElement = document.createElement('em');
+
+                        labelElement.textContent = label;
+                        valueElement.textContent = value;
+                        valueElement.style.fontStyle = 'normal';
+
+                        row.appendChild(labelElement);
+                        row.appendChild(valueElement);
+                        meta.appendChild(row);
+                    });
+
+                    card.appendChild(head);
+                    card.appendChild(meta);
+                    list.appendChild(card);
+                });
+
+                calendarDetails.appendChild(list);
+            }
+
+            function renderAdminCalendar() {
+                if (!calendarGrid || !calendarMonth) {
+                    return;
+                }
+
+                const year = currentCalendarDate.getFullYear();
+                const month = currentCalendarDate.getMonth();
+                const firstDay = createDate(year, month, 1);
+                const mondayOffset = (firstDay.getDay() + 6) % 7;
+                const startDate = createDate(year, month, 1 - mondayOffset);
+                const todayKey = toDateKey(new Date());
+
+                calendarMonth.textContent = new Intl.DateTimeFormat('fr-FR', {
+                    month: 'long',
+                    year: 'numeric'
+                }).format(firstDay);
+                calendarGrid.innerHTML = '';
+
+                for (let index = 0; index < 42; index++) {
+                    const dayDate = createDate(
+                        startDate.getFullYear(),
+                        startDate.getMonth(),
+                        startDate.getDate() + index
+                    );
+                    const dateKey = toDateKey(dayDate);
+                    const dayReservations = reservationsByDate[dateKey] || [];
+                    const dayButton = document.createElement('button');
+                    dayButton.type = 'button';
+                    dayButton.className = 'admin-calendar-day';
+                    dayButton.setAttribute('aria-label', dayDate.toLocaleDateString('fr-FR'));
+
+                    if (dayDate.getMonth() !== month) {
+                        dayButton.classList.add('is-muted');
+                    }
+
+                    if (dateKey === todayKey) {
+                        dayButton.classList.add('is-today');
+                    }
+
+                    if (dateKey === selectedCalendarDate) {
+                        dayButton.classList.add('is-selected');
+                    }
+
+                    const number = document.createElement('span');
+                    number.className = 'admin-calendar-number';
+                    number.textContent = dayDate.getDate();
+                    dayButton.appendChild(number);
+
+                    if (dayReservations.length > 0) {
+                        const count = document.createElement('span');
+                        count.className = 'admin-calendar-count';
+                        count.textContent = dayReservations.length;
+                        dayButton.classList.add('has-reservation');
+                        dayButton.appendChild(count);
+
+                        dayButton.addEventListener('click', () => {
+                            selectedCalendarDate = dateKey;
+                            renderAdminCalendar();
+                            renderCalendarDetails(dateKey);
+                        });
+                    }
+
+                    calendarGrid.appendChild(dayButton);
+                }
+            }
+
+            if (calendarPrev && calendarNext) {
+                calendarPrev.addEventListener('click', () => {
+                    currentCalendarDate = createDate(
+                        currentCalendarDate.getFullYear(),
+                        currentCalendarDate.getMonth() - 1,
+                        1
+                    );
+                    selectedCalendarDate = null;
+                    renderAdminCalendar();
+                    renderCalendarDetails('');
+                });
+
+                calendarNext.addEventListener('click', () => {
+                    currentCalendarDate = createDate(
+                        currentCalendarDate.getFullYear(),
+                        currentCalendarDate.getMonth() + 1,
+                        1
+                    );
+                    selectedCalendarDate = null;
+                    renderAdminCalendar();
+                    renderCalendarDetails('');
+                });
+            }
+
+            setAdminView('table');
+            renderAdminCalendar();
+            renderCalendarDetails('');
+        });
+    </script>
     <script src="{{ asset('js/admin.js') }}"></script>
 </body>
 </html>

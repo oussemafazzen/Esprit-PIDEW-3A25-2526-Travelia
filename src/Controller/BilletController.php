@@ -6,6 +6,7 @@ use App\Entity\Billet;
 use App\Form\BilletType;
 use App\Repository\BilletRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Knp\Snappy\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class BilletController extends AbstractController
 {
     #[Route(name: 'app_billet_index', methods: ['GET'])]
-    public function index(Request $request, BilletRepository $billetRepository): Response
+    public function index(Request $request, BilletRepository $billetRepository, PaginatorInterface $paginator): Response
     {
         $search = trim((string) $request->query->get('search', ''));
         $sort = (string) $request->query->get('sort', 'id');
@@ -68,8 +69,14 @@ final class BilletController extends AbstractController
 
         $qb->orderBy($allowedSorts[$sort], $direction);
 
+        $billets = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            5
+        );
+
         return $this->render('billet/index.html.twig', [
-            'billets' => $qb->getQuery()->getResult(),
+            'billets' => $billets,
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction,

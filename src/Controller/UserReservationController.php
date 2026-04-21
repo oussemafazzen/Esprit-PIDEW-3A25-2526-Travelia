@@ -16,7 +16,7 @@ final class UserReservationController extends AbstractController
     #[Route('/mes-reservations', name: 'app_user_reservations', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
-        $reservations = $reservationRepository->findBy([], ['id' => 'DESC']);
+        $reservations = $reservationRepository->findBy(['clientId' => 51], ['id' => 'DESC']);
 
         return $this->render('front/user/reservations.html.twig', [
             'reservations' => $reservations,

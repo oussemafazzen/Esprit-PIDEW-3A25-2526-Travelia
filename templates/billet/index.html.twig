@@ -189,6 +189,16 @@
             color: #f59e0b;
         }
 
+        .status-pill.retarde {
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
+        }
+
+        .status-pill.annule {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+        }
+
         .action-group {
             display: flex;
             gap: 0.6rem;
@@ -216,6 +226,44 @@
             padding: 2rem;
             text-align: center;
             color: rgba(255,255,255,0.5);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .pagination span,
+        .pagination a {
+            min-width: 42px;
+            height: 42px;
+            padding: 0 0.85rem;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.72);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .pagination .current {
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            border-color: rgba(201, 168, 76, 0.6);
+            color: #111;
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.18);
+        }
+
+        .pagination a:hover {
+            border-color: rgba(201, 168, 76, 0.45);
+            color: var(--gold2);
         }
 
         @media (max-width: 1200px) {
@@ -337,7 +385,7 @@
                     </thead>
                     <tbody>
                     {% for billet in billets %}
-                        {% set statutClass = billet.statut|lower starts with 'confirm' ? 'confirme' : 'attente' %}
+                        {% set statutClass = billet.statut|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e', 'Ã©':'e', 'Ã¨':'e', 'Ãª':'e'}) %}
                         <tr>
                             <td>{{ billet.typeTransport }}</td>
                             <td>{{ billet.numeroBillet }}</td>
@@ -361,6 +409,8 @@
                     </tbody>
                 </table>
             </div>
+
+            {{ knp_pagination_render(billets) }}
         </section>
     </main>
 

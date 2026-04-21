@@ -60,6 +60,7 @@ class BilletType extends AbstractType
                 'label' => 'Statut',
                 'choices' => [
                     'Confirmé' => 'confirme',
+                    'Retardé' => 'retarde',
                     'En attente' => 'en_attente',
                     'Annulé' => 'annule',
                 ],
