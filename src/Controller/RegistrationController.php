@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\FaceData;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,6 +41,17 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+
+            // Save face encoding if provided during registration
+            $faceEncoding = $request->request->get('face_encoding');
+            if ($faceEncoding) {
+                $faceData = new FaceData();
+                $faceData->setUser($user);
+                $faceData->setFaceEncoding($faceEncoding);
+                $faceData->setFaceToken(bin2hex(random_bytes(16)));
+                $entityManager->persist($faceData);
+                $entityManager->flush();
+            }
 
             // Redirect to login after successful registration
             return $this->redirectToRoute('app_login');

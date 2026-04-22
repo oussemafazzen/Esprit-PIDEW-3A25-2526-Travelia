@@ -3,79 +3,191 @@
 {% block title %}Hebergement index{% endblock %}
 
 {% block body %}
-    <div class="crud-header-actions" style="margin-bottom: 2rem;">
-        <div style="display: flex; align-items: center; gap: 2rem;">
-            <h2>Hebergement List</h2>
-            <form action="{{ path('app_hebergement_index') }}" method="get" style="display: flex; gap: 0.5rem; align-items: center;">
-                <div style="position: relative;">
-                    <input type="text" name="search" value="{{ currentSearch }}" placeholder="Rechercher par nom..." 
-                        style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.6rem 1rem; border-radius: 8px; color: white; width: 300px; font-family: var(--sans); font-size: 0.9rem;">
-                    {% if currentSearch %}
-                        <a href="{{ path('app_hebergement_index') }}" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.3); text-decoration: none;">✕</a>
-                    {% endif %}
-                </div>
-                <button type="submit" style="background: var(--gold); border: none; padding: 0.6rem 1.2rem; border-radius: 8px; color: var(--ink); font-weight: 700; cursor: pointer; font-size: 0.85rem; text-transform: uppercase;">Rechercher</button>
-            </form>
-        </div>
-        
-        <div class="sort-container">
-            <span class="sort-label">Trier Par:</span>
-            <div class="sort-options">
-                <a href="{{ path('app_hebergement_index', { 'sort_by': 'ville', 'search': currentSearch }) }}" 
-                   class="sort-pill {% if currentSort == 'ville' %}active{% endif %}">
-                    Ville
-                </a>
-                <a href="{{ path('app_hebergement_index', { 'sort_by': 'pays', 'search': currentSearch }) }}" 
-                   class="sort-pill {% if currentSort == 'pays' %}active{% endif %}">
-                    Pays
-                </a>
-                {% if currentSort %}
-                    <a href="{{ path('app_hebergement_index', { 'search': currentSearch }) }}" class="sort-reset" title="Réinitialiser">↺</a>
+
+{# ── Global holiday banner: shown only when today IS a holiday in at least one listed country ── #}
+{% set anyHoliday = false %}
+{% for msg in holidayMessages %}
+    {% if msg %}{% set anyHoliday = true %}{% endif %}
+{% endfor %}
+
+{% if anyHoliday %}
+<div class="holiday-global-banner" role="alert">
+    <span class="holiday-confetti">🎊</span>
+    <span class="holiday-global-text">Aujourd'hui est un jour férié dans certains pays où vous proposez des hébergements !</span>
+    <span class="holiday-confetti">🎊</span>
+</div>
+{% endif %}
+
+<div class="crud-header-actions" style="margin-bottom: 2rem;">
+    <div style="display: flex; align-items: center; gap: 2rem;">
+        <h2>Hebergement List</h2>
+        <form action="{{ path('app_hebergement_index') }}" method="get" style="display: flex; gap: 0.5rem; align-items: center;">
+            <div style="position: relative;">
+                <input type="text" name="search" value="{{ currentSearch }}" placeholder="Rechercher par nom..."
+                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.6rem 1rem; border-radius: 8px; color: white; width: 300px; font-family: var(--sans); font-size: 0.9rem;">
+                {% if currentSearch %}
+                    <a href="{{ path('app_hebergement_index') }}" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.3); text-decoration: none;">✕</a>
                 {% endif %}
             </div>
-        </div>
+            <button type="submit" style="background: var(--gold); border: none; padding: 0.6rem 1.2rem; border-radius: 8px; color: var(--ink); font-weight: 700; cursor: pointer; font-size: 0.85rem; text-transform: uppercase;">Rechercher</button>
+        </form>
     </div>
 
-    <table class="crud-table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th style="color: var(--gold);">Nom</th>
-                <th>Type</th>
-                <th>Adresse</th>
-                <th>Ville</th>
-                <th>Pays</th>
-                <th>Capacite</th>
-                <th>Equipements</th>
-                <th>Tarif/Nuit</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for hebergement in hebergements %}
-            <tr>
-                <td>{{ hebergement.idHebergement }}</td>
-                <td><strong style="color: white; font-weight: 600; letter-spacing: 0.02em;">{{ hebergement.nom }}</strong></td>
-                <td><span style="opacity: 0.8; text-transform: capitalize;">{{ hebergement.type }}</span></td>
-                <td>{{ hebergement.adresse }}</td>
-                <td>{{ hebergement.ville }}</td>
-                <td>{{ hebergement.pays }}</td>
-                <td>{{ hebergement.capacite }}</td>
-                <td><span style="font-size: 0.8rem; opacity: 0.6;">{{ hebergement.equipements }}</span></td>
-                <td><strong style="color: var(--gold2);">€{{ hebergement.tarifParNuit }}</strong></td>
-                <td>
-                    <div class="crud-actions">
-                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Create New Hebergement" href="{{ path('app_hebergement_new') }}">Create</a>
-                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Hebergement Details" href="{{ path('app_hebergement_show', {'idHebergement': hebergement.idHebergement}) }}">View</a>
-                        <a class="crud-action-btn lux-modal-trigger" data-modal-title="Edit Hebergement" href="{{ path('app_hebergement_edit', {'idHebergement': hebergement.idHebergement}) }}">Edit</a>
+    <div class="sort-container">
+        <span class="sort-label">Trier Par:</span>
+        <div class="sort-options">
+            <a href="{{ path('app_hebergement_index', { 'sort_by': 'ville', 'search': currentSearch }) }}"
+               class="sort-pill {% if currentSort == 'ville' %}active{% endif %}">
+                Ville
+            </a>
+            <a href="{{ path('app_hebergement_index', { 'sort_by': 'pays', 'search': currentSearch }) }}"
+               class="sort-pill {% if currentSort == 'pays' %}active{% endif %}">
+                Pays
+            </a>
+            {% if currentSort %}
+                <a href="{{ path('app_hebergement_index', { 'search': currentSearch }) }}" class="sort-reset" title="Réinitialiser">↺</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<table class="crud-table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th style="color: var(--gold);">Nom</th>
+            <th>📷 Photo</th>
+            <th>Type</th>
+            <th>Adresse</th>
+            <th>Ville</th>
+            <th>Pays</th>
+            <th>Capacite</th>
+            <th>Equipements</th>
+            <th>Tarif/Nuit</th>
+            <th>🎉 Jour Férié</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for hebergement in hebergements %}
+        {% set msg = holidayMessages[hebergement.idHebergement] ?? null %}
+        <tr class="{% if msg %}holiday-row{% endif %}">
+            <td>{{ hebergement.idHebergement }}</td>
+            <td>
+                <strong style="color: white; font-weight: 600; letter-spacing: 0.02em;">{{ hebergement.nom }}</strong>
+                {% if msg %}
+                    <div class="holiday-inline-badge">🎊 Jour Férié</div>
+                {% endif %}
+            </td>
+            <td>
+                {% set photo = unsplashPhotos[hebergement.idHebergement] ?? null %}
+                {% set displayPhoto = hebergement.imageUrl ?: photo %}
+                {% if displayPhoto %}
+                    <div style="position: relative; display: inline-block;">
+                        <img src="{{ displayPhoto }}" alt="{{ hebergement.nom }}" 
+                             style="width: 80px; height: 55px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: block;">
+                        {% if not hebergement.imageUrl and photo %}
+                            <span title="Photo récupérée depuis Unsplash" style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.7); border-radius: 4px; padding: 1px 3px; font-size: 0.55rem; color: rgba(255,255,255,0.7);">📷</span>
+                        {% endif %}
                     </div>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="10" style="text-align: center; padding: 4rem; opacity: 0.4;">No records found. Click 'Create new' to add an entry.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                {% else %}
+                    <span style="opacity: 0.25; font-size: 0.8rem;">—</span>
+                {% endif %}
+            </td>
+            <td><span style="opacity: 0.8; text-transform: capitalize;">{{ hebergement.type }}</span></td>
+            <td>{{ hebergement.adresse }}</td>
+            <td>{{ hebergement.ville }}</td>
+            <td>{{ hebergement.pays }}</td>
+            <td>{{ hebergement.capacite }}</td>
+            <td><span style="font-size: 0.8rem; opacity: 0.6;">{{ hebergement.equipements }}</span></td>
+            <td><strong style="color: var(--gold2);">€{{ hebergement.tarifParNuit }}</strong></td>
+            <td>
+                {% if msg %}
+                    <div class="holiday-cell-msg">{{ msg }}</div>
+                {% else %}
+                    <span style="opacity: 0.3; font-size: 0.8rem;">—</span>
+                {% endif %}
+            </td>
+            <td>
+                <div class="crud-actions">
+                    <a class="crud-action-btn lux-modal-trigger" data-modal-title="Create New Hebergement" href="{{ path('app_hebergement_new') }}">Create</a>
+                    <a class="crud-action-btn lux-modal-trigger" data-modal-title="Hebergement Details" href="{{ path('app_hebergement_show', {'idHebergement': hebergement.idHebergement}) }}">View</a>
+                    <a class="crud-action-btn lux-modal-trigger" data-modal-title="Edit Hebergement" href="{{ path('app_hebergement_edit', {'idHebergement': hebergement.idHebergement}) }}">Edit</a>
+                </div>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="11" style="text-align: center; padding: 4rem; opacity: 0.4;">No records found. Click 'Create new' to add an entry.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{# ── Holiday styles (scoped to this page) ─────────────────────────── #}
+<style>
+/* Global top banner */
+.holiday-global-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.9rem 1.8rem;
+    background: linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.06) 100%);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 14px;
+    animation: holidayPulse 3s ease-in-out infinite;
+}
+.holiday-global-text {
+    font-size: 0.92rem;
+    color: var(--gold, #d4af37);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-align: center;
+}
+.holiday-confetti {
+    font-size: 1.4rem;
+    animation: spin 4s linear infinite;
+}
+@keyframes holidayPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+    50%       { box-shadow: 0 0 18px 4px rgba(212,175,55,0.18); }
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Row highlight */
+.holiday-row {
+    background: linear-gradient(90deg, rgba(212,175,55,0.06) 0%, rgba(0,0,0,0) 100%) !important;
+    border-left: 3px solid rgba(212,175,55,0.6);
+}
+
+/* Small badge under the hotel name */
+.holiday-inline-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 20px;
+    font-size: 0.68rem;
+    color: var(--gold, #d4af37);
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Message in the holiday column cell */
+.holiday-cell-msg {
+    font-size: 0.78rem;
+    color: var(--gold, #d4af37);
+    line-height: 1.45;
+    font-weight: 500;
+    max-width: 240px;
+}
+</style>
+
 {% endblock %}

@@ -868,9 +868,11 @@
     if (idx !== activeScene) setScene(idx);
   });
 
-  // Patch nav links
+  // Patch nav links — only intercept in-page scroll links (data-section)
   navLinks.forEach(link => {
     link.addEventListener('click', e => {
+      // Skip links that are meant for real page navigation
+      if (!link.dataset.section || link.dataset.ignoreScroll) return;
       e.preventDefault();
       const idx = parseInt(link.dataset.section);
       setScene(idx);

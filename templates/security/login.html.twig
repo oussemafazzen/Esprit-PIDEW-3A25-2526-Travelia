@@ -30,6 +30,72 @@
     
     .auth-submit { width:100%; background:#e8c97e; color:#000; border:none; padding:1rem; border-radius:12px; font-weight:700; font-size:1rem; text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:transform 0.2s, background 0.2s; margin-top:1rem; }
     .auth-submit:hover { transform:translateY(-2px); background:#f4d890; }
+
+    /* Divider */
+    .auth-divider { display:flex; align-items:center; gap:1rem; margin:1.5rem 0; }
+    .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.1); }
+    .auth-divider span { color:rgba(255,255,255,0.4); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; }
+
+    /* Face Recognition Button */
+    .face-btn {
+      width:100%;
+      background: transparent;
+      border: 1px solid rgba(232,201,126,0.4);
+      border-radius:12px;
+      padding:0.9rem 1rem;
+      color:#e8c97e;
+      font-size:0.95rem;
+      font-weight:600;
+      cursor:pointer;
+      transition: all 0.3s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0.6rem;
+      font-family:'Inter',sans-serif;
+    }
+    .face-btn:hover { background:rgba(232,201,126,0.08); border-color:#e8c97e; transform:translateY(-2px); }
+    .face-btn svg { width:20px; height:20px; }
+
+    /* Face Recognition Modal */
+    .face-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .face-modal-overlay.active { display: flex; }
+    .face-modal {
+      background: rgba(10,15,30,0.95);
+      border: 1px solid rgba(232,201,126,0.2);
+      border-radius: 24px;
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    }
+    .face-modal h2 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:#e8c97e; margin:0 0 0.5rem; font-weight:400; }
+    .face-modal p { color:rgba(255,255,255,0.6); font-size:0.9rem; margin-bottom:1.5rem; }
+    #face-video-container { position:relative; width:100%; border-radius:16px; overflow:hidden; background:#000; margin-bottom:1.2rem; }
+    #face-video { width:100%; border-radius:16px; display:block; }
+    #face-canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+    #face-status { margin:0.8rem 0; font-size:0.9rem; color:rgba(255,255,255,0.7); min-height:1.4em; }
+    #face-status.scanning { color:#e8c97e; }
+    #face-status.success { color:#4ade80; }
+    #face-status.error { color:#f87171; }
+    .face-modal-actions { display:flex; gap:0.8rem; margin-top:1rem; }
+    .face-modal-actions button { flex:1; padding:0.8rem; border-radius:10px; font-weight:600; font-size:0.85rem; cursor:pointer; border:none; transition:all 0.2s; }
+    #face-scan-btn { background:#e8c97e; color:#000; }
+    #face-scan-btn:hover { background:#f4d890; }
+    #face-cancel-btn { background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.6); border:1px solid rgba(255,255,255,0.1) !important; }
+    #face-cancel-btn:hover { background:rgba(255,255,255,0.1); }
+    .face-loading { display:inline-block; width:16px; height:16px; border:2px solid rgba(232,201,126,0.3); border-top-color:#e8c97e; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:6px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
     
     .auth-footer { margin-top:2rem; font-size:0.9rem; color:rgba(255,255,255,0.5); }
     .auth-footer a { color:#e8c97e; text-decoration:none; font-weight:600; }
@@ -57,7 +123,7 @@
   <div class="auth-container">
     <div class="auth-box">
       <h1 class="auth-title">Bienvenue sur Travelia</h1>
-      <p class="auth-subtitle">Votre plateforme complète de gestion de voyages & loisirs. Connectez-vous pour accéder à vos réservations.</p>
+      <p class="auth-subtitle">Votre plateforme complète de gestion de voyages &amp; loisirs. Connectez-vous pour accéder à vos réservations.</p>
 
       {% if error %}
           <div class="auth-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -71,6 +137,9 @@
         <div class="auth-field">
           <label>Password</label>
           <input type="password" name="password" id="inputPassword" autocomplete="current-password" required placeholder="••••••••">
+          <div style="text-align:right; margin-top:0.5rem;">
+            <a href="{{ path('app_forgot_password_request') }}" style="font-size:0.8rem; color:rgba(255,255,255,0.45); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#e8c97e'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Mot de passe oublié ?</a>
+          </div>
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -78,10 +147,216 @@
         <button class="auth-submit" type="submit">Se Connecter</button>
       </form>
 
-      <div class="auth-footer">
+      <!-- Divider -->
+      <div class="auth-divider"><span>ou</span></div>
+
+      <!-- Face Recognition Button -->
+      <button class="face-btn" id="openFaceLogin" type="button" style="margin-bottom:1rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+        </svg>
+        Connexion par reconnaissance faciale
+      </button>
+
+      <!-- Google Login Button -->
+      <a href="{{ path('connect_google') }}" class="face-btn" style="background: rgba(255,255,255,0.02); color: #fff; border: 1px solid rgba(255,255,255,0.08) !important; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; gap: 0.8rem;">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Connexion avec Google
+      </a>
+
+      <div class="auth-footer" style="margin-top:2rem;">
         Un nouveau compte ? <a href="{{ path('app_register') }}">S'inscrire</a>
       </div>
     </div>
   </div>
+
+  <!-- Face Recognition Modal -->
+  <div class="face-modal-overlay" id="faceModalOverlay">
+    <div class="face-modal">
+      <h2>Reconnaissance Faciale</h2>
+      <p>Positionnez votre visage dans le cadre et cliquez sur Scanner</p>
+      <div id="face-video-container">
+        <video id="face-video" autoplay muted playsinline></video>
+        <canvas id="face-canvas"></canvas>
+      </div>
+      <div id="face-status">Caméra en cours d'initialisation...</div>
+      <div class="face-modal-actions">
+        <button id="face-scan-btn" type="button">Scanner mon visage</button>
+        <button id="face-cancel-btn" type="button">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- face-api.js — served locally, no CDN needed -->
+  <script src="/face-api.min.js"></script>
+  <script>
+    const MODELS_URL = '/models';
+    
+    let modelsLoaded = false;
+    let videoStream = null;
+    let isScanning = false;
+
+    const overlay    = document.getElementById('faceModalOverlay');
+    const openBtn    = document.getElementById('openFaceLogin');
+    const cancelBtn  = document.getElementById('face-cancel-btn');
+    const scanBtn    = document.getElementById('face-scan-btn');
+    const video      = document.getElementById('face-video');
+    const canvas     = document.getElementById('face-canvas');
+    const statusEl   = document.getElementById('face-status');
+
+    function setStatus(msg, type = '') {
+      statusEl.textContent = msg;
+      statusEl.className = type;
+    }
+
+    async function loadModels() {
+      if (modelsLoaded) return;
+      setStatus('Chargement des modèles IA…');
+      try {
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODELS_URL),
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODELS_URL),
+          faceapi.nets.faceRecognitionNet.loadFromUri(MODELS_URL),
+        ]);
+        modelsLoaded = true;
+        setStatus('Modèles chargés. Prêt à scanner.', 'scanning');
+      } catch(e) {
+        setStatus('Erreur lors du chargement des modèles.', 'error');
+        console.error(e);
+      }
+    }
+
+    async function startCamera() {
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 } });
+        video.srcObject = videoStream;
+        await new Promise(resolve => video.onloadedmetadata = resolve);
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      } catch(e) {
+        setStatus('Impossible d\'accéder à la caméra. Vérifiez les permissions.', 'error');
+        console.error(e);
+      }
+    }
+
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(t => t.stop());
+        videoStream = null;
+      }
+      video.srcObject = null;
+    }
+
+    openBtn.addEventListener('click', async () => {
+      overlay.classList.add('active');
+      setStatus('Initialisation…');
+      await loadModels();
+      await startCamera();
+      if (modelsLoaded && video.srcObject) {
+        setStatus('Prêt. Cliquez sur "Scanner mon visage".', 'scanning');
+      }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      overlay.classList.remove('active');
+      stopCamera();
+      setStatus('Caméra en cours d\'initialisation…');
+    });
+
+    scanBtn.addEventListener('click', async () => {
+      if (isScanning) return;
+      if (!modelsLoaded) {
+        setStatus('Modèles non encore chargés, patientez…', 'error');
+        return;
+      }
+      if (!video.srcObject) {
+        setStatus('Caméra non disponible.', 'error');
+        return;
+      }
+
+      isScanning = true;
+      scanBtn.disabled = true;
+
+      // Retry up to 5 times to handle blurry/unready frames
+      const MAX_TRIES = 5;
+      let detection = null;
+
+      for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
+        statusEl.innerHTML = `<span class="face-loading"></span> Analyse… tentative ${attempt}/${MAX_TRIES}`;
+
+        // Re-sync canvas size before every attempt
+        if (video.videoWidth > 0) {
+          canvas.width  = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+
+        // Small pause to let the video frame stabilize
+        await new Promise(r => setTimeout(r, 400));
+
+        try {
+          detection = await faceapi
+            .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({
+              inputSize: 416,       // larger = more accurate
+              scoreThreshold: 0.3   // lower = easier to detect
+            }))
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+        } catch(e) {
+          console.warn('Detection attempt error:', e);
+        }
+
+        if (detection) break; // Found a face — stop retrying
+      }
+
+      if (!detection) {
+        setStatus('❌ Aucun visage détecté après plusieurs essais.<br><small>Assurez-vous d\'être bien éclairé et face à la caméra.</small>', 'error');
+        statusEl.innerHTML = '❌ Aucun visage détecté après plusieurs essais.<br><small>Assurez-vous d\'être bien éclairé et face à la caméra.</small>';
+        isScanning = false;
+        scanBtn.disabled = false;
+        return;
+      }
+
+      // Draw detection box on canvas
+      try {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const dims = { width: canvas.width, height: canvas.height };
+        faceapi.draw.drawDetections(canvas, faceapi.resizeResults(detection, dims));
+      } catch(e) { /* drawing is cosmetic, ignore errors */ }
+
+      setStatus('✓ Visage détecté ! Vérification en cours…', 'scanning');
+
+      try {
+        const descriptor = Array.from(detection.descriptor);
+
+        const response = await fetch('/api/face/identify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ descriptor })
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.redirect) {
+          setStatus('✓ Authentifié ! Redirection…', 'success');
+          setTimeout(() => { window.location.href = result.redirect; }, 800);
+        } else {
+          setStatus(result.error || 'Visage non reconnu. Essayez à nouveau.', 'error');
+          isScanning = false;
+          scanBtn.disabled = false;
+        }
+      } catch(e) {
+        setStatus('Erreur réseau lors de la vérification. Réessayez.', 'error');
+        console.error(e);
+        isScanning = false;
+        scanBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>

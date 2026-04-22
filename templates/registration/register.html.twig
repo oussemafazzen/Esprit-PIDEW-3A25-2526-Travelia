@@ -35,6 +35,45 @@
     
     .auth-footer { margin-top:2rem; font-size:0.9rem; color:rgba(255,255,255,0.5); }
     .auth-footer a { color:#e8c97e; text-decoration:none; font-weight:600; }
+
+    /* Face Capture Section */
+    .face-capture-section {
+      grid-column: 1 / -1;
+      background: rgba(232,201,126,0.05);
+      border: 1px solid rgba(232,201,126,0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    .face-capture-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:#e8c97e; margin:0 0 0.4rem; font-weight:400; }
+    .face-capture-subtitle { color:rgba(255,255,255,0.5); font-size:0.82rem; margin-bottom:1rem; }
+    #reg-video-container { position:relative; width:100%; max-width:280px; margin:0 auto 1rem; border-radius:12px; overflow:hidden; background:#000; display:none; }
+    #reg-video { width:100%; display:block; border-radius:12px; }
+    #reg-canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+    #reg-face-status { font-size:0.85rem; margin-bottom:0.8rem; min-height:1.2em; color:rgba(255,255,255,0.6); }
+    #reg-face-status.scanning { color:#e8c97e; }
+    #reg-face-status.success { color:#4ade80; }
+    #reg-face-status.error { color:#f87171; }
+    .face-reg-actions { display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap; }
+    .face-reg-btn {
+      padding:0.65rem 1.4rem;
+      border-radius:10px;
+      font-size:0.82rem;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      transition:all 0.2s;
+      font-family:'Inter',sans-serif;
+    }
+    #reg-start-cam { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.15) !important; }
+    #reg-start-cam:hover { background:rgba(255,255,255,0.12); }
+    #reg-capture-btn { background:#e8c97e; color:#000; display:none; }
+    #reg-capture-btn:hover { background:#f4d890; }
+    #reg-reset-btn { background:rgba(239,68,68,0.1); color:#f87171; border:1px solid rgba(239,68,68,0.2) !important; display:none; }
+    #face-encoded-badge { display:none; align-items:center; gap:0.5rem; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:8px; padding:0.5rem 1rem; font-size:0.82rem; color:#4ade80; margin-bottom:0.8rem; justify-content:center; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .face-loading { display:inline-block; width:12px; height:12px; border:2px solid rgba(232,201,126,0.3); border-top-color:#e8c97e; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:4px; }
   </style>
 </head>
 <body>
@@ -95,6 +134,26 @@
               <div class="form-error">{{ form_errors(registrationForm.date_naissance) }}</div>
           </div>
 
+          <!-- Hidden face encoding field -->
+          <input type="hidden" name="face_encoding" id="face_encoding_input">
+
+          <!-- Face Capture Section (Optional) -->
+          <div class="face-capture-section full-width">
+            <div id="face-encoded-badge">✓ Visage enregistré avec succès</div>
+            <p class="face-capture-title">🎭 Reconnaissance Faciale <span style="font-size:0.75rem;color:rgba(255,255,255,0.4);">(optionnel)</span></p>
+            <p class="face-capture-subtitle">Enregistrez votre visage pour vous connecter sans mot de passe lors de vos prochaines visites.</p>
+            <div id="reg-video-container">
+              <video id="reg-video" autoplay muted playsinline></video>
+              <canvas id="reg-canvas"></canvas>
+            </div>
+            <div id="reg-face-status"></div>
+            <div class="face-reg-actions">
+              <button type="button" class="face-reg-btn" id="reg-start-cam">📷 Activer la caméra</button>
+              <button type="button" class="face-reg-btn" id="reg-capture-btn">Capturer mon visage</button>
+              <button type="button" class="face-reg-btn" id="reg-reset-btn">↺ Recommencer</button>
+            </div>
+          </div>
+
           <button type="submit" class="auth-submit">S'inscrire</button>
       {{ form_end(registrationForm) }}
 
@@ -103,5 +162,130 @@
       </div>
     </div>
   </div>
+
+  <!-- face-api.js — served locally, no CDN needed -->
+  <script src="/face-api.min.js"></script>
+  <script>
+    const MODELS_URL = '/models';
+    let modelsLoaded = false;
+    let regStream = null;
+    let faceEncoded = false;
+
+    const startCamBtn   = document.getElementById('reg-start-cam');
+    const captureBtn    = document.getElementById('reg-capture-btn');
+    const resetBtn      = document.getElementById('reg-reset-btn');
+    const regVideo      = document.getElementById('reg-video');
+    const regCanvas     = document.getElementById('reg-canvas');
+    const regContainer  = document.getElementById('reg-video-container');
+    const regStatus     = document.getElementById('reg-face-status');
+    const encodedBadge  = document.getElementById('face-encoded-badge');
+    const hiddenInput   = document.getElementById('face_encoding_input');
+
+    function setRegStatus(msg, type='') {
+      regStatus.innerHTML = msg;
+      regStatus.className = type;
+    }
+
+    async function loadModels() {
+      if (modelsLoaded) return;
+      setRegStatus('Chargement des modèles IA…', 'scanning');
+      try {
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODELS_URL),
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODELS_URL),
+          faceapi.nets.faceRecognitionNet.loadFromUri(MODELS_URL),
+        ]);
+        modelsLoaded = true;
+      } catch(e) {
+        throw new Error('models_failed');
+      }
+    }
+
+    startCamBtn.addEventListener('click', async () => {
+      startCamBtn.disabled = true;
+
+      // Step 1: Load AI models
+      try {
+        setRegStatus('Chargement des modèles IA… (connexion internet requise)', 'scanning');
+        await loadModels();
+      } catch(e) {
+        setRegStatus('❌ Impossible de charger les modèles IA. Vérifiez votre connexion internet.', 'error');
+        startCamBtn.disabled = false;
+        return;
+      }
+
+      // Step 2: Access camera
+      try {
+        setRegStatus('Accès à la caméra…', 'scanning');
+        regStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } }
+        });
+        regVideo.srcObject = regStream;
+        await new Promise(r => { regVideo.onloadedmetadata = r; });
+        regCanvas.width  = regVideo.videoWidth;
+        regCanvas.height = regVideo.videoHeight;
+        regContainer.style.display = 'block';
+        captureBtn.style.display = 'inline-block';
+        startCamBtn.style.display = 'none';
+        setRegStatus('✓ Caméra active. Positionnez votre visage et cliquez sur Capturer.', 'scanning');
+      } catch(e) {
+        console.error('Camera error:', e.name, e.message);
+        if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+          setRegStatus('🔒 Permission caméra refusée.<br><small>Cliquez sur l\'icône 🎥 dans la barre d\'adresse du navigateur → Autoriser.</small>', 'error');
+        } else if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+          setRegStatus('❌ Aucune caméra détectée sur cet appareil.', 'error');
+        } else if (e.name === 'NotReadableError' || e.name === 'TrackStartError') {
+          setRegStatus('❌ La caméra est déjà utilisée par une autre application. Fermez-la et réessayez.', 'error');
+        } else {
+          setRegStatus('❌ Erreur caméra : ' + e.name + '. Réessayez ou utilisez un autre navigateur.', 'error');
+        }
+        startCamBtn.disabled = false;
+      }
+    });
+
+    captureBtn.addEventListener('click', async () => {
+      captureBtn.disabled = true;
+      setRegStatus('Analyse…', 'scanning');
+      try {
+        const detection = await faceapi
+          .detectSingleFace(regVideo, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        if (!detection) {
+          setRegStatus('Aucun visage détecté. Repositionnez-vous.', 'error');
+          captureBtn.disabled = false;
+          return;
+        }
+
+        const descriptor = Array.from(detection.descriptor);
+        hiddenInput.value = JSON.stringify(descriptor);
+        faceEncoded = true;
+
+        // Stop camera
+        if (regStream) { regStream.getTracks().forEach(t => t.stop()); regStream = null; }
+        regContainer.style.display = 'none';
+        captureBtn.style.display = 'none';
+        resetBtn.style.display = 'inline-block';
+        encodedBadge.style.display = 'flex';
+        setRegStatus('Votre visage a été enregistré.', 'success');
+      } catch(e) {
+        setRegStatus('Erreur lors de la capture. Réessayez.', 'error');
+        captureBtn.disabled = false;
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      hiddenInput.value = '';
+      faceEncoded = false;
+      resetBtn.style.display = 'none';
+      encodedBadge.style.display = 'none';
+      regContainer.style.display = 'none';
+      captureBtn.style.display = 'none';
+      startCamBtn.style.display = 'inline-block';
+      startCamBtn.disabled = false;
+      setRegStatus('');
+    });
+  </script>
 </body>
 </html>

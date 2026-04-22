@@ -3,48 +3,111 @@
 {% block title %}Dashboard | Travelia Admin{% endblock %}
 
 {% block body %}
-<style>
-    .stats-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
-    .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 2rem; border-radius: 20px; }
-    .stat-title { color: rgba(255,255,255,0.5); text-transform: uppercase; font-size: 0.8rem; font-weight: 600; letter-spacing:1px; margin-bottom: 1rem; }
-    .stat-value { font-size: 2.5rem; font-weight: 700; color: #fff; font-family:'Space Grotesk', sans-serif; }
-    .list-stat-row { display:flex; justify-content:space-between; padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .list-stat-row:last-child { border: none; padding-bottom: 0; }
-</style>
-
-<h1 style="font-family:'Cormorant Garamond', serif; font-size: 3rem; font-weight: 400; color: #fff; margin:0 0 0.5rem;">Général <em>Dashboard</em></h1>
-<p style="color: rgba(255,255,255,0.5); font-size: 1.1rem; margin-bottom: 3rem;">Statistiques des voyageurs et clients sur Travelia.</p>
-
-<div class="stats-grid">
+<!-- Top Stats Row -->
+<div class="dashboard-grid">
   <div class="stat-card">
-      <div class="stat-title">Total Voyageurs</div>
-      <div class="stat-value">{{ totalClients }}</div>
+    <div class="stat-label">Total Voyageurs</div>
+    <div class="stat-value">{{ totalClients }}</div>
+    <div class="stat-trend">+14.2% ↑</div>
   </div>
-  
-  <div class="stat-card" style="grid-row: span 2;">
-      <div class="stat-title">Répartition par Nationalité (Top 5)</div>
+  <div class="stat-card">
+    <div class="stat-label">Monthly Revenue</div>
+    <div class="stat-value">€142,8K</div>
+    <div class="stat-trend">+5.8% ↑</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Active Bookings</div>
+    <div class="stat-value">3,190</div>
+    <div class="stat-trend down">-2.4% ↓</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">User Satisfaction</div>
+    <div class="stat-value">98.4%</div>
+    <div class="stat-trend">+0.2% ↑</div>
+  </div>
+
+  <!-- Overview Section: Traveler Stats + Graph -->
+  <div class="overview-section">
+    
+    <!-- Traveler Statistics (Reused for Nationalities) -->
+    <div class="traveler-stats">
+      <div class="chart-title">Répartition par Nationalité (Top 5)</div>
+      
       <div style="margin-top:1rem;">
           {% for nat, count in nationalityStats %}
-          <div class="list-stat-row">
-              <span style="color:rgba(255,255,255,0.8);">{{ nat }}</span>
-              <strong style="color:#e8c97e;">{{ count }}</strong>
+          <div style="display:flex; justify-content:space-between; padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <span style="font-size:0.85rem; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px;">{{ nat }}</span>
+              <strong style="color:var(--gold); font-family:var(--sans); font-size:1.1rem;">{{ count }}</strong>
           </div>
           {% else %}
-          <p style="color:rgba(255,255,255,0.5);">Aucune donnée.</p>
+          <p style="color:rgba(255,255,255,0.5); font-size:0.8rem; margin-top:1rem;">Aucune donnée disponible.</p>
           {% endfor %}
       </div>
-  </div>
-  
-  <div class="stat-card" style="grid-row: span 2;">
-      <div class="stat-title">Tranches d'âge</div>
+    </div>
+
+    <!-- Booking Overview Graph -->
+    <div class="booking-graph">
+      <div class="graph-header">
+        <div class="graph-title">
+          <h3>Booking Overview</h3>
+          <p style="font-size:0.75rem; opacity:0.3; font-weight:300;">Last 7 Days Performance</p>
+        </div>
+        <div class="graph-controls">
+          <button class="g-btn">D</button>
+          <button class="g-btn active">W</button>
+          <button class="g-btn">M</button>
+          <button class="g-btn">Y</button>
+        </div>
+      </div>
+      
+      <div class="graph-canvas">
+        <svg class="svg-graph-lines" viewBox="0 0 800 240">
+          <defs>
+            <linearGradient id="graph-gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(201, 168, 76, 0.4)" />
+              <stop offset="100%" stop-color="rgba(10, 13, 26, 0)" />
+            </linearGradient>
+          </defs>
+          <path class="g-area" d="M0,200 Q150,120 300,160 T600,80 T800,120 L800,240 L0,240 Z"></path>
+          <path class="g-line" d="M0,200 Q150,120 300,160 T600,80 T800,120"></path>
+          <g class="g-points">
+            <circle cx="0" cy="200" r="5"></circle>
+            <circle cx="300" cy="160" r="5"></circle>
+            <circle cx="600" cy="80" r="5"></circle>
+            <circle cx="800" cy="120" r="5"></circle>
+          </g>
+        </svg>
+        <div class="graph-labels">
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+          <span>Sun</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Bookings List (Reused for Age Groups) -->
+    <div class="bookings-list">
+      <div class="list-head">
+        <h4>Tranches d'Âge</h4>
+      </div>
+      
       <div style="margin-top:1rem;">
           {% for range, count in ageGroupStats %}
-          <div class="list-stat-row">
-              <span style="color:rgba(255,255,255,0.8);">{{ range }} ans</span>
-              <strong style="color:#6ee7b7;">{{ count }}</strong>
+          <div class="booking-item" style="display:flex; justify-content:space-between; align-items:center; border:none; border-bottom:1px solid rgba(255,255,255,0.03);">
+            <div>
+              <div class="b-cust" style="font-size:0.9rem; color:#fff;">{{ range }} ans</div>
+              <div class="b-dest" style="font-size:0.7rem; color:rgba(255,255,255,0.4);">Génération démographique</div>
+            </div>
+            <div class="b-status" style="color:#6ee7b7; font-weight:600; font-size:1.1rem; padding:0; background:none;">{{ count }}</div>
           </div>
           {% endfor %}
       </div>
-  </div>
-</div>
+    </div>
+
+  </div> <!-- End Overview -->
+</div> <!-- End Grid -->
 {% endblock %}

@@ -461,6 +461,122 @@
     {% for i in 1..20 %}
     .res-card:nth-child({{ i }}) { animation-delay: {{ (i - 1) * 0.07 }}s; }
     {% endfor %}
+
+    /* ─── CALENDAR STYLES ─── */
+    .cal-toggle-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.6rem;
+      border-radius: 100px;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold2);
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.3s var(--ease);
+      margin-bottom: 2.5rem;
+    }
+    .cal-toggle-btn:hover { background: rgba(201,168,76,0.18); border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .res-calendar-card {
+      background: rgba(10,14,30,0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      backdrop-filter: blur(24px);
+      padding: 1.8rem 2rem;
+      margin-bottom: 2.5rem;
+      animation: fadeSlideUp 0.4s var(--ease) both;
+    }
+    .res-calendar-card[hidden] { display: none; }
+
+    .res-cal-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.4rem;
+    }
+    .res-cal-kicker {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .res-cal-title {
+      font-family: var(--serif);
+      font-size: 1.8rem; font-weight: 300; color: var(--white);
+      margin: 0.3rem 0 0;
+    }
+    .res-cal-title em { font-style: italic; color: var(--gold); }
+    .res-cal-nav-wrap { display: flex; align-items: center; gap: 0.6rem; }
+    .res-cal-nav {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7); font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .res-cal-nav:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold); }
+    .res-cal-month-label {
+      font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.7);
+      min-width: 120px; text-align: center; letter-spacing: 0.05em; text-transform: capitalize;
+    }
+    .res-cal-weekdays, .res-cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+    }
+    .res-cal-weekdays { margin-bottom: 4px; }
+    .res-cal-weekdays span {
+      text-align: center; font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); padding: 4px 0;
+    }
+    .res-cal-day {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.8rem; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      cursor: default; transition: all 0.2s;
+    }
+    .res-cal-day.is-muted { color: rgba(255,255,255,0.18); }
+    .res-cal-day.is-today {
+      border-color: rgba(201,168,76,0.4);
+      color: var(--gold2);
+    }
+    .res-cal-day.has-res {
+      cursor: pointer;
+      border-color: rgba(201,168,76,0.4);
+      background: linear-gradient(145deg, rgba(201,168,76,0.2), rgba(255,255,255,0.05));
+      color: var(--white);
+    }
+    .res-cal-day.has-res:hover, .res-cal-day.is-selected {
+      transform: translateY(-2px);
+      border-color: rgba(201,168,76,0.7);
+      background: linear-gradient(145deg, rgba(201,168,76,0.32), rgba(255,255,255,0.08));
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    .res-cal-count {
+      position: absolute; right: 4px; bottom: 4px;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--ink); font-size: 0.58rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .res-cal-details {
+      margin-top: 1.2rem; padding-top: 1.2rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .res-cal-details-title {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+      margin-bottom: 0.8rem;
+    }
+    .res-cal-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0.4rem 0.9rem; border-radius: 100px;
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.75); font-size: 0.78rem;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .res-cal-pill strong { color: var(--gold2); }
   </style>
 </head>
 <body>
@@ -472,6 +588,9 @@
       alt="Premium flights background"
     />
   </div>
+
+  <!-- LIVE CANVAS OVERLAY -->
+  <canvas id="live-canvas" style="position:fixed;inset:0;z-index:1;pointer-events:none;width:100%;height:100%;"></canvas>
 
   <!-- NAV -->
   <nav class="nav">
@@ -485,11 +604,111 @@
       <a href="{{ path('app_home') }}#panel-2" class="nav-link">Flights</a>
       <a href="{{ path('app_home') }}#panel-3" class="nav-link">Activities</a>
       <a href="{{ path('app_home') }}#panel-4" class="nav-link">Reviews</a>
-      <a href="{{ path('app_user_reservations') }}" class="nav-link active-gold">Mes Réservations</a>
     </div>
-    <!-- Spacement balancer to keep nav-links exactly as they are in the front -->
-    <div style="width: 180px;"></div>
+
+    {% if app.user %}
+      <button id="user-panel-btn" onclick="openUserPanel()" style="
+        background:none; border:none; cursor:pointer;
+        color:#c9a84c; font-family:'Inter',sans-serif;
+        font-size:0.82rem; font-weight:600; letter-spacing:1px;
+        text-transform:uppercase; display:flex; align-items:center; gap:0.5rem;
+        transition:opacity 0.2s;
+      " onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+        <span style="font-size:1rem;">✦</span>
+        {{ app.user.prenom }} {{ app.user.nom }}
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="opacity:0.5;">
+          <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    {% else %}
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <a href="{{ path('app_login') }}" class="nav-link" style="color:rgba(255,255,255,0.8); font-weight:600; text-transform:uppercase; font-size:0.75rem; letter-spacing:1px;">Connexion</a>
+        <a href="{{ path('app_register') }}" class="trip-btn" style="padding:0.6rem 1.4rem; font-size:0.8rem;">Inscription</a>
+      </div>
+    {% endif %}
   </nav>
+
+  {# ── USER PROFILE PANEL (identical to homepage) ── #}
+  {% if app.user %}
+  <div id="user-panel-mask" onclick="closeUserPanel()" style="
+    display:none; position:fixed; inset:0; z-index:1998;
+    background:rgba(0,0,0,0.55); backdrop-filter:blur(4px);
+  "></div>
+  <aside id="user-panel" style="
+    position:fixed; top:0; right:-360px; width:320px; height:100vh; z-index:1999;
+    background:rgba(8,12,24,0.97); border-left:1px solid rgba(232,201,126,0.15);
+    box-shadow:-20px 0 60px rgba(0,0,0,0.6); display:flex; flex-direction:column;
+    transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+    font-family:'Inter',sans-serif;
+  ">
+    <div style="padding:2rem 1.8rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:#e8c97e; font-weight:400;">Bienvenue</div>
+        <div style="color:#fff; font-size:1rem; font-weight:600; margin-top:0.2rem;">{{ app.user.prenom }} {{ app.user.nom }}</div>
+        <div style="color:rgba(255,255,255,0.4); font-size:0.78rem; margin-top:0.15rem;">{{ app.user.email }}</div>
+      </div>
+      <button onclick="closeUserPanel()" style="
+        background:rgba(255,255,255,0.06); border:none; color:rgba(255,255,255,0.6);
+        width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:1rem;
+        display:flex; align-items:center; justify-content:center; transition:background 0.2s;
+      " onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">✕</button>
+    </div>
+    <div style="padding:1.5rem 1.8rem; display:flex; align-items:center; gap:1rem;">
+      <div style="
+        width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg,#e8c97e,#c9a050);
+        display:flex; align-items:center; justify-content:center;
+        font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:#000; font-weight:600; flex-shrink:0;
+      ">{{ app.user.prenom|first|upper }}</div>
+      <div>
+        <div style="color:rgba(255,255,255,0.5); font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;">Niveau fidélité</div>
+        <div style="color:#e8c97e; font-size:0.9rem; font-weight:600;">{{ app.user.niveauFidelite ?? 'BRONZE' }} — {{ app.user.pointsFidelite ?? 0 }} pts</div>
+      </div>
+    </div>
+    <div style="padding:0.5rem 1.2rem; flex:1;">
+      <a href="{{ path('app_profile') }}" style="
+        display:flex; align-items:center; gap:0.9rem;
+        padding:0.9rem 1rem; border-radius:12px; margin-bottom:0.5rem;
+        color:#fff; text-decoration:none; font-size:0.9rem; font-weight:500;
+        background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); transition:all 0.2s;
+      " onmouseover="this.style.background='rgba(232,201,126,0.08)'; this.style.borderColor='rgba(232,201,126,0.25)';"
+         onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.06)';">&#128100; Mon Profil</a>
+      <a href="/reservation/mes-reservations" style="
+        display:flex; align-items:center; gap:0.9rem;
+        padding:0.9rem 1rem; border-radius:12px; margin-bottom:0.5rem;
+        color:#e8c97e; text-decoration:none; font-size:0.9rem; font-weight:600;
+        background:rgba(232,201,126,0.08); border:1px solid rgba(232,201,126,0.25); transition:all 0.2s;
+      ">&#128202; Mes Réservations</a>
+      {% if 'ROLE_ADMIN' in app.user.roles %}
+      <a href="{{ path('app_admin_dashboard') }}" style="
+        display:flex; align-items:center; gap:0.9rem;
+        padding:0.9rem 1rem; border-radius:12px; margin-bottom:0.5rem;
+        color:#6ee7b7; text-decoration:none; font-size:0.9rem; font-weight:500;
+        background:rgba(110,231,183,0.05); border:1px solid rgba(110,231,183,0.12); transition:all 0.2s;
+      " onmouseover="this.style.background='rgba(110,231,183,0.1)';" onmouseout="this.style.background='rgba(110,231,183,0.05)';">&#9881;&#65039; Tableau de Bord Admin</a>
+      {% endif %}
+    </div>
+    <div style="padding:1.2rem 1.2rem 2rem;">
+      <a href="{{ path('app_logout') }}" style="
+        display:flex; align-items:center; justify-content:center; gap:0.6rem;
+        padding:0.95rem; border-radius:12px;
+        background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2);
+        color:#f87171; text-decoration:none; font-size:0.88rem; font-weight:600;
+        text-transform:uppercase; letter-spacing:0.5px; transition:all 0.2s;
+      " onmouseover="this.style.background='rgba(239,68,68,0.16)';" onmouseout="this.style.background='rgba(239,68,68,0.08)';">&#9167; Déconnexion</a>
+    </div>
+  </aside>
+  <script>
+    function openUserPanel() {
+      document.getElementById('user-panel').style.right = '0';
+      document.getElementById('user-panel-mask').style.display = 'block';
+    }
+    function closeUserPanel() {
+      document.getElementById('user-panel').style.right = '-360px';
+      document.getElementById('user-panel-mask').style.display = 'none';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeUserPanel(); });
+  </script>
+  {% endif %}
 
   <!-- PAGE CONTENT -->
   <div class="page-content">
@@ -497,6 +716,47 @@
     <h1 class="page-h1">Mes <em>réservations</em></h1>
     <p class="page-lead">Consultez vos réservations et vos billets dans une interface moderne.</p>
     <a href="{{ path('app_home') }}" class="new-res-btn">+ Nouvelle Réservation</a>
+
+    {# ── Build calendar data ── #}
+    {% set calItems = [] %}
+    {% for r in reservations %}
+      {% if r.dateReservation %}
+        {% set calItems = calItems|merge([{
+          id: r.id,
+          date: r.dateReservation|date('Y-m-d'),
+          destination: r.paysDestination ?? 'Destination inconnue',
+          status: r.statut ?? ''
+        }]) %}
+      {% endif %}
+    {% endfor %}
+    <script id="res-cal-data" type="application/json">{{ calItems|json_encode|raw }}</script>
+
+    {# ── Calendar toggle button ── #}
+    <button type="button" class="cal-toggle-btn" id="calToggleBtn"
+            aria-controls="resCal" aria-expanded="false">
+      📅 Calendrier
+    </button>
+
+    {# ── Calendar card ── #}
+    <section class="res-calendar-card" id="resCal" hidden>
+      <div class="res-cal-top">
+        <div>
+          <p class="res-cal-kicker">Calendrier</p>
+          <h2 class="res-cal-title">Dates <em>réservées</em></h2>
+        </div>
+        <div class="res-cal-nav-wrap">
+          <button type="button" class="res-cal-nav" id="calPrev" aria-label="Mois précédent">‹</button>
+          <div class="res-cal-month-label" id="calMonthLabel"></div>
+          <button type="button" class="res-cal-nav" id="calNext" aria-label="Mois suivant">›</button>
+        </div>
+      </div>
+      <div class="res-cal-weekdays" aria-hidden="true">
+        <span>Lun</span><span>Mar</span><span>Mer</span>
+        <span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+      </div>
+      <div class="res-cal-grid" id="calGrid"></div>
+      <div class="res-cal-details" id="calDetails"></div>
+    </section>
 
     {% if reservations is empty %}
       <div class="empty-state">
@@ -611,6 +871,119 @@
   </div>
 
   <script>
+    /* ─── CALENDAR ENGINE ─── */
+    (function() {
+      const toggleBtn   = document.getElementById('calToggleBtn');
+      const calSection  = document.getElementById('resCal');
+      const calGrid     = document.getElementById('calGrid');
+      const calMonthLbl = document.getElementById('calMonthLabel');
+      const calPrev     = document.getElementById('calPrev');
+      const calNext     = document.getElementById('calNext');
+      const calDetails  = document.getElementById('calDetails');
+
+      const rawData = JSON.parse(document.getElementById('res-cal-data').textContent || '[]');
+      const byDate  = rawData.reduce((acc, r) => {
+        if (!r.date) return acc;
+        (acc[r.date] = acc[r.date] || []).push(r);
+        return acc;
+      }, {});
+
+      let curDate  = new Date();
+      let selected = null;
+
+      const pad = n => String(n).padStart(2, '0');
+      const key = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+
+      function safeDate(y, m, d) {
+        const dt = new Date(y, m, d);
+        if (isNaN(dt.getTime())) { console.error('Invalid date', y, m, d); return new Date(); }
+        return dt;
+      }
+
+      function renderCalDetails(dateKey) {
+        const items = byDate[dateKey] || [];
+        if (!dateKey || items.length === 0) {
+          calDetails.innerHTML = '<p style="color:rgba(255,255,255,0.35);font-size:0.85rem;">Cliquez sur un jour surligné pour voir vos réservations.</p>';
+          return;
+        }
+        calDetails.innerHTML = '<p class="res-cal-details-title">Réservations du ' + dateKey + '</p>'
+          + '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + items.map(r =>
+            `<span class="res-cal-pill">✈ Réservation #<strong>${r.id}</strong> — ${r.destination}</span>`
+          ).join('') + '</div>';
+      }
+
+      function render() {
+        const y = curDate.getFullYear();
+        const m = curDate.getMonth();
+        calMonthLbl.textContent = new Date(y, m, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        calGrid.innerHTML = '';
+
+        const firstDay = safeDate(y, m, 1);
+        const totalDays = new Date(y, m + 1, 0).getDate();
+        const today = key(new Date());
+
+        // Mon=1 → offset 0, Sun=0 → offset 6
+        let startOffset = firstDay.getDay() - 1;
+        if (startOffset < 0) startOffset = 6;
+
+        // Prev month filler
+        const prevMonthDays = new Date(y, m, 0).getDate();
+        for (let i = startOffset - 1; i >= 0; i--) {
+          const d = document.createElement('div');
+          d.className = 'res-cal-day is-muted';
+          d.textContent = prevMonthDays - i;
+          calGrid.appendChild(d);
+        }
+
+        // Current month days
+        for (let d = 1; d <= totalDays; d++) {
+          const dateKey = `${y}-${pad(m+1)}-${pad(d)}`;
+          const reservations = byDate[dateKey];
+          const btn = document.createElement('div');
+          btn.className = 'res-cal-day';
+          if (dateKey === today) btn.classList.add('is-today');
+          if (dateKey === selected) btn.classList.add('is-selected');
+          if (reservations) btn.classList.add('has-res');
+          btn.textContent = d;
+          if (reservations) {
+            const badge = document.createElement('span');
+            badge.className = 'res-cal-count';
+            badge.textContent = reservations.length;
+            btn.appendChild(badge);
+            btn.addEventListener('click', () => {
+              selected = dateKey;
+              render();
+              renderCalDetails(dateKey);
+            });
+          }
+          calGrid.appendChild(btn);
+        }
+
+        // Next month filler
+        const totalCells = startOffset + totalDays;
+        const remaining = (7 - (totalCells % 7)) % 7;
+        for (let d = 1; d <= remaining; d++) {
+          const el = document.createElement('div');
+          el.className = 'res-cal-day is-muted';
+          el.textContent = d;
+          calGrid.appendChild(el);
+        }
+
+        if (!selected) renderCalDetails('');
+      }
+
+      toggleBtn.addEventListener('click', function() {
+        const hidden = calSection.hasAttribute('hidden');
+        if (hidden) { calSection.removeAttribute('hidden'); this.setAttribute('aria-expanded','true'); render(); }
+        else         { calSection.setAttribute('hidden','hidden'); this.setAttribute('aria-expanded','false'); }
+      });
+
+      calPrev.addEventListener('click', () => { curDate = safeDate(curDate.getFullYear(), curDate.getMonth()-1, 1); selected=null; render(); });
+      calNext.addEventListener('click', () => { curDate = safeDate(curDate.getFullYear(), curDate.getMonth()+1, 1); selected=null; render(); });
+    })();
+  </script>
+
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       let formToSubmit = null;
       const deleteModal = document.getElementById('deleteModal');
@@ -678,6 +1051,94 @@
       document.querySelector('.js-close-delete').addEventListener('click', closeDelete);
       deleteModal.addEventListener('click', (e) => { if(e.target === deleteModal) closeDelete(); });
     });
+  </script>
+
+  <!-- LIVE CANVAS ANIMATION (Bokeh + Streaks, identical to Reservations branch) -->
+  <script>
+  (function() {
+    const canvas = document.getElementById('live-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = window.innerWidth;
+    let H = canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
+
+    let mouseX = W/2, mouseY = H/2, targetMX = W/2, targetMY = H/2;
+    window.addEventListener('mousemove', e => { targetMX = e.clientX; targetMY = e.clientY; });
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function rand(a,b){ return a+Math.random()*(b-a); }
+
+    /* ── Drifting gold bokeh orbs ── */
+    const bokeh = Array.from({length:55}, () => ({
+      x: rand(0,W), y: rand(0,H),
+      r: rand(8,48),
+      vx: rand(-0.18,0.18), vy: rand(-0.32,-0.06),
+      a: rand(0.03,0.14),
+      hue: rand(28,52),
+      phase: rand(0,Math.PI*2)
+    }));
+
+    /* ── Light streaks (flight trails) ── */
+    const streaks = Array.from({length:10}, () => ({
+      x: rand(-200,W+200), y: rand(H*0.05, H*0.85),
+      vx: rand(1.8,4.5), vy: rand(-0.4,0.4),
+      len: rand(100,340),
+      a: rand(0.05,0.15),
+      width: rand(0.5,1.8),
+      phase: rand(0,Math.PI*2),
+      hue: rand(195,235)
+    }));
+
+    let t = 0;
+    function tick() {
+      requestAnimationFrame(tick);
+      t += 0.016;
+      mouseX = lerp(mouseX, targetMX, 0.04);
+      mouseY = lerp(mouseY, targetMY, 0.04);
+      ctx.clearRect(0, 0, W, H);
+
+      /* Bokeh orbs */
+      bokeh.forEach(p => {
+        p.phase += 0.011;
+        p.x += p.vx + Math.sin(p.phase*0.5)*0.13;
+        p.y += p.vy;
+        if (p.y < -p.r*2) { p.y = H+p.r; p.x = rand(0,W); }
+        const a = p.a*(0.5+0.5*Math.sin(p.phase));
+        const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+        g.addColorStop(0,`hsla(${p.hue},88%,72%,${a})`);
+        g.addColorStop(1,'transparent');
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=g; ctx.fill();
+      });
+
+      /* Light streaks */
+      streaks.forEach(s => {
+        s.phase += 0.014;
+        s.x += s.vx; s.y += s.vy;
+        if (s.x > W+400) { s.x = -400; s.y = rand(H*0.05, H*0.85); }
+        const opacity = s.a*(0.45+0.55*Math.sin(s.phase));
+        const grad = ctx.createLinearGradient(s.x-s.len, s.y, s.x, s.y);
+        grad.addColorStop(0,'transparent');
+        grad.addColorStop(0.6,`hsla(${s.hue},85%,85%,${opacity*0.5})`);
+        grad.addColorStop(1,`hsla(${s.hue},90%,95%,${opacity})`);
+        ctx.beginPath(); ctx.moveTo(s.x-s.len, s.y); ctx.lineTo(s.x, s.y);
+        ctx.strokeStyle=grad; ctx.lineWidth=s.width; ctx.stroke();
+      });
+
+      /* Subtle mouse cursor glow */
+      const cg = ctx.createRadialGradient(mouseX,mouseY,0,mouseX,mouseY,160);
+      cg.addColorStop(0,'rgba(201,168,76,0.06)');
+      cg.addColorStop(1,'transparent');
+      ctx.fillStyle=cg; ctx.fillRect(0,0,W,H);
+
+      /* Bottom warm vignette */
+      const vig = ctx.createLinearGradient(0,H*0.55,0,H);
+      vig.addColorStop(0,'transparent');
+      vig.addColorStop(1,'rgba(30,10,5,0.28)');
+      ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+    }
+    tick();
+  })();
   </script>
 
 </body>

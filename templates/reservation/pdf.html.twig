@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Export PDF - Réservations</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #1f2937;
+            margin: 0;
+            padding: 24px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 24px;
+            color: #111827;
+        }
+
+        .meta {
+            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 700;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    {# This heading makes the exported document understandable when printed or shared. #}
+    <h1>Liste des réservations</h1>
+
+    {# We display the generation timestamp so the PDF can be identified later. #}
+    <div class="meta">
+        Export généré le {{ generatedAt|date('d/m/Y H:i') }}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date réservation</th>
+                <th>Statut</th>
+                <th>Paiement</th>
+                <th>Client</th>
+                <th>Destination</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '' }}</td>
+                <td>{{ reservation.statut }}</td>
+                <td>{{ reservation.modalitesPaiement }}</td>
+                <td>{{ reservation.clientId }}</td>
+                <td>{{ reservation.paysDestination }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune réservation disponible.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

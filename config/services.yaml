@@ -22,3 +22,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\HolidayService:
+        arguments:
+            $apiKey: '%env(ABSTRACT_HOLIDAYS_API_KEY)%'
+            $cacheDir: '%kernel.cache_dir%'
+
+    App\Service\UnsplashService:
+        arguments:
+            $accessKey: '%env(UNSPLASH_ACCESS_KEY)%'

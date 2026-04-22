@@ -1,0 +1,13 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     '"%kernel.project_dir%/vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe"'
+        options:
+            encoding: 'UTF-8'
+            page-size: 'A4'
+            margin-top: '12mm'
+            margin-right: '10mm'
+            margin-bottom: '12mm'
+            margin-left: '10mm'
+    image:
+        enabled:    false

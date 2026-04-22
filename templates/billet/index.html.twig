@@ -1,15 +1,24 @@
-{% extends 'admin_base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des billets</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
-{% block title %}Gestion des billets{% endblock %}
-
-{% block stylesheets %}
     <style>
+        .content-card {
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            margin-top: 1.5rem;
+        }
+
         .page-switch {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
-            z-index: 2;
-            position: relative;
         }
 
         .switch-btn {
@@ -17,151 +26,394 @@
             align-items: center;
             justify-content: center;
             min-width: 170px;
-            padding: 0.9rem 1.3rem;
+            padding: 0.9rem 1.2rem;
             border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.02);
-            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--gbord);
+            background: transparent;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
-            font-size: 0.76rem;
+            font-size: 0.75rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            font-weight: 700;
+            font-weight: 600;
             transition: all 0.3s var(--ease);
-            backdrop-filter: blur(10px);
         }
 
         .switch-btn.active,
         .switch-btn:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-            background: rgba(201, 168, 76, 0.08);
-            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.15);
-        }
-
-        .content-card {
-            width: 100%;
-            background: var(--panel);
-            border: 1px solid var(--gbord);
-            border-radius: 28px;
-            padding: 2.2rem;
-            backdrop-filter: blur(20px);
-            margin-top: 1rem;
+            border-color: rgba(201, 168, 76, 0.6);
+            color: var(--gold2);
+            box-shadow: 0 0 20px rgba(201, 168, 76, 0.12);
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.6rem;
+            margin-bottom: 1.5rem;
             gap: 1rem;
         }
 
         .section-header h2 {
             font-family: var(--serif);
-            font-size: 2.4rem;
-            font-weight: 400;
-            color: #fff;
+            font-size: 2.2rem;
+            font-weight: 300;
         }
 
         .create-btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 1rem 1.5rem;
+            gap: 0.6rem;
+            padding: 0.95rem 1.5rem;
             border-radius: 14px;
             text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 800;
+            font-size: 0.78rem;
+            font-weight: 700;
             letter-spacing: 0.06em;
+            text-transform: uppercase;
             background: linear-gradient(135deg, var(--gold), var(--gold2));
             color: #111;
-            text-transform: uppercase;
             box-shadow: 0 8px 25px rgba(201, 168, 76, 0.25);
-            transition: transform 0.2s ease;
         }
 
-        .create-btn:hover {
-            transform: translateY(-2px);
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
-        
-        .status-pill {
+
+        .export-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.45rem 0.85rem;
-            border_radius: 999px;
-            font-size: 0.72rem;
+            padding: 0.95rem 1.5rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.04);
+            color: var(--gold2);
+            border: 1px solid rgba(201, 168, 76, 0.35);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .table-tools {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 14px;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-tools-input,
+        .table-tools-select {
+            min-height: 52px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            padding: 0 16px;
+            outline: none;
+        }
+
+        .table-tools-select option {
+            color: #111;
+        }
+
+        .table-tools-btn {
+            min-height: 52px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
             font-weight: 800;
+            cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
+        .data-table-wrap {
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            font-weight: 700;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .data-table tbody td {
+            padding: 1.2rem 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.88);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
         .status-pill.confirme {
-            background: rgba(16, 185, 129, 0.16);
+            background: rgba(16, 185, 129, 0.12);
             color: #10b981;
         }
 
         .status-pill.attente {
-            background: rgba(245, 158, 11, 0.16);
+            background: rgba(245, 158, 11, 0.12);
             color: #f59e0b;
         }
 
+        .status-pill.retarde {
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
+        }
+
+        .status-pill.annule {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 72px;
+            padding: 0.55rem 0.85rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--gold2);
+        }
+
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .pagination span,
+        .pagination a {
+            min-width: 42px;
+            height: 42px;
+            padding: 0 0.85rem;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.72);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .pagination .current {
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            border-color: rgba(201, 168, 76, 0.6);
+            color: #111;
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.18);
+        }
+
+        .pagination a:hover {
+            border-color: rgba(201, 168, 76, 0.45);
+            color: var(--gold2);
+        }
+
+        @media (max-width: 1200px) {
+            .table-tools {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
-{% endblock %}
+</head>
+<body>
+    <aside class="app-sidebar">
+        <div class="logo-area">Travel<em>ia</em></div>
+        <nav class="nav-menu">
+            <a href="{{ path('app_admin_dashboard') }}" class="nav-item">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏨</span>
+                Hébergements
+            </a>
+            <a href="{{ path('app_billet_index') }}" class="nav-item active">
+                <span class="nav-icon">✈</span>
+                Billets
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🛶</span>
+                Activités
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span>
+                Clients
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Paramètres
+            </a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin</span>
+                <small>Accès complet</small>
+            </div>
+        </div>
+    </aside>
 
-{% block body %}
-    <div class="page-switch">
-        <a href="/billet/" class="switch-btn active">Tables billets</a>
-        <a href="/reservation/" class="switch-btn">Tables réservations</a>
-    </div>
+    <main class="app-main">
+        <div class="glow-bg"></div>
 
-    <section class="content-card">
-        <div class="section-header">
-            <h2>Liste des billets</h2>
-            <a href="{{ path('app_billet_new') }}" class="create-btn lux-modal-trigger" data-modal-title="Créer un billet">+ Créer nouveau</a>
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Gestion des <em>billets</em></h1>
+                    <p style="font-size: 0.9rem; opacity: 0.5; margin-top: 0.5rem;">
+                        Suivi complet des billets Travelia.
+                    </p>
+                </div>
+                <div class="date-pill">Admin Dashboard</div>
+            </div>
+        </header>
+
+        <div class="page-switch">
+            <a href="{{ path('app_billet_index') }}" class="switch-btn active">Tables billets</a>
+            <a href="{{ path('app_reservation_index') }}" class="switch-btn">Tables réservations</a>
         </div>
 
-        <div class="data-table-wrap">
-            <table class="crud-table">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">ID</th>
-                        <th style="width: 12%;">Transport</th>
-                        <th style="width: 15%;">N° Billet</th>
-                        <th style="width: 15%;">Départ</th>
-                        <th style="width: 15%;">Arrivée</th>
-                        <th style="width: 10%;">Prix</th>
-                        <th style="width: 12%;">Statut</th>
-                        <th style="width: 16%;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for billet in billets %}
-                    {% set statutClass = billet.statut|lower starts with 'confirm' ? 'confirme' : 'attente' %}
-                    <tr>
-                        <td>{{ billet.id }}</td>
-                        <td>{{ billet.typeTransport }}</td>
-                        <td>{{ billet.numeroBillet }}</td>
-                        <td>{{ billet.dateDepart ? billet.dateDepart|date('Y-m-d') : '' }}</td>
-                        <td>{{ billet.dateArrivee ? billet.dateArrivee|date('Y-m-d') : '' }}</td>
-                        <td>{{ billet.prix }} €</td>
-                        <td><span class="status-pill {{ statutClass }}">{{ billet.statut }}</span></td>
-                        <td>
-                            <div class="crud-actions">
-                                <a class="crud-action-btn lux-modal-trigger" data-modal-title="Détails billet" href="{{ path('app_billet_show', {'id': billet.id}) }}">Voir</a>
-                                <a class="crud-action-btn lux-modal-trigger" data-modal-title="Modifier billet" href="{{ path('app_billet_edit', {'id': billet.id}) }}">Modifier</a>
-                            </div>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="8" style="text-align:center; padding:3rem; opacity:0.5;">Aucun billet trouvé.</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
+        <section class="content-card">
+            <div class="section-header">
+                <h2>Liste des billets</h2>
+                <div class="header-actions">
+                    <a href="{{ path('app_billet_export_pdf') }}" class="export-btn">Exporter PDF</a>
+                    <a href="{{ path('app_billet_export_excel') }}" class="export-btn">Exporter Excel</a>
+                    <a href="{{ path('app_billet_new') }}" class="create-btn">+ Créer nouveau</a>
+                </div>
+            </div>
 
-{% endblock %}
+            <form method="get" action="{{ path('app_billet_index') }}" class="table-tools">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search|default('') }}"
+                    placeholder="Rechercher par transport, numéro, statut ou ID..."
+                    class="table-tools-input"
+                >
+
+                <select name="sort" class="table-tools-select">
+                    <option value="id" {{ sort == 'id' ? 'selected' : '' }}>Trier par ID</option>
+                    <option value="transport" {{ sort == 'transport' ? 'selected' : '' }}>Transport</option>
+                    <option value="numero" {{ sort == 'numero' ? 'selected' : '' }}>Numéro billet</option>
+                    <option value="depart" {{ sort == 'depart' ? 'selected' : '' }}>Date départ</option>
+                    <option value="arrivee" {{ sort == 'arrivee' ? 'selected' : '' }}>Date arrivée</option>
+                    <option value="prix" {{ sort == 'prix' ? 'selected' : '' }}>Prix</option>
+                    <option value="statut" {{ sort == 'statut' ? 'selected' : '' }}>Statut</option>
+                    <option value="reservation" {{ sort == 'reservation' ? 'selected' : '' }}>Réservation</option>
+                </select>
+
+                <select name="direction" class="table-tools-select">
+                    <option value="DESC" {{ direction == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                    <option value="ASC" {{ direction == 'ASC' ? 'selected' : '' }}>Ascendant</option>
+                </select>
+
+                <button type="submit" class="table-tools-btn">Appliquer</button>
+            </form>
+
+            <div class="data-table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Transport</th>
+                            <th>Numéro billet</th>
+                            <th>Date départ</th>
+                            <th>Date arrivée</th>
+                            <th>Prix</th>
+                            <th>Statut</th>
+                            <th>Réservation</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for billet in billets %}
+                        {% set statutClass = billet.statut|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e', 'é':'e', 'è':'e', 'ê':'e'}) %}
+                        <tr>
+                            <td>{{ billet.typeTransport }}</td>
+                            <td>{{ billet.numeroBillet }}</td>
+                            <td>{{ billet.dateDepart ? billet.dateDepart|date('Y-m-d') : '' }}</td>
+                            <td>{{ billet.dateArrivee ? billet.dateArrivee|date('Y-m-d') : '' }}</td>
+                            <td>{{ billet.prix }}</td>
+                            <td><span class="status-pill {{ statutClass }}">{{ billet.statut }}</span></td>
+                            <td>{{ billet.reservation ? billet.reservation.id : '' }}</td>
+                            <td>
+                                <div class="action-group">
+                                    <a class="action-btn" href="{{ path('app_billet_show', {'id': billet.id}) }}">Voir</a>
+                                    <a class="action-btn" href="{{ path('app_billet_edit', {'id': billet.id}) }}">Modifier</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-state">Aucun billet trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {{ knp_pagination_render(billets) }}
+        </section>
+    </main>
+
+    <script src="{{ asset('js/admin.js') }}"></script>
+</body>
+</html>

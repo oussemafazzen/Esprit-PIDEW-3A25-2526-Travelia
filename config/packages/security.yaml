@@ -24,7 +24,9 @@ security:
             logout:
                 path: app_logout
                 target: app_home
-            custom_authenticator: App\Security\AppAuthenticator
+            custom_authenticator: 
+                - App\Security\AppAuthenticator
+                - App\Security\GoogleAuthenticator
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800

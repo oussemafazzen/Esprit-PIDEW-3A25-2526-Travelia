@@ -1,5 +1,17 @@
 {% block body %}
 <div class="modal-detail-view">
+
+    {# ── Holiday alert banner (only shown when today IS a holiday in this country) ── #}
+    {% if holidayMessage %}
+    <div class="holiday-show-banner" role="alert">
+        <div class="holiday-show-icon">🎉</div>
+        <div class="holiday-show-text">{{ holidayMessage }}</div>
+        {% if holiday.type is defined %}
+            <div class="holiday-show-type">{{ holiday.type }}</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
         <div class="detail-group" style="grid-column: span 2;">
             <label style="display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; font-weight: 600;">Nom de l'hôtel</label>
@@ -30,14 +42,61 @@
             <div style="font-size: 0.95rem; color: rgba(255,255,255,0.8); padding-top: 0.5rem; line-height: 1.5; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.06);">{{ hebergement.equipements }}</div>
         </div>
     </div>
-    
+
     <div style="display: flex; justify-content: flex-end; gap: 1rem; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem;">
         {{ include('hebergement/_delete_form.html.twig') }}
     </div>
+
     <style>
       .modal-detail-view .btn:hover { background: rgba(255,255,255,0.05) !important; border-color: var(--white); }
       .modal-detail-view form button { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 12px; padding: 0.8rem 1.8rem; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; }
       .modal-detail-view form button:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+
+      /* ── Holiday banner on show page ─────────────────────────── */
+      .holiday-show-banner {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.9rem;
+          padding: 1rem 1.4rem;
+          margin-bottom: 1.8rem;
+          background: linear-gradient(135deg, rgba(212,175,55,0.16) 0%, rgba(212,175,55,0.04) 100%);
+          border: 1px solid rgba(212,175,55,0.35);
+          border-radius: 14px;
+          animation: holidayGlow 3s ease-in-out infinite;
+      }
+      .holiday-show-icon {
+          font-size: 1.8rem;
+          flex-shrink: 0;
+          animation: bounce 1.5s ease-in-out infinite;
+      }
+      .holiday-show-text {
+          flex: 1;
+          font-size: 0.9rem;
+          color: var(--gold, #d4af37);
+          font-weight: 600;
+          line-height: 1.5;
+      }
+      .holiday-show-type {
+          flex-shrink: 0;
+          align-self: center;
+          padding: 3px 12px;
+          background: rgba(212,175,55,0.15);
+          border: 1px solid rgba(212,175,55,0.3);
+          border-radius: 20px;
+          font-size: 0.7rem;
+          color: var(--gold, #d4af37);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          font-weight: 700;
+      }
+      @keyframes holidayGlow {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+          50%       { box-shadow: 0 0 20px 4px rgba(212,175,55,0.15); }
+      }
+      @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50%       { transform: translateY(-6px); }
+      }
     </style>
 </div>
 {% endblock %}
