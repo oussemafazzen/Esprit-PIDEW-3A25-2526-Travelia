@@ -8,23 +8,33 @@
     .flights-results-page {
         min-height: 100vh;
         color: #fff;
-        background-image:
-            linear-gradient(rgba(5, 15, 35, 0.55), rgba(5, 15, 35, 0.72)),
-            url('{{ asset('images/avion.jpg') }}');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+        background: linear-gradient(rgba(5, 15, 35, 0.55), rgba(5, 15, 35, 0.72));
     }
 
     .results-navbar {
         position: sticky;
         top: 0;
         z-index: 1000;
-        background: rgba(10, 20, 40, 0.88);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        background:
+            linear-gradient(180deg, rgba(7, 12, 30, 0.9), rgba(5, 9, 24, 0.72)),
+            rgba(10, 20, 40, 0.72);
+        backdrop-filter: blur(30px) saturate(165%);
+        -webkit-backdrop-filter: blur(30px) saturate(165%);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        box-shadow:
+            0 18px 50px rgba(0, 0, 0, 0.28),
+            inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .results-navbar::after {
+        content: "";
+        position: absolute;
+        left: 32px;
+        right: 32px;
+        bottom: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(228, 201, 110, 0.62), transparent);
+        pointer-events: none;
     }
 
     .results-navbar-inner {
@@ -46,13 +56,14 @@
         color: #fff;
         font-weight: 700;
         font-size: 18px;
+        letter-spacing: 0.02em;
     }
 
     .results-brand-logo {
         width: 42px;
         height: 42px;
         border-radius: 50%;
-        background: #d4af37;
+        background: linear-gradient(135deg, #d4af37, #e4c96e);
         color: #111;
         display: flex;
         align-items: center;
@@ -61,53 +72,89 @@
         font-weight: 700;
         font-size: 28px;
         line-height: 1;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.18),
+            0 0 24px rgba(212, 175, 55, 0.42),
+            0 10px 24px rgba(0,0,0,0.26);
     }
 
     .results-nav-links {
         display: flex;
         align-items: center;
-        gap: 34px;
+        gap: 6px;
+        padding: 5px;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.035);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .results-nav-links a {
         text-decoration: none;
-        color: rgba(255,255,255,0.76);
-        font-size: 14px;
+        color: rgba(255,255,255,0.66);
+        font-size: 12px;
         font-weight: 700;
-        letter-spacing: 0.4px;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         position: relative;
-        transition: 0.2s ease;
+        padding: 11px 13px;
+        border-radius: 999px;
+        transition: color 0.25s ease, background 0.25s ease, text-shadow 0.25s ease;
     }
 
     .results-nav-links a:hover,
     .results-nav-links a.active {
         color: #fff;
+        background: rgba(255,255,255,0.045);
+        text-shadow: 0 0 18px rgba(228, 201, 110, 0.22);
     }
 
-    .results-nav-links a.active::after {
+    .results-nav-links a::after {
         content: "";
         position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -10px;
-        height: 2px;
-        background: #d4af37;
+        left: 13px;
+        right: 13px;
+        bottom: 5px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e4c96e, transparent);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.25s ease;
+    }
+
+    .results-nav-links a:hover::after,
+    .results-nav-links a.active::after {
+        transform: scaleX(1);
     }
 
     .results-signin {
         text-decoration: none;
-        background: linear-gradient(135deg, #d4af37, #e4c96e);
+        border: 1px solid rgba(255,255,255,0.22);
+        background:
+            linear-gradient(135deg, rgba(228, 201, 110, 0.98), rgba(212, 175, 55, 0.95)),
+            #d4af37;
         color: #111;
-        padding: 12px 22px;
+        padding: 13px 24px;
         border-radius: 999px;
         font-weight: 800;
-        font-size: 14px;
+        font-size: 13px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 8px 18px rgba(0,0,0,0.14);
+        letter-spacing: 0.08em;
+        box-shadow:
+            0 12px 30px rgba(212, 175, 55, 0.28),
+            0 0 24px rgba(228, 201, 110, 0.16),
+            inset 0 1px 0 rgba(255,255,255,0.42);
         white-space: nowrap;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    }
+
+    .results-signin:hover {
+        transform: translateY(-1px);
+        filter: saturate(1.08);
+        box-shadow:
+            0 16px 38px rgba(212, 175, 55, 0.38),
+            0 0 34px rgba(228, 201, 110, 0.24),
+            inset 0 1px 0 rgba(255,255,255,0.48);
     }
 
     .results-hero {
@@ -163,7 +210,7 @@
 
     .results-info-bar {
         display: grid;
-        grid-template-columns: 1.4fr 1fr 0.7fr auto;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
         align-items: center;
         border-radius: 28px;
         overflow: hidden;
@@ -192,6 +239,103 @@
         font-size: 18px;
         font-weight: 600;
         color: #fff;
+    }
+
+    .criteria-notice {
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(212, 175, 55, 0.28);
+        background: rgba(212, 175, 55, 0.12);
+        color: #f1d77d;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .premium-summary {
+        margin-bottom: 18px;
+        padding: 22px 24px;
+        border-radius: 22px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        background:
+            linear-gradient(155deg, rgba(212, 175, 55, 0.12), rgba(12, 22, 48, 0.55)),
+            rgba(9, 16, 34, 0.88);
+        box-shadow:
+            0 16px 36px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .premium-summary-title {
+        margin: 0 0 14px;
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(228, 201, 110, 0.95);
+        font-weight: 800;
+    }
+
+    .premium-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .premium-summary-item {
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .premium-summary-label {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.62);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .premium-summary-value {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .closest-date-note {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(228, 201, 110, 0.35);
+        background: rgba(228, 201, 110, 0.13);
+        color: #ffe79a;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .closest-option-badge {
+        display: inline-block;
+        margin: 0 0 12px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(228, 201, 110, 0.4);
+        background: rgba(228, 201, 110, 0.14);
+        color: #ffe7a0;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .card-consistency-note {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 13px;
+        line-height: 1.5;
     }
 
     .info-action {
@@ -292,6 +436,89 @@
         color: rgba(255,255,255,0.95);
     }
 
+    .ai-badge,
+    .ai-prediction {
+        margin-top: 12px;
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(212, 175, 55, 0.15);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        color: #e1c15a;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .ai-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .ai-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 22px;
+        border-radius: 999px;
+        border: 1px solid rgba(212, 175, 55, 0.42);
+        background: rgba(212, 175, 55, 0.14);
+        color: #f2d47a;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .ai-toggle-btn:disabled {
+        opacity: 0.65;
+        cursor: wait;
+    }
+
+    .ai-status {
+        color: rgba(255,255,255,0.72);
+        font-size: 14px;
+    }
+
+    .ai-profile-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 999px;
+        border: 1px solid rgba(212, 175, 55, 0.34);
+        background: rgba(10, 22, 52, 0.76);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .ai-profile-pill {
+        border: none;
+        border-radius: 999px;
+        background: transparent;
+        color: rgba(255,255,255,0.72);
+        cursor: pointer;
+        padding: 9px 14px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.35px;
+        text-transform: uppercase;
+        transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .ai-profile-pill:hover {
+        background: rgba(212, 175, 55, 0.10);
+        color: #f2d47a;
+    }
+
+    .ai-profile-pill.is-active {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.96), rgba(228, 201, 110, 0.92));
+        color: #111;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }
+
     .flight-right {
         display: flex;
         justify-content: flex-end;
@@ -330,6 +557,10 @@
             grid-template-columns: 1fr 1fr;
         }
 
+        .premium-summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
         .info-action {
             grid-column: 1 / -1;
         }
@@ -358,7 +589,12 @@
             width: 100%;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 18px;
+            gap: 6px;
+        }
+
+        .results-nav-links a {
+            padding: 10px 12px;
+            font-size: 11px;
         }
 
         .results-hero-inner,
@@ -387,6 +623,10 @@
         }
 
         .results-info-bar {
+            grid-template-columns: 1fr;
+        }
+
+        .premium-summary-grid {
             grid-template-columns: 1fr;
         }
 
@@ -452,7 +692,11 @@
             <div class="results-info-bar-wrap">
                 <div class="results-info-bar">
                     <div class="info-item">
-                        <div class="info-label">Where</div>
+                        <div class="info-label">Mode</div>
+                        <div class="info-value">{{ trip_type == 'one_way' ? 'One way' : 'Return' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Destination</div>
                         <div class="info-value">{{ destination|default('Non définie') }}</div>
                     </div>
 
@@ -464,6 +708,18 @@
                     <div class="info-item">
                         <div class="info-label">Who</div>
                         <div class="info-value">{{ passagers|default(1) }} passager(s)</div>
+                    </div>
+
+                    {% if trip_type != 'one_way' %}
+                        <div class="info-item">
+                            <div class="info-label">Retour</div>
+                            <div class="info-value">{{ date_arrivee is not empty ? date_arrivee : 'Non définie' }}</div>
+                        </div>
+                    {% endif %}
+
+                    <div class="info-item">
+                        <div class="info-label">Classe</div>
+                        <div class="info-value">{{ travel_class_label|default('Business') }}</div>
                     </div>
 
                     <div class="info-action">
@@ -478,6 +734,24 @@
 
     <section class="results-section">
         <div class="results-container">
+            {% set summaryOrigin = 'Tunis' %}
+            {% set requestedDepartureDate = date_depart is not empty ? date_depart|date('Y-m-d') : '' %}
+            {% set closestDepartureDate = '' %}
+            {% set closestDepartureDisplay = '' %}
+            {% if flights is not empty %}
+                {% set firstFlight = flights|first %}
+                {% if firstFlight.originLabel is defined and firstFlight.originLabel is not empty %}
+                    {% set summaryOrigin = firstFlight.originLabel %}
+                {% elseif firstFlight.originCode is defined and firstFlight.originCode is not empty and firstFlight.originCode != '---' %}
+                    {% set summaryOrigin = firstFlight.originCode %}
+                {% endif %}
+
+                {% if firstFlight.dateDepart is defined and firstFlight.dateDepart is not empty %}
+                    {% set closestDepartureDate = firstFlight.dateDepart|date('Y-m-d') %}
+                    {% set closestDepartureDisplay = firstFlight.dateDepart|date('d M Y') %}
+                {% endif %}
+            {% endif %}
+            {% set showClosestDepartureNote = requestedDepartureDate is not empty and closestDepartureDate is not empty and requestedDepartureDate != closestDepartureDate %}
 
             {% if api_error is not empty and not used_mock_fallback %}
                 <div class="alert error">
@@ -485,15 +759,98 @@
                 </div>
             {% endif %}
 
-            {% if used_mock_fallback %}
-                <div class="alert info">
-                    Résultats affichés depuis les données locales.
+            <div class="premium-summary">
+                <h2 class="premium-summary-title">Your selected search criteria</h2>
+                <div class="premium-summary-grid">
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Origin</div>
+                        <div class="premium-summary-value">{{ summaryOrigin|default('Tunis') }}</div>
+                    </div>
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Destination</div>
+                        <div class="premium-summary-value">{{ destination|default('Non définie') }}</div>
+                    </div>
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Departure date</div>
+                        <div class="premium-summary-value">{{ date_depart is not empty ? date_depart|date('d/m/Y') : 'Non définie' }}</div>
+                    </div>
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Return date</div>
+                        <div class="premium-summary-value">{{ (trip_type == 'one_way') ? 'N/A' : (date_arrivee is not empty ? date_arrivee|date('d/m/Y') : 'Non définie') }}</div>
+                    </div>
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Passenger count</div>
+                        <div class="premium-summary-value">{{ passagers|default(1) }}</div>
+                    </div>
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Selected class</div>
+                        <div class="premium-summary-value">{{ travel_class_label|default('Business') }}</div>
+                    </div>
+                    <div class="premium-summary-item">
+                        <div class="premium-summary-label">Trip mode</div>
+                        <div class="premium-summary-value">{{ trip_type == 'one_way' ? 'One way' : 'Return' }}</div>
+                    </div>
+                </div>
+
+                {% if showClosestDepartureNote %}
+                    <div class="closest-date-note">
+                        Closest available departure found: {{ closestDepartureDisplay }}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if criteria_notice is defined and criteria_notice is not empty %}
+                <div class="criteria-notice">
+                    {{ criteria_notice }}
+                </div>
+            {% endif %}
+
+            {% if flights is not empty %}
+                <div class="ai-actions">
+                    <button type="button" class="ai-toggle-btn" id="activate-ai-btn">
+                        Activer Recommandation IA
+                    </button>
+                    <div class="ai-profile-group" role="group" aria-label="Profil de recommandation IA">
+                        <button type="button" class="ai-profile-pill is-active" data-ai-profile="balanced" aria-pressed="true">
+                            Balanced traveler
+                        </button>
+                        <button type="button" class="ai-profile-pill" data-ai-profile="budget" aria-pressed="false">
+                            Budget traveler
+                        </button>
+                        <button type="button" class="ai-profile-pill" data-ai-profile="comfort" aria-pressed="false">
+                            Comfort traveler
+                        </button>
+                    </div>
+                    <span class="ai-status" id="ai-status"></span>
                 </div>
             {% endif %}
 
             {% for flight in flights %}
-                <div class="flight-card">
+                <div
+                    class="flight-card"
+                    data-ai-card
+                    data-ai-index="{{ loop.index0 }}"
+                    data-destination="{{ flight.destinationCountry|default(flight.destinationLabel|default(destination))|e('html_attr') }}"
+                    data-current-price="{{ flight.prix|default(0) }}"
+                    data-date-depart="{% if flight.dateDepart is not empty %}{{ flight.dateDepart|date('Y-m-d H:i:s') }}{% endif %}"
+                    data-travel-class="{{ flight.cabinClass|default(flight.offerLabel|default('economy'))|e('html_attr') }}"
+                    data-offer-type="{{ flight.offerLabel|default(flight.cabinClass|default('standard'))|e('html_attr') }}"
+                    data-stops-count="{{ flight.stopsCount|default(0) }}"
+                    data-duration-minutes="{{ flight.durationMinutes|default(120) }}"
+                    data-airline="{{ flight.airline|default('unknown')|e('html_attr') }}"
+                >
                     <div class="flight-left">
+                        {% set requestedCardDate = date_depart is not empty ? date_depart|date('Y-m-d') : '' %}
+                        {% set cardDepartureDate = (flight.dateDepart is defined and flight.dateDepart is not empty) ? flight.dateDepart|date('Y-m-d') : '' %}
+                        {% set cardDateMismatch = requestedCardDate is not empty and cardDepartureDate is not empty and requestedCardDate != cardDepartureDate %}
+                        {% set cardClassMismatch = flight.classMismatch|default(false) %}
+                        {% set cardHasClosestNotice = cardDateMismatch or cardClassMismatch %}
+                        {% set closestClassLabel = flight.actualTravelClassLabel|default('') %}
+
+                        {% if cardHasClosestNotice %}
+                            <div class="closest-option-badge">Closest available option</div>
+                        {% endif %}
+
                         {% set originCode = flight.originCode|default('') %}
                         {% set destinationCode = flight.destinationCode|default('') %}
                         {% set routeLabel = flight.originLabel|default('Tunis') %}
@@ -508,21 +865,67 @@
                         {% endif %}
                         <span style="color: rgba(255,255,255,0.72);">{{ routeLabel }} &rarr; {{ destinationLabel }}</span><br><br>
 
-                        D&eacute;part :
-                        {% if flight.dateDepart is not empty %}
-                            {{ flight.dateDepart|date('d M Y H:i') }}
-                        {% else %}
-                            Non d&eacute;finie
-                        {% endif %}
-                        <br>
+                        {% if trip_type == 'return' %}
+                            Departure:
+                            {% if flight.dateDepart is not empty %}
+                                {% set departureTime = flight.dateDepart|date('H:i') %}
+                                {{ flight.dateDepart|date('d M Y') }}
+                                {% if departureTime == '00:00' %}
+                                    - Time to be confirmed
+                                {% else %}
+                                    {{ ' ' ~ departureTime }}
+                                {% endif %}
+                            {% else %}
+                                Non d&eacute;finie
+                            {% endif %}
+                            <br>
 
-                        Arriv&eacute;e :
-                        {% if flight.dateArrivee is not empty %}
-                            {{ flight.dateArrivee|date('d M Y H:i') }}
+                            Arrival:
+                            {% if flight.dateArrivee is not empty %}
+                                {% set arrivalTime = flight.dateArrivee|date('H:i') %}
+                                {{ flight.dateArrivee|date('d M Y') }}
+                                {% if arrivalTime == '00:00' %}
+                                    - Time to be confirmed
+                                {% else %}
+                                    {{ ' ' ~ arrivalTime }}
+                                {% endif %}
+                            {% else %}
+                                Non d&eacute;finie
+                            {% endif %}
+                            <br>
+
+                            {% if date_arrivee is not empty %}
+                                Return date selected: {{ date_arrivee|date('d M Y') }}<br>
+                            {% endif %}
                         {% else %}
-                            Non d&eacute;finie
+                            D&eacute;part :
+                            {% if flight.dateDepart is not empty %}
+                                {% set departureTime = flight.dateDepart|date('H:i') %}
+                                {{ flight.dateDepart|date('d M Y') }}
+                                {% if departureTime == '00:00' %}
+                                    - Time to be confirmed
+                                {% else %}
+                                    {{ ' ' ~ departureTime }}
+                                {% endif %}
+                            {% else %}
+                                Non d&eacute;finie
+                            {% endif %}
+                            <br>
+
+                            Arriv&eacute;e :
+                            {% if flight.dateArrivee is not empty %}
+                                {% set arrivalTime = flight.dateArrivee|date('H:i') %}
+                                {{ flight.dateArrivee|date('d M Y') }}
+                                {% if arrivalTime == '00:00' %}
+                                    - Time to be confirmed
+                                {% else %}
+                                    {{ ' ' ~ arrivalTime }}
+                                {% endif %}
+                            {% else %}
+                                Non d&eacute;finie
+                            {% endif %}
+                            <br>
                         {% endif %}
-                        <br>
 
                         {% if durationMinutes is not null and durationMinutes > 0 %}
                             {% set durationHours = (durationMinutes // 60) %}
@@ -532,13 +935,30 @@
                         {% endif %}
 
                         Trajet : {{ stopsCount == 0 ? 'Direct' : stopsCount ~ ' escale(s)' }}<br>
-                        {% if flight.cabinClass is defined and flight.cabinClass is not empty %}
-                            Classe : {{ flight.cabinClass }}<br>
-                        {% elseif flight.offerLabel is defined and flight.offerLabel is not empty %}
-                            Classe : {{ flight.offerLabel }}<br>
+                        {% set displayCabinLabel = closestClassLabel is not empty ? closestClassLabel : (flight.cabinClass|default('')|trim) %}
+                        {% if displayCabinLabel is empty %}
+                            {% set displayCabinLabel = flight.requestedTravelClassLabel|default(travel_class_label|default('')) %}
+                        {% endif %}
+                        {% if displayCabinLabel is not empty %}
+                            Classe : {{ displayCabinLabel }}<br>
                         {% endif %}
                         Transport : {{ flight.transport|default('avion') }}<br>
                         R&eacute;f : {{ flight.reference|default('N/A') }}
+
+                        {% if cardClassMismatch %}
+                            <div class="card-consistency-note">
+                                Requested class: {{ flight.requestedTravelClassLabel|default(travel_class_label|default('Business')) }}<br>
+                                Closest available class found: {{ closestClassLabel|default('Economy') }}
+                            </div>
+                        {% endif %}
+
+                        {% if cardDateMismatch %}
+                            <div class="card-consistency-note">
+                                Requested departure date: {{ date_depart is not empty ? date_depart|date('d M Y') : 'N/A' }}<br>
+                                Closest available departure found: {{ flight.dateDepart|date('d M Y') }}
+                            </div>
+                        {% endif %}
+
                     </div>
 
                     <div class="flight-middle">
@@ -552,8 +972,10 @@
                         </div>
 
                         {% if flight.offerLabel is defined and flight.offerLabel is not empty %}
-                            <div class="offer">Offre : {{ flight.offerLabel }}</div>
+                            <div class="offer">Tarif : {{ flight.offerLabel == 'Eco' ? 'Éco' : flight.offerLabel }}</div>
                         {% endif %}
+
+                        <div class="ai-badge" data-ai-badge hidden></div>
                     </div>
 
                     <div class="flight-right">
@@ -582,5 +1004,88 @@
     </section>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const button = document.getElementById('activate-ai-btn');
+        const status = document.getElementById('ai-status');
+        const profileButtons = Array.from(document.querySelectorAll('[data-ai-profile]'));
+        let selectedProfile = 'balanced';
+
+        if (!button) {
+            return;
+        }
+
+        profileButtons.forEach((profileButton) => {
+            profileButton.addEventListener('click', () => {
+                selectedProfile = profileButton.dataset.aiProfile || 'balanced';
+                profileButtons.forEach((item) => {
+                    const isActive = item === profileButton;
+                    item.classList.toggle('is-active', isActive);
+                    item.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+            });
+        });
+
+        button.addEventListener('click', async () => {
+            const cards = Array.from(document.querySelectorAll('[data-ai-card]'));
+            const flights = cards.map((card) => ({
+                index: Number(card.dataset.aiIndex),
+                destination: card.dataset.destination || '',
+                currentPrice: Number(card.dataset.currentPrice || 0),
+                dateDepart: card.dataset.dateDepart || '',
+                travelClass: card.dataset.travelClass || 'economy',
+                offerType: card.dataset.offerType || 'standard',
+                stopsCount: Number(card.dataset.stopsCount || 0),
+                durationMinutes: Number(card.dataset.durationMinutes || 120),
+                airline: card.dataset.airline || 'unknown',
+            }));
+            const profile = selectedProfile;
+
+            button.disabled = true;
+            status.textContent = 'Recommandation IA en cours...';
+
+            try {
+                const response = await fetch('{{ path('app_flights_ai_recommendations') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ flights, profile }),
+                });
+                const payload = await response.json();
+
+                if (!response.ok || !Array.isArray(payload.recommendations)) {
+                    status.textContent = payload.error
+                        ? `Recommandation IA indisponible: ${payload.error}`
+                        : 'Recommandation IA indisponible pour le moment.';
+                    return;
+                }
+
+                payload.recommendations.forEach((item) => {
+                    const card = document.querySelector(`[data-ai-index="${item.index}"]`);
+                    const badge = card ? card.querySelector('[data-ai-badge]') : null;
+
+                    if (badge) {
+                        const badgeText = Array.isArray(item.badges) && item.badges.length > 0
+                            ? item.badges.map((badgeItem) => `${badgeItem.icon} ${badgeItem.label}`).join(' · ')
+                            : `AI rank #${item.rank}`;
+                        badge.textContent = `${badgeText} · Score ${item.score}/100`;
+                        badge.hidden = false;
+                    }
+                });
+
+                status.textContent = payload.recommendations.length > 0
+                    ? 'Recommandations IA ajoutees.'
+                    : 'Aucune recommandation IA disponible.';
+            } catch (error) {
+                status.textContent = `Recommandation IA indisponible: ${error.message}`;
+            } finally {
+                button.disabled = false;
+            }
+        });
+    });
+</script>
 
 {% endblock %}

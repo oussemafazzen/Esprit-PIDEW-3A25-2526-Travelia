@@ -6,6 +6,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DestinationCodeResolver
 {
+    private array $countryDataCache = [];
+
     /**
      * Deterministic major airport candidates by country ISO2 code.
      * Ordered by practical hub priority for better hit rate.
@@ -229,6 +231,12 @@ class DestinationCodeResolver
 
     private function resolveCountryData(string $original, string $normalized): ?array
     {
+        $cacheKey = $normalized . '|' . mb_strtolower(trim($original));
+
+        if (array_key_exists($cacheKey, $this->countryDataCache)) {
+            return $this->countryDataCache[$cacheKey];
+        }
+
         $queries = array_values(array_unique(array_filter([
             $original,
             $normalized,
@@ -245,6 +253,8 @@ class DestinationCodeResolver
                             'fullText' => $fullText,
                             'fields' => 'capital,capitalInfo,translations,name,cca2,cca3',
                         ],
+                        'timeout' => 4,
+                        'max_duration' => 5,
                     ]);
 
                     $countries = $response->toArray(false);
@@ -283,7 +293,7 @@ class DestinationCodeResolver
                             }
                         }
 
-                        return [
+                        return $this->countryDataCache[$cacheKey] = [
                             'capital' => trim($capital),
                             'capitalLat' => is_numeric($capitalLat) ? (float) $capitalLat : null,
                             'capitalLng' => is_numeric($capitalLng) ? (float) $capitalLng : null,
@@ -296,11 +306,13 @@ class DestinationCodeResolver
                         ];
                     }
                 } catch (\Throwable $e) {
+                    error_log('RestCountries destination lookup failed: ' . $e->getMessage());
+                    continue;
                 }
             }
         }
 
-        return null;
+        return $this->countryDataCache[$cacheKey] = null;
     }
 
     private function resolveNearestAirportCode(string $placeQuery): ?string

@@ -11,7 +11,9 @@ use App\Repository\ReservationRepository;
 use App\Service\AmadeusFlightService;
 use App\Service\DestinationCodeResolver;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Process\Process;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,6 +29,9 @@ class FrontFlightController extends AbstractController
         $reservationId = (int) $request->query->get('reservation_id', 0);
         $destination = trim((string) $request->query->get('destination', ''));
         $dateDepart = trim((string) $request->query->get('date_depart', ''));
+        $dateArrivee = trim((string) $request->query->get('date_arrivee', ''));
+        $tripType = $this->normalizeTripType((string) $request->query->get('trip_type', 'return'));
+        $travelClass = $this->normalizeSearchTravelClass((string) $request->query->get('travel_class', 'business'));
         $passagers = max(1, (int) $request->query->get('passagers', 1));
 
         if ($destination !== '' && method_exists($searchData, 'setDestination')) {
@@ -55,8 +60,10 @@ class FrontFlightController extends AbstractController
                 'reservation_id' => $reservationId,
                 'destination' => $searchData->getDestination(),
                 'date_depart' => $searchData->getDateDepart()?->format('Y-m-d'),
-                'date_arrivee' => '',
+                'date_arrivee' => $tripType === 'return' ? $dateArrivee : '',
                 'type_transport' => 'avion',
+                'trip_type' => $tripType,
+                'travel_class' => $travelClass,
                 'passagers' => $searchData->getPassagers(),
             ]);
         }
@@ -77,6 +84,8 @@ class FrontFlightController extends AbstractController
         $destination = trim((string) $request->query->get('destination', ''));
         $dateDepart = trim((string) $request->query->get('date_depart', ''));
         $dateArrivee = trim((string) $request->query->get('date_arrivee', ''));
+        $tripType = $this->normalizeTripType((string) $request->query->get('trip_type', 'return'));
+        $travelClass = $this->normalizeSearchTravelClass((string) $request->query->get('travel_class', 'business'));
         $typeTransport = trim((string) $request->query->get('type_transport', 'avion'));
         $passagers = max(1, (int) $request->query->get('passagers', 1));
         $reservationId = (int) $request->query->get('reservation_id', 0);
@@ -85,6 +94,15 @@ class FrontFlightController extends AbstractController
         $apiError = null;
         $destinationCode = null;
         $usedMockFallback = false;
+        $apiReturnedFlights = false;
+        $apiRawFlightsCount = 0;
+        $apiNormalizedFlightsCount = 0;
+        $apiDateFilteredFlightsCount = 0;
+        $criteriaNotice = null;
+
+        if ($tripType === 'return' && $dateArrivee === '') {
+            $criteriaNotice = 'No exact match found for your selected criteria — showing closest available options.';
+        }
 
         if ($destination !== '' && $dateDepart !== '') {
             $destinationCodes = $destinationCodeResolver->resolveCandidates($destination);
@@ -97,17 +115,49 @@ class FrontFlightController extends AbstractController
                         $apiFlights = $amadeusFlightService->searchFlights(
                             destinationCode: $destinationCode,
                             departureDate: $dateDepart,
-                            adults: $passagers
+                            adults: $passagers,
+                            returnDate: $tripType === 'return' ? $dateArrivee : '',
+                            tripType: $tripType,
+                            travelClass: $travelClass
                         );
 
+                        $apiRawFlightsCount = count($apiFlights);
+                        error_log('Front flight API raw normalized count: ' . $apiRawFlightsCount);
+
                         if (!empty($apiFlights)) {
+                            $apiReturnedFlights = true;
                             $normalizedApiFlights = $this->normalizeApiFlightsForDisplay(
                                 $apiFlights,
                                 $destination,
-                                $dateDepart
+                                $dateDepart,
+                                $tripType === 'return' ? $dateArrivee : ''
                             );
 
+                            $apiNormalizedFlightsCount = count($normalizedApiFlights);
                             $normalizedApiFlights = $this->filterFlightsByDepartureDate($normalizedApiFlights, $dateDepart);
+                            $apiDateFilteredFlightsCount = count($normalizedApiFlights);
+                            error_log('Front flight API display count before date filter: ' . $apiNormalizedFlightsCount);
+                            error_log('Front flight API display count after date filter: ' . $apiDateFilteredFlightsCount);
+                            if ($apiNormalizedFlightsCount > 0 && $apiDateFilteredFlightsCount === 0) {
+                                $criteriaNotice = 'No exact match found for your selected departure date — showing closest available options.';
+                                $normalizedApiFlights = $this->decorateFlightsWithSearchCriteria(
+                                    $this->normalizeApiFlightsForDisplay(
+                                        $apiFlights,
+                                        $destination,
+                                        $dateDepart,
+                                        $tripType === 'return' ? $dateArrivee : ''
+                                    ),
+                                    $tripType,
+                                    $travelClass,
+                                    $dateArrivee
+                                );
+                            } else {
+                                $classMatchedFlights = $this->filterFlightsByRequestedClass($normalizedApiFlights, $travelClass);
+                                if (count($classMatchedFlights) > 0) {
+                                    $normalizedApiFlights = $classMatchedFlights;
+                                }
+                                $normalizedApiFlights = $this->decorateFlightsWithSearchCriteria($normalizedApiFlights, $tripType, $travelClass, $dateArrivee);
+                            }
                             $flightsWithOptions = $this->buildFlightVariants($normalizedApiFlights);
 
                             if (count($flightsWithOptions) > 0) {
@@ -123,7 +173,7 @@ class FrontFlightController extends AbstractController
             }
         }
 
-        if (count($flightsWithOptions) === 0) {
+        if (count($flightsWithOptions) === 0 && (!$apiReturnedFlights || $apiError !== null)) {
             $billets = [];
 
             if (method_exists($billetRepository, 'findAvailableFlights')) {
@@ -169,6 +219,9 @@ class FrontFlightController extends AbstractController
             }
 
             $usedMockFallback = count($baseFlights) > 0;
+            if ($usedMockFallback && $criteriaNotice === null) {
+                $criteriaNotice = 'No exact match found for your selected criteria — showing closest available options.';
+            }
 
             $filteredFlights = $baseFlights;
 
@@ -191,25 +244,178 @@ class FrontFlightController extends AbstractController
             }
 
             if (count($filteredFlights) === 0 && count($baseFlights) > 0) {
+                $criteriaNotice = 'No exact match found for your selected criteria — showing closest available options.';
                 $filteredFlights = $baseFlights;
             }
 
             $filteredFlights = $this->filterFlightsByDepartureDate(array_values($filteredFlights), $dateDepart);
+            if (count($filteredFlights) === 0 && count($baseFlights) > 0) {
+                $criteriaNotice = 'No exact match found for your selected departure date — showing closest available options.';
+                $filteredFlights = $baseFlights;
+            }
+            $filteredFlights = $this->decorateFlightsWithSearchCriteria($filteredFlights, $tripType, $travelClass, $dateArrivee);
             $flightsWithOptions = $this->buildFlightVariants(array_values($filteredFlights));
         }
 
+        $flights = $flightsWithOptions;
+
         return $this->render('front/flights/results.html.twig', [
-            'flights' => $flightsWithOptions,
+            'flights' => $flights,
             'destination' => $destination,
             'date_depart' => $dateDepart,
             'date_arrivee' => $dateArrivee,
+            'trip_type' => $tripType,
+            'travel_class' => $travelClass,
+            'travel_class_label' => $this->getTravelClassLabel($travelClass),
             'type_transport' => $typeTransport,
             'passagers' => $passagers,
             'reservation_id' => $reservationId,
             'api_error' => $apiError,
             'destination_code_debug' => $destinationCode,
             'used_mock_fallback' => $usedMockFallback,
+            'api_raw_flights_count' => $apiRawFlightsCount,
+            'api_normalized_flights_count' => $apiNormalizedFlightsCount,
+            'api_date_filtered_flights_count' => $apiDateFilteredFlightsCount,
+            'criteria_notice' => $criteriaNotice,
         ]);
+    }
+
+    #[Route('/vols/ai-recommendations', name: 'app_flights_ai_recommendations', methods: ['POST'])]
+    public function aiRecommendations(Request $request): JsonResponse
+    {
+        $payload = json_decode($request->getContent(), true);
+
+        if (!is_array($payload)) {
+            return $this->json([
+                'recommendations' => [],
+                'error' => 'invalid_json_payload',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $submittedFlights = $payload['flights'] ?? [];
+        $profile = in_array(($payload['profile'] ?? ''), ['budget', 'comfort', 'balanced'], true)
+            ? (string) $payload['profile']
+            : 'balanced';
+
+        if (!is_array($submittedFlights)) {
+            return $this->json([
+                'recommendations' => [],
+                'error' => 'invalid_flights_payload',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        error_log('AI recommendation flights received: ' . json_encode($submittedFlights));
+
+        $pythonBinary = $this->resolvePythonBinary();
+
+        if ($pythonBinary === null) {
+            return $this->json([
+                'recommendations' => [],
+                'error' => 'python_binary_not_found',
+            ]);
+        }
+
+        $featureRows = [];
+
+        foreach ($submittedFlights as $flightPayload) {
+            if (!is_array($flightPayload)) {
+                continue;
+            }
+
+            $index = isset($flightPayload['index']) ? (int) $flightPayload['index'] : null;
+
+            if ($index === null) {
+                continue;
+            }
+
+            $row = $this->buildAiRecommendationRow($flightPayload);
+
+            if ($row === null) {
+                error_log('AI recommendation skipped for flight ' . $index . ': invalid_feature_payload');
+                continue;
+            }
+
+            $featureRows[] = $row;
+        }
+
+        error_log('AI recommendation rows sent to Python: ' . json_encode($featureRows));
+
+        if (count($featureRows) === 0) {
+            return $this->json([
+                'recommendations' => [],
+                'error' => 'no_valid_feature_rows',
+            ]);
+        }
+
+        $debugReason = null;
+        $recommendations = $this->recommendFlightsBatch(
+            $pythonBinary,
+            $featureRows,
+            $profile,
+            $debugReason
+        );
+
+        if ($recommendations === null) {
+            error_log('AI recommendation batch skipped: ' . ($debugReason ?? 'recommendation_returned_null'));
+
+            return $this->json([
+                'recommendations' => [],
+                'error' => $debugReason ?? 'recommendation_returned_null',
+            ]);
+        }
+
+        return $this->json([
+            'profile' => $profile,
+            'recommendations' => $recommendations,
+        ]);
+    }
+
+    /**
+     * Converts browser-submitted flight card data into the same feature shape
+     * used by the existing Python/scikit-learn prediction script.
+     */
+    private function normalizeAiPredictionPayload(array $flightPayload): array
+    {
+        return [
+            'destinationCountry' => (string) ($flightPayload['destination'] ?? ''),
+            'destinationLabel' => (string) ($flightPayload['destination'] ?? ''),
+            'prix' => isset($flightPayload['currentPrice']) && is_numeric($flightPayload['currentPrice'])
+                ? (float) $flightPayload['currentPrice']
+                : 0.0,
+            'dateDepart' => (string) ($flightPayload['dateDepart'] ?? ''),
+            'cabinClass' => (string) ($flightPayload['travelClass'] ?? ''),
+            'offerLabel' => (string) ($flightPayload['travelClass'] ?? ''),
+            'offerType' => (string) ($flightPayload['offerType'] ?? ''),
+            'stopsCount' => isset($flightPayload['stopsCount']) && is_numeric($flightPayload['stopsCount'])
+                ? (int) $flightPayload['stopsCount']
+                : 0,
+            'durationMinutes' => isset($flightPayload['durationMinutes']) && is_numeric($flightPayload['durationMinutes'])
+                ? (int) $flightPayload['durationMinutes']
+                : 120,
+            'airline' => (string) ($flightPayload['airline'] ?? 'unknown'),
+        ];
+    }
+
+    private function buildAiRecommendationRow(array $flightPayload): ?array
+    {
+        $flight = $this->normalizeAiPredictionPayload($flightPayload);
+        $price = isset($flight['prix']) && is_numeric($flight['prix']) ? (float) $flight['prix'] : 0.0;
+
+        if ($price <= 0) {
+            return null;
+        }
+
+        return [
+            'index' => isset($flightPayload['index']) ? (int) $flightPayload['index'] : 0,
+            'destination' => (string) ($flight['destinationCountry'] ?? $flight['destinationLabel'] ?? 'unknown'),
+            'current_price' => $price,
+            'travel_class' => $this->normalizeTravelClass((string) ($flight['cabinClass'] ?? $flight['offerLabel'] ?? 'economy')),
+            'offer_type' => (string) ($flight['offerType'] ?: ($flight['offerLabel'] ?? $flight['cabinClass'] ?? 'standard')),
+            'airline' => (string) ($flight['airline'] ?? 'unknown'),
+            'stops_count' => max(0, (int) ($flight['stopsCount'] ?? 0)),
+            'duration_minutes' => max(1, (int) ($flight['durationMinutes'] ?? 120)),
+            'departure_hour' => $this->resolveFlightDepartureHour((string) ($flight['dateDepart'] ?? $flightPayload['dateDepart'] ?? '')),
+        ];
     }
 
     #[Route('/vols/paiement', name: 'app_flights_payment_submit', methods: ['POST'])]
@@ -475,6 +681,234 @@ class FrontFlightController extends AbstractController
         ]);
     }
 
+    /**
+     * Finds a local Python command. The page must keep working even when Python
+     * is not installed, so this returns null instead of throwing.
+     */
+    private function resolvePythonBinary(): ?string
+    {
+        $projectDir = dirname(__DIR__, 2);
+        $configuredBinary = $_ENV['PYTHON_BINARY']
+            ?? $_SERVER['PYTHON_BINARY']
+            ?? (getenv('PYTHON_BINARY') ?: null);
+        $candidates = array_filter([
+            $configuredBinary,
+            $projectDir . DIRECTORY_SEPARATOR . '.venv' . DIRECTORY_SEPARATOR . 'Scripts' . DIRECTORY_SEPARATOR . 'python.exe',
+            $projectDir . DIRECTORY_SEPARATOR . 'venv' . DIRECTORY_SEPARATOR . 'Scripts' . DIRECTORY_SEPARATOR . 'python.exe',
+            'python',
+            'py',
+            'python3',
+        ]);
+
+        foreach ($candidates as $binary) {
+            try {
+                $process = new Process([$binary, '--version']);
+                $process->setTimeout(2);
+                $process->run();
+
+                if ($process->isSuccessful()) {
+                    return $binary;
+                }
+            } catch (\Throwable $e) {
+                continue;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Runs the Python recommendation engine once for all submitted flight cards.
+     */
+    private function recommendFlightsBatch(string $pythonBinary, array $featureRows, string $profile, ?string &$debugReason = null): ?array
+    {
+        $recommendationScript = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'ai' . DIRECTORY_SEPARATOR . 'recommend_flights.py';
+
+        if (!is_file($recommendationScript)) {
+            $debugReason = 'recommendation_script_not_found: ' . $recommendationScript;
+            error_log('AI recommendation skipped: ' . $debugReason);
+            return null;
+        }
+
+        try {
+            $process = new Process([
+                $pythonBinary,
+                $recommendationScript,
+                '--batch-json',
+                '-',
+                '--profile',
+                $profile,
+            ]);
+            $process->setInput(json_encode($featureRows, JSON_THROW_ON_ERROR));
+            $process->setTimeout(8);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                $debugReason = 'python_process_failed: ' . trim($process->getErrorOutput() ?: $process->getOutput());
+                error_log('AI recommendation skipped: ' . $debugReason);
+                return null;
+            }
+
+            $output = trim($process->getOutput());
+
+            if ($output === '') {
+                $debugReason = 'python_process_empty_output';
+                error_log('AI recommendation skipped: ' . $debugReason);
+                return null;
+            }
+
+            $payload = json_decode($output, true);
+            error_log('AI recommendation raw Python stdout: ' . $output);
+            error_log('AI recommendation decoded Python JSON: ' . json_encode($payload));
+
+            if (!is_array($payload)) {
+                $debugReason = 'python_json_parse_failed: ' . json_last_error_msg() . ' output=' . $output;
+                error_log('AI recommendation skipped: ' . $debugReason);
+                return null;
+            }
+
+            if (!empty($payload['error'])) {
+                $debugReason = 'python_recommendation_error: ' . (string) $payload['error'];
+                error_log('AI recommendation skipped: ' . $debugReason);
+                return null;
+            }
+
+            $recommendations = $payload['recommendations'] ?? null;
+
+            if (!is_array($recommendations)) {
+                $debugReason = 'missing_recommendations';
+                error_log('AI recommendation skipped: ' . $debugReason);
+                return null;
+            }
+
+            return array_values($recommendations);
+        } catch (\Throwable $e) {
+            $debugReason = 'prediction_exception: ' . $e->getMessage();
+            error_log('AI recommendation skipped: ' . $debugReason);
+            return null;
+        }
+    }
+
+    private function resolveFlightDepartureDate(array $flight, string $searchDateDepart): ?\DateTimeInterface
+    {
+        if (($flight['dateDepart'] ?? null) instanceof \DateTimeInterface) {
+            return $flight['dateDepart'];
+        }
+
+        $dateValue = (string) ($flight['dateDepart'] ?? $searchDateDepart);
+
+        if ($dateValue === '') {
+            return null;
+        }
+
+        try {
+            return new \DateTimeImmutable($dateValue);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    private function resolveFlightDepartureHour(string $dateValue): int
+    {
+        if (trim($dateValue) === '') {
+            return 9;
+        }
+
+        try {
+            return (int) (new \DateTimeImmutable($dateValue))->format('G');
+        } catch (\Throwable $e) {
+            return 9;
+        }
+    }
+
+    private function normalizeTravelClass(string $travelClass): string
+    {
+        $value = mb_strtolower(trim($travelClass));
+
+        if (str_contains($value, 'first')) {
+            return 'first';
+        }
+
+        if (str_contains($value, 'business')) {
+            return 'business';
+        }
+
+        if (str_contains($value, 'flex')) {
+            return 'flex';
+        }
+
+        if (str_contains($value, 'standard')) {
+            return 'standard';
+        }
+
+        return 'economy';
+    }
+
+    private function filterFlightsByRequestedClass(array $flights, string $requestedClass): array
+    {
+        $requestedClass = $this->normalizeSearchTravelClass($requestedClass);
+
+        $filtered = array_values(array_filter($flights, function (array $flight) use ($requestedClass): bool {
+            $rawClass = (string) ($flight['cabinClass'] ?? $flight['offerLabel'] ?? '');
+            if ($rawClass === '') {
+                return false;
+            }
+
+            return $this->normalizeTravelClass($rawClass) === $requestedClass;
+        }));
+
+        return $filtered;
+    }
+
+    private function normalizeSearchTravelClass(string $travelClass): string
+    {
+        return match (mb_strtolower(trim($travelClass))) {
+            'business' => 'business',
+            'first' => 'first',
+            'premium_economy' => 'premium_economy',
+            default => 'economy',
+        };
+    }
+
+    private function normalizeTripType(string $tripType): string
+    {
+        return $tripType === 'one_way' ? 'one_way' : 'return';
+    }
+
+    private function getTravelClassLabel(string $travelClass): string
+    {
+        return match ($this->normalizeSearchTravelClass($travelClass)) {
+            'business' => 'Business',
+            'first' => 'First Class',
+            'premium_economy' => 'Premium Economy',
+            default => 'Economy',
+        };
+    }
+
+    private function decorateFlightsWithSearchCriteria(array $flights, string $tripType, string $travelClass, string $dateArrivee): array
+    {
+        $travelClass = $this->normalizeSearchTravelClass($travelClass);
+        $travelClassLabel = $this->getTravelClassLabel($travelClass);
+
+        return array_map(function (array $flight) use ($tripType, $travelClass, $travelClassLabel, $dateArrivee): array {
+            $actualClassRaw = trim((string) ($flight['cabinClass'] ?? $flight['offerLabel'] ?? ''));
+            $actualTravelClass = $actualClassRaw !== '' ? $this->normalizeTravelClass($actualClassRaw) : '';
+            $actualTravelClassLabel = $actualTravelClass !== ''
+                ? $this->getTravelClassLabel($actualTravelClass)
+                : '';
+
+            $flight['tripType'] = $tripType;
+            $flight['requestedTravelClass'] = $travelClass;
+            $flight['requestedTravelClassLabel'] = $travelClassLabel;
+            $flight['requestedReturnDate'] = $tripType === 'return' ? $dateArrivee : '';
+            $flight['actualTravelClass'] = $actualTravelClass;
+            $flight['actualTravelClassLabel'] = $actualTravelClassLabel;
+            $flight['classMismatch'] = $actualTravelClass !== '' && $actualTravelClass !== $travelClass;
+
+            return $flight;
+        }, $flights);
+    }
+
     private function matchesTransport(Billet $billet, string $typeTransport): bool
     {
         if ($typeTransport === '' || mb_strtolower($typeTransport) === 'tous') {
@@ -592,13 +1026,19 @@ class FrontFlightController extends AbstractController
         return $flights;
     }
 
-    private function normalizeApiFlightsForDisplay(array $apiFlights, string $destination, string $fallbackDateDepart): array
-    {
+    private function normalizeApiFlightsForDisplay(
+        array $apiFlights,
+        string $destination,
+        string $fallbackDateDepart,
+        string $fallbackReturnDate = ''
+    ): array {
         $flights = [];
 
         foreach ($apiFlights as $index => $flight) {
             $departureAt = null;
             $arrivalAt = null;
+            $departureAtRaw = isset($flight['departureAt']) ? trim((string) $flight['departureAt']) : '';
+            $arrivalAtRaw = isset($flight['arrivalAt']) ? trim((string) $flight['arrivalAt']) : '';
             $originCode = 'TUN';
             $destinationCode = $destination;
             $originLabel = 'Tunis';
@@ -607,9 +1047,9 @@ class FrontFlightController extends AbstractController
                 ? (int) $flight['durationMinutes']
                 : null;
 
-            if (isset($flight['departureAt'])) {
+            if ($departureAtRaw !== '') {
                 try {
-                    $departureAt = new \DateTime((string) $flight['departureAt']);
+                    $departureAt = new \DateTime($departureAtRaw);
                 } catch (\Throwable $e) {
                     $departureAt = null;
                 }
@@ -621,9 +1061,9 @@ class FrontFlightController extends AbstractController
                 }
             }
 
-            if (isset($flight['arrivalAt'])) {
+            if ($arrivalAtRaw !== '') {
                 try {
-                    $arrivalAt = new \DateTime((string) $flight['arrivalAt']);
+                    $arrivalAt = new \DateTime($arrivalAtRaw);
                 } catch (\Throwable $e) {
                     $arrivalAt = null;
                 }
@@ -632,6 +1072,30 @@ class FrontFlightController extends AbstractController
                     $arrivalAt = new \DateTime((string) $flight['itineraries'][0]['segments'][0]['arrival']['at']);
                 } catch (\Throwable $e) {
                     $arrivalAt = null;
+                }
+            }
+
+            if (
+                $departureAt instanceof \DateTimeInterface
+                && $fallbackDateDepart !== ''
+                && $departureAt->format('Y-m-d') !== $fallbackDateDepart
+                && preg_match('/^\d{1,2}:\d{2}(?:\s*[AP]M)?$/i', $departureAtRaw) === 1
+            ) {
+                try {
+                    $departureAt = new \DateTime($fallbackDateDepart . ' ' . $departureAtRaw);
+                } catch (\Throwable $e) {
+                }
+            }
+
+            if (
+                $arrivalAt instanceof \DateTimeInterface
+                && $fallbackDateDepart !== ''
+                && $arrivalAt->format('Y-m-d') !== $fallbackDateDepart
+                && preg_match('/^\d{1,2}:\d{2}(?:\s*[AP]M)?$/i', $arrivalAtRaw) === 1
+            ) {
+                try {
+                    $arrivalAt = new \DateTime($fallbackDateDepart . ' ' . $arrivalAtRaw);
+                } catch (\Throwable $e) {
                 }
             }
 
@@ -646,6 +1110,56 @@ class FrontFlightController extends AbstractController
             if (!$arrivalAt && $departureAt instanceof \DateTimeInterface) {
                 $arrivalAt = \DateTime::createFromInterface($departureAt);
                 $arrivalAt->modify('+2 hours');
+            }
+
+            $returnDepartureAt = null;
+            $returnArrivalAt = null;
+            $returnDepartureAtRaw = isset($flight['returnDepartureAt']) ? trim((string) $flight['returnDepartureAt']) : '';
+            $returnArrivalAtRaw = isset($flight['returnArrivalAt']) ? trim((string) $flight['returnArrivalAt']) : '';
+
+            if ($returnDepartureAtRaw !== '') {
+                try {
+                    $returnDepartureAt = new \DateTime($returnDepartureAtRaw);
+                } catch (\Throwable $e) {
+                    $returnDepartureAt = null;
+                }
+            }
+
+            if ($returnArrivalAtRaw !== '') {
+                try {
+                    $returnArrivalAt = new \DateTime($returnArrivalAtRaw);
+                } catch (\Throwable $e) {
+                    $returnArrivalAt = null;
+                }
+            }
+
+            if (
+                $returnDepartureAt instanceof \DateTimeInterface
+                && $fallbackReturnDate !== ''
+                && $returnDepartureAt->format('Y-m-d') !== $fallbackReturnDate
+                && preg_match('/^\d{1,2}:\d{2}(?:\s*[AP]M)?$/i', $returnDepartureAtRaw) === 1
+            ) {
+                try {
+                    $returnDepartureAt = new \DateTime($fallbackReturnDate . ' ' . $returnDepartureAtRaw);
+                } catch (\Throwable $e) {
+                }
+            }
+
+            if (
+                $returnArrivalAt instanceof \DateTimeInterface
+                && $fallbackReturnDate !== ''
+                && $returnArrivalAt->format('Y-m-d') !== $fallbackReturnDate
+                && preg_match('/^\d{1,2}:\d{2}(?:\s*[AP]M)?$/i', $returnArrivalAtRaw) === 1
+            ) {
+                try {
+                    $returnArrivalAt = new \DateTime($fallbackReturnDate . ' ' . $returnArrivalAtRaw);
+                } catch (\Throwable $e) {
+                }
+            }
+
+            if (!$returnArrivalAt && $returnDepartureAt instanceof \DateTimeInterface) {
+                $returnArrivalAt = \DateTime::createFromInterface($returnDepartureAt);
+                $returnArrivalAt->modify('+2 hours');
             }
 
             if (isset($flight['origin'])) {
@@ -696,6 +1210,8 @@ class FrontFlightController extends AbstractController
                 'destinationLabel' => (string) $destinationLabel,
                 'dateDepart' => $departureAt,
                 'dateArrivee' => $arrivalAt,
+                'dateReturnDepart' => $returnDepartureAt,
+                'dateReturnArrivee' => $returnArrivalAt,
                 'durationMinutes' => $durationMinutes,
                 'prix' => is_numeric($price) ? (float) $price : 0,
                 'currency' => (string) $currency,
