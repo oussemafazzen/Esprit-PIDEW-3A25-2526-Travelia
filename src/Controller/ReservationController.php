@@ -66,7 +66,14 @@ final class ReservationController extends AbstractController
 
         $qb->orderBy($allowedSorts[$sort], $direction);
 
-        $calendarReservations = $reservationRepository->findBy([], ['dateReservation' => 'ASC', 'id' => 'DESC']);
+        $calendarReservations = $reservationRepository->createQueryBuilder('cr')
+            ->leftJoin('cr.billets', 'cb')
+            ->addSelect('cb')
+            ->orderBy('cr.dateReservation', 'ASC')
+            ->addOrderBy('cr.id', 'DESC')
+            ->addOrderBy('cb.dateDepart', 'ASC')
+            ->getQuery()
+            ->getResult();
 
         $reservations = $paginator->paginate(
             $qb,

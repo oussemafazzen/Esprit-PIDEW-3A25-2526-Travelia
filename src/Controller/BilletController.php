@@ -69,6 +69,10 @@ final class BilletController extends AbstractController
 
         $qb->orderBy($allowedSorts[$sort], $direction);
 
+        $calendarBillets = (clone $qb)
+            ->getQuery()
+            ->getResult();
+
         $billets = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -77,6 +81,7 @@ final class BilletController extends AbstractController
 
         return $this->render('billet/index.html.twig', [
             'billets' => $billets,
+            'calendarBillets' => $calendarBillets,
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction,
@@ -94,12 +99,12 @@ final class BilletController extends AbstractController
 
         $headers = [
             'Type transport',
-            'Numéro billet',
-            'Date départ',
-            'Date arrivée',
+            'NumÃ©ro billet',
+            'Date dÃ©part',
+            'Date arrivÃ©e',
             'Prix',
             'Statut',
-            'Réservation liée',
+            'RÃ©servation liÃ©e',
         ];
 
         foreach ($headers as $index => $header) {

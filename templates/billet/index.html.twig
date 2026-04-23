@@ -83,6 +83,37 @@
             justify-content: flex-end;
         }
 
+        .view-toggle {
+            display: inline-flex;
+            gap: 0.5rem;
+            padding: 0.35rem;
+            border: 1px solid rgba(201, 168, 76, 0.22);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .view-toggle-btn {
+            min-height: 42px;
+            padding: 0 1rem;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: rgba(255,255,255,0.62);
+            cursor: pointer;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .view-toggle-btn.active,
+        .view-toggle-btn:hover {
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.18);
+        }
+
         .export-btn {
             display: inline-flex;
             align-items: center;
@@ -266,14 +297,254 @@
             color: var(--gold2);
         }
 
+        .admin-calendar-panel[hidden],
+        .admin-table-panel[hidden] {
+            display: none;
+        }
+
+        .admin-calendar-panel {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+            gap: 1.4rem;
+        }
+
+        .admin-calendar-card,
+        .admin-calendar-details {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            background: rgba(255,255,255,0.03);
+            padding: 1.4rem;
+        }
+
+        .admin-calendar-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .admin-calendar-kicker {
+            margin: 0 0 0.45rem;
+            color: var(--gold2);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .admin-calendar-title {
+            margin: 0;
+            font-family: var(--serif);
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .admin-calendar-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .admin-calendar-nav {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.15rem;
+            transition: all 0.2s ease;
+        }
+
+        .admin-calendar-nav:hover {
+            background: rgba(201, 168, 76, 0.18);
+            color: var(--gold2);
+        }
+
+        .admin-calendar-month {
+            min-width: 145px;
+            text-align: center;
+            color: rgba(255,255,255,0.82);
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+
+        .admin-calendar-weekdays,
+        .admin-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.45rem;
+        }
+
+        .admin-calendar-weekdays {
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-calendar-weekdays span {
+            color: rgba(255,255,255,0.42);
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .admin-calendar-day {
+            position: relative;
+            min-height: 72px;
+            padding: 0.65rem;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.025);
+            color: rgba(255,255,255,0.76);
+            cursor: default;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .admin-calendar-day.is-muted {
+            opacity: 0.34;
+        }
+
+        .admin-calendar-day.is-today {
+            border-color: rgba(232, 201, 122, 0.42);
+        }
+
+        .admin-calendar-day.has-billet {
+            cursor: pointer;
+            border-color: rgba(201, 168, 76, 0.44);
+            background: linear-gradient(145deg, rgba(201, 168, 76, 0.20), rgba(255,255,255,0.04));
+        }
+
+        .admin-calendar-day.has-billet:hover,
+        .admin-calendar-day.is-selected {
+            transform: translateY(-2px);
+            border-color: rgba(232, 201, 122, 0.72);
+            background: linear-gradient(145deg, rgba(201, 168, 76, 0.32), rgba(255,255,255,0.06));
+        }
+
+        .admin-calendar-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 0.84rem;
+        }
+
+        .admin-calendar-day.is-today .admin-calendar-number {
+            background: rgba(232, 201, 122, 0.16);
+            color: var(--gold2);
+        }
+
+        .admin-calendar-count {
+            position: absolute;
+            right: 0.5rem;
+            bottom: 0.5rem;
+            min-width: 28px;
+            height: 28px;
+            padding: 0 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #111;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .admin-calendar-details-title {
+            margin: 0 0 1rem;
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .admin-calendar-empty {
+            color: rgba(255,255,255,0.52);
+            line-height: 1.6;
+        }
+
+        .admin-calendar-billet-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .admin-calendar-billet {
+            padding: 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.035);
+        }
+
+        .admin-calendar-billet-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .admin-calendar-billet-head strong {
+            color: var(--gold2);
+        }
+
+        .admin-calendar-billet-meta {
+            display: grid;
+            gap: 0.45rem;
+            color: rgba(255,255,255,0.74);
+            font-size: 0.86rem;
+        }
+
+        .admin-calendar-billet-meta span {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        .admin-calendar-billet-meta b {
+            color: rgba(255,255,255,0.44);
+            font-weight: 700;
+        }
+
         @media (max-width: 1200px) {
             .table-tools {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-calendar-panel {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
+    {% set billetCalendarItems = [] %}
+    {% for billet in calendarBillets|default([]) %}
+        {% if billet.dateDepart %}
+            {% set billetCalendarItems = billetCalendarItems|merge([{
+                id: billet.id,
+                date: billet.dateDepart|date('Y-m-d'),
+                displayDate: billet.dateDepart|date('Y-m-d'),
+                transport: billet.typeTransport ?? '',
+                numero: billet.numeroBillet ?? '',
+                arrivee: billet.dateArrivee ? billet.dateArrivee|date('Y-m-d') : '',
+                prix: billet.prix ?? '',
+                status: billet.statut ?? '',
+                reservation: billet.reservation ? billet.reservation.id : '',
+                showUrl: path('app_billet_show', {'id': billet.id})
+            }]) %}
+        {% endif %}
+    {% endfor %}
+
     <aside class="app-sidebar">
         <div class="logo-area">Travel<em>ia</em></div>
         <nav class="nav-menu">
@@ -335,12 +606,17 @@
             <div class="section-header">
                 <h2>Liste des billets</h2>
                 <div class="header-actions">
+                    <div class="view-toggle" aria-label="Changer de vue">
+                        <button type="button" class="view-toggle-btn active" data-billet-view="table">Table</button>
+                        <button type="button" class="view-toggle-btn" data-billet-view="calendar">Calendrier</button>
+                    </div>
                     <a href="{{ path('app_billet_export_pdf') }}" class="export-btn">Exporter PDF</a>
                     <a href="{{ path('app_billet_export_excel') }}" class="export-btn">Exporter Excel</a>
                     <a href="{{ path('app_billet_new') }}" class="create-btn">+ Créer nouveau</a>
                 </div>
             </div>
 
+            <div class="admin-table-panel" id="adminBilletTablePanel">
             <form method="get" action="{{ path('app_billet_index') }}" class="table-tools">
                 <input
                     type="text"
@@ -411,9 +687,295 @@
             </div>
 
             {{ knp_pagination_render(billets) }}
+            </div>
+
+            <div class="admin-calendar-panel" id="adminBilletCalendarPanel" hidden>
+                <div class="admin-calendar-card">
+                    <div class="admin-calendar-top">
+                        <div>
+                            <p class="admin-calendar-kicker">Vue calendrier</p>
+                            <h3 class="admin-calendar-title">Billets par date de départ</h3>
+                        </div>
+
+                        <div class="admin-calendar-actions" aria-label="Navigation du calendrier">
+                            <button type="button" class="admin-calendar-nav" id="adminBilletCalendarPrev" aria-label="Mois précédent">&lsaquo;</button>
+                            <div class="admin-calendar-month" id="adminBilletCalendarMonth"></div>
+                            <button type="button" class="admin-calendar-nav" id="adminBilletCalendarNext" aria-label="Mois suivant">&rsaquo;</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-calendar-weekdays" aria-hidden="true">
+                        <span>Lun</span>
+                        <span>Mar</span>
+                        <span>Mer</span>
+                        <span>Jeu</span>
+                        <span>Ven</span>
+                        <span>Sam</span>
+                        <span>Dim</span>
+                    </div>
+
+                    <div class="admin-calendar-grid" id="adminBilletCalendarGrid"></div>
+                </div>
+
+                <aside class="admin-calendar-details" id="adminBilletCalendarDetails">
+                    <h3 class="admin-calendar-details-title">Détails</h3>
+                    <p class="admin-calendar-empty">Sélectionnez une date dorée pour afficher les billets au départ.</p>
+                </aside>
+            </div>
+
+            <script type="application/json" id="admin-billet-calendar-data">{{ billetCalendarItems|json_encode|raw }}</script>
         </section>
     </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tablePanel = document.getElementById('adminBilletTablePanel');
+            const calendarPanel = document.getElementById('adminBilletCalendarPanel');
+            const viewButtons = document.querySelectorAll('[data-billet-view]');
+            const dataElement = document.getElementById('admin-billet-calendar-data');
+            const calendarGrid = document.getElementById('adminBilletCalendarGrid');
+            const calendarMonth = document.getElementById('adminBilletCalendarMonth');
+            const calendarPrev = document.getElementById('adminBilletCalendarPrev');
+            const calendarNext = document.getElementById('adminBilletCalendarNext');
+            const calendarDetails = document.getElementById('adminBilletCalendarDetails');
+            const calendarBillets = dataElement ? JSON.parse(dataElement.textContent || '[]') : [];
+            const billetsByDate = calendarBillets.reduce((groups, billet) => {
+                if (!billet.date) {
+                    return groups;
+                }
+
+                if (!groups[billet.date]) {
+                    groups[billet.date] = [];
+                }
+
+                groups[billet.date].push(billet);
+                return groups;
+            }, {});
+
+            let currentCalendarDate = calendarBillets.length > 0
+                ? new Date(calendarBillets[0].date + 'T00:00:00')
+                : new Date();
+            let selectedCalendarDate = null;
+
+            function setBilletView(view) {
+                if (!tablePanel || !calendarPanel) {
+                    return;
+                }
+
+                tablePanel.hidden = view !== 'table';
+                calendarPanel.hidden = view !== 'calendar';
+
+                viewButtons.forEach((button) => {
+                    const isActive = button.dataset.billetView === view;
+                    button.classList.toggle('active', isActive);
+                    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+            }
+
+            viewButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    setBilletView(button.dataset.billetView);
+                });
+            });
+
+            function padDatePart(value) {
+                return String(value).padStart(2, '0');
+            }
+
+            function createDate(year, month, day) {
+                return new Date(year, month, day);
+            }
+
+            function toDateKey(date) {
+                return [
+                    date.getFullYear(),
+                    padDatePart(date.getMonth() + 1),
+                    padDatePart(date.getDate())
+                ].join('-');
+            }
+
+            function formatDate(dateKey) {
+                const parts = dateKey.split('-').map(Number);
+                const date = createDate(parts[0], parts[1] - 1, parts[2]);
+
+                return new Intl.DateTimeFormat('fr-FR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                }).format(date);
+            }
+
+            function renderCalendarDetails(dateKey) {
+                if (!calendarDetails) {
+                    return;
+                }
+
+                const items = billetsByDate[dateKey] || [];
+                calendarDetails.innerHTML = '';
+
+                const title = document.createElement('h3');
+                title.className = 'admin-calendar-details-title';
+                title.textContent = items.length > 0 ? formatDate(dateKey) : 'Détails';
+                calendarDetails.appendChild(title);
+
+                if (items.length === 0) {
+                    const empty = document.createElement('p');
+                    empty.className = 'admin-calendar-empty';
+                    empty.textContent = calendarBillets.length > 0
+                        ? 'Sélectionnez une date dorée pour afficher les billets au départ.'
+                        : 'Aucun billet daté à afficher dans le calendrier.';
+                    calendarDetails.appendChild(empty);
+                    return;
+                }
+
+                const list = document.createElement('div');
+                list.className = 'admin-calendar-billet-list';
+
+                items.forEach((billet) => {
+                    const card = document.createElement('article');
+                    card.className = 'admin-calendar-billet';
+
+                    const head = document.createElement('div');
+                    head.className = 'admin-calendar-billet-head';
+
+                    const heading = document.createElement('strong');
+                    heading.textContent = 'Billet #' + billet.id;
+
+                    const link = document.createElement('a');
+                    link.className = 'action-btn';
+                    link.href = billet.showUrl;
+                    link.textContent = 'Voir';
+
+                    head.appendChild(heading);
+                    head.appendChild(link);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'admin-calendar-billet-meta';
+
+                    [
+                        ['Numéro', billet.numero || '-'],
+                        ['Départ', billet.displayDate || billet.date],
+                        ['Arrivée', billet.arrivee || '-'],
+                        ['Transport', billet.transport || '-'],
+                        ['Prix', billet.prix !== '' ? billet.prix : '-'],
+                        ['Statut', billet.status || '-'],
+                        ['Réservation', billet.reservation ? '#' + billet.reservation : '-']
+                    ].forEach(([label, value]) => {
+                        const row = document.createElement('span');
+                        const labelElement = document.createElement('b');
+                        const valueElement = document.createElement('em');
+
+                        labelElement.textContent = label;
+                        valueElement.textContent = value;
+                        valueElement.style.fontStyle = 'normal';
+
+                        row.appendChild(labelElement);
+                        row.appendChild(valueElement);
+                        meta.appendChild(row);
+                    });
+
+                    card.appendChild(head);
+                    card.appendChild(meta);
+                    list.appendChild(card);
+                });
+
+                calendarDetails.appendChild(list);
+            }
+
+            function renderBilletCalendar() {
+                if (!calendarGrid || !calendarMonth) {
+                    return;
+                }
+
+                const year = currentCalendarDate.getFullYear();
+                const month = currentCalendarDate.getMonth();
+                const firstDay = createDate(year, month, 1);
+                const mondayOffset = (firstDay.getDay() + 6) % 7;
+                const startDate = createDate(year, month, 1 - mondayOffset);
+                const todayKey = toDateKey(new Date());
+
+                calendarMonth.textContent = new Intl.DateTimeFormat('fr-FR', {
+                    month: 'long',
+                    year: 'numeric'
+                }).format(firstDay);
+                calendarGrid.innerHTML = '';
+
+                for (let index = 0; index < 42; index++) {
+                    const dayDate = createDate(
+                        startDate.getFullYear(),
+                        startDate.getMonth(),
+                        startDate.getDate() + index
+                    );
+                    const dateKey = toDateKey(dayDate);
+                    const dayBillets = billetsByDate[dateKey] || [];
+                    const dayButton = document.createElement('button');
+                    dayButton.type = 'button';
+                    dayButton.className = 'admin-calendar-day';
+                    dayButton.setAttribute('aria-label', dayDate.toLocaleDateString('fr-FR'));
+
+                    if (dayDate.getMonth() !== month) {
+                        dayButton.classList.add('is-muted');
+                    }
+
+                    if (dateKey === todayKey) {
+                        dayButton.classList.add('is-today');
+                    }
+
+                    if (dateKey === selectedCalendarDate) {
+                        dayButton.classList.add('is-selected');
+                    }
+
+                    const number = document.createElement('span');
+                    number.className = 'admin-calendar-number';
+                    number.textContent = dayDate.getDate();
+                    dayButton.appendChild(number);
+
+                    if (dayBillets.length > 0) {
+                        const count = document.createElement('span');
+                        count.className = 'admin-calendar-count';
+                        count.textContent = dayBillets.length;
+                        dayButton.classList.add('has-billet');
+                        dayButton.appendChild(count);
+
+                        dayButton.addEventListener('click', () => {
+                            selectedCalendarDate = dateKey;
+                            renderBilletCalendar();
+                            renderCalendarDetails(dateKey);
+                        });
+                    }
+
+                    calendarGrid.appendChild(dayButton);
+                }
+            }
+
+            if (calendarPrev && calendarNext) {
+                calendarPrev.addEventListener('click', () => {
+                    currentCalendarDate = createDate(
+                        currentCalendarDate.getFullYear(),
+                        currentCalendarDate.getMonth() - 1,
+                        1
+                    );
+                    selectedCalendarDate = null;
+                    renderBilletCalendar();
+                    renderCalendarDetails('');
+                });
+
+                calendarNext.addEventListener('click', () => {
+                    currentCalendarDate = createDate(
+                        currentCalendarDate.getFullYear(),
+                        currentCalendarDate.getMonth() + 1,
+                        1
+                    );
+                    selectedCalendarDate = null;
+                    renderBilletCalendar();
+                    renderCalendarDetails('');
+                });
+            }
+
+            renderBilletCalendar();
+            renderCalendarDetails('');
+        });
+    </script>
     <script src="{{ asset('js/admin.js') }}"></script>
 </body>
 </html>
