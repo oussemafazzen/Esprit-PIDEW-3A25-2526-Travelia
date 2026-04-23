@@ -26,7 +26,15 @@ final class UserReservationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $reservations = $reservationRepository->findBy(['clientId' => $currentClient->getId()], ['id' => 'DESC']);
+        $reservations = $reservationRepository->createQueryBuilder('r')
+            ->leftJoin('r.billets', 'b')
+            ->addSelect('b')
+            ->andWhere('r.clientId = :clientId')
+            ->setParameter('clientId', $currentClient->getId())
+            ->orderBy('r.id', 'DESC')
+            ->addOrderBy('b.dateDepart', 'ASC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('front/user/reservations.html.twig', [
             'reservations' => $reservations,

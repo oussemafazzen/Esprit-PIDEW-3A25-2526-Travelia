@@ -770,17 +770,47 @@
 } %}
 {% set reservationCalendarItems = [] %}
 {% for reservation in reservations %}
-    {% if reservation.dateReservation %}
+    {% set reservationDestination = reservation.paysDestination ?? reservation.pays ?? 'Destination non définie' %}
+    {% if reservation.billets is not empty %}
+        {% for billet in reservation.billets %}
+            {% if billet.dateDepart %}
+                {% set reservationCalendarItems = reservationCalendarItems|merge([{
+                    id: reservation.id,
+                    billetId: billet.id,
+                    date: billet.dateDepart|date('Y-m-d'),
+                    displayDate: billet.dateDepart|date('Y-m-d'),
+                    dateType: 'Départ',
+                    destination: reservationDestination,
+                    status: billet.statut ?? reservation.statut ?? '',
+                    billets: 1
+                }]) %}
+            {% endif %}
+
+            {% if billet.bookedReturnDate %}
+                {% set reservationCalendarItems = reservationCalendarItems|merge([{
+                    id: reservation.id,
+                    billetId: billet.id,
+                    date: billet.bookedReturnDate|date('Y-m-d'),
+                    displayDate: billet.bookedReturnDate|date('Y-m-d'),
+                    dateType: 'Retour',
+                    destination: reservationDestination,
+                    status: billet.statut ?? reservation.statut ?? '',
+                    billets: 1
+                }]) %}
+            {% endif %}
+        {% endfor %}
+    {% elseif reservation.dateReservation %}
         {% set reservationCalendarItems = reservationCalendarItems|merge([{
             id: reservation.id,
             date: reservation.dateReservation|date('Y-m-d'),
-            destination: reservation.paysDestination ?? reservation.pays ?? 'Destination non définie',
+            displayDate: reservation.dateReservation|date('Y-m-d'),
+            dateType: 'Réservation',
+            destination: reservationDestination,
             status: reservation.statut ?? '',
-            billets: reservation.billets|length
+            billets: 0
         }]) %}
     {% endif %}
 {% endfor %}
-
 <canvas id="live-canvas"></canvas>
 
 {% include 'front/_site_nav.html.twig' with { active_nav: 'reservations' } %}
@@ -1246,9 +1276,10 @@
 
                     const meta = document.createElement('span');
                     const destination = reservation.destination || 'Destination non définie';
+                    const dateType = reservation.dateType ? reservation.dateType + ' - ' : '';
                     const status = reservation.status ? ' - ' + reservation.status : '';
                     const billets = reservation.billets > 0 ? ' - ' + reservation.billets + ' billet(s)' : '';
-                    meta.textContent = destination + status + billets;
+                    meta.textContent = dateType + destination + status + billets;
 
                     pill.appendChild(label);
                     pill.appendChild(meta);
