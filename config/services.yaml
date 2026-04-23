@@ -1,6 +1,8 @@
 parameters:
     serpapi.key: '%env(SERPAPI_KEY)%'
     flight.default_origin: '%env(FLIGHT_DEFAULT_ORIGIN)%'
+    abstract_holidays.api_key: '%env(ABSTRACT_HOLIDAYS_API_KEY)%'
+    unsplash.access_key: '%env(UNSPLASH_ACCESS_KEY)%'
 
 services:
     _defaults:
@@ -17,3 +19,12 @@ services:
         arguments:
             $apiKey: '%serpapi.key%'
             $defaultOrigin: '%flight.default_origin%'
+
+    App\Service\HolidayService:
+        arguments:
+            $apiKey: '%abstract_holidays.api_key%'
+            $cacheDir: '%kernel.cache_dir%'
+
+    App\Service\UnsplashService:
+        arguments:
+            $accessKey: '%unsplash.access_key%'

@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Billet;
+use App\Entity\Client;
 use App\Entity\FlightSearchData;
 use App\Entity\Reservation;
 use App\Form\FlightSearchType;
 use App\Repository\BilletRepository;
+use App\Repository\ClientRepository;
 use App\Repository\ReservationRepository;
 use App\Service\AmadeusFlightService;
 use App\Service\DestinationCodeResolver;
@@ -18,6 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class FrontFlightController extends AbstractController
@@ -424,6 +427,7 @@ class FrontFlightController extends AbstractController
         Request $request,
         BilletRepository $billetRepository,
         ReservationRepository $reservationRepository,
+        ClientRepository $clientRepository,
         EntityManagerInterface $em,
         ValidatorInterface $validator,
         PromoCodeEvaluator $promoCodeEvaluator
@@ -556,6 +560,15 @@ class FrontFlightController extends AbstractController
         $reservationId = (int) $request->request->get('reservation_id', 0);
 
         $reservation = null;
+        $currentClient = $this->resolveAuthenticatedClient($clientRepository);
+
+        if (!$currentClient instanceof Client || $currentClient->getId() === null) {
+            return $this->render('front/flights/payment.html.twig', [
+                'payment' => $paymentPayload,
+                'payment_errors' => ['Vous devez être connecté avec un compte client valide pour confirmer cette réservation.'],
+                'promo_rules_json' => $promoRulesJson,
+            ]);
+        }
 
         if (!$reservation) {
             $reservation = new Reservation();
@@ -573,7 +586,7 @@ class FrontFlightController extends AbstractController
             }
 
             if (method_exists($reservation, 'setClientId')) {
-                $reservation->setClientId(51);
+                $reservation->setClientId($currentClient->getId());
             }
 
             if (method_exists($reservation, 'setPaysDestination')) {
@@ -691,6 +704,31 @@ class FrontFlightController extends AbstractController
             'payment' => $paymentData,
             'promo_rules_json' => $promoRulesJson,
         ]);
+    }
+
+    private function resolveAuthenticatedClient(ClientRepository $clientRepository): ?Client
+    {
+        $user = $this->getUser();
+
+        if ($user instanceof Client) {
+            return $user;
+        }
+
+        $identifier = null;
+
+        if ($user instanceof UserInterface) {
+            $identifier = $user->getUserIdentifier();
+        } elseif (is_object($user) && method_exists($user, 'getEmail')) {
+            $identifier = (string) $user->getEmail();
+        }
+
+        $identifier = trim((string) $identifier);
+
+        if ($identifier === '') {
+            return null;
+        }
+
+        return $clientRepository->findOneBy(['email' => $identifier]);
     }
 
     private function buildFlightPaymentPayloadForTemplate(

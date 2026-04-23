@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Repository\BilletRepository;
+use App\Repository\ClientRepository;
 use App\Repository\ReservationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class AdminController extends AbstractController
 {
+    #[Route('/admin', name: 'app_admin_dashboard')]
     #[Route('/admin', name: 'admin_dashboard')]
     public function dashboard(
         Request $request,
@@ -243,5 +247,48 @@ final class AdminController extends AbstractController
             'billetSort' => $billetSort,
             'billetDirection' => $billetDirection,
         ]);
+    }
+
+    #[Route('/admin/travelers', name: 'app_admin_travelers', methods: ['GET'])]
+    public function travelers(Request $request, ClientRepository $clientRepository): Response
+    {
+        $search = trim((string) $request->query->get('q', ''));
+        $sortBy = (string) $request->query->get('sort', 'nom');
+        $direction = strtoupper((string) $request->query->get('direction', 'ASC'));
+
+        if (!in_array($direction, ['ASC', 'DESC'], true)) {
+            $direction = 'ASC';
+        }
+
+        $clients = $clientRepository->findBySearchAndSort($search, $sortBy, $direction);
+
+        return $this->render('admin/travelers.html.twig', [
+            'clients' => $clients,
+            'search' => $search,
+            'sortBy' => $sortBy,
+            'direction' => $direction,
+        ]);
+    }
+
+    #[Route('/admin/clients/{id}/toggle-status', name: 'app_admin_client_toggle_status', methods: ['POST'])]
+    public function toggleClientStatus(Client $client, EntityManagerInterface $entityManager): Response
+    {
+        $client->setStatut($client->getStatut() === 'ACTIF' ? 'BLOQUE' : 'ACTIF');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Statut client mis a jour.');
+
+        return $this->redirectToRoute('app_admin_travelers');
+    }
+
+    #[Route('/admin/clients/{id}/delete', name: 'app_admin_client_delete', methods: ['POST'])]
+    public function deleteClient(Client $client, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($client);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Client supprime.');
+
+        return $this->redirectToRoute('app_admin_travelers');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\BilletRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: BilletRepository::class)]
 #[ORM\Table(name: 'billet')]
@@ -16,21 +17,44 @@ class Billet
     private ?int $id = null;
 
     #[ORM\Column(name: 'type_transport', type: 'string', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Le type de transport est obligatoire.')]
+    #[Assert\Choice(
+        choices: ['avion', 'train', 'bus', 'bateau'],
+        message: 'Le type de transport sélectionné est invalide.'
+    )]
     private ?string $typeTransport = null;
 
     #[ORM\Column(name: 'numero_billet', type: 'string', length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Le numéro du billet est obligatoire.')]
+    #[Assert\Length(
+        min: 3,
+        max: 100,
+        minMessage: 'Le numéro du billet doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le numéro du billet ne doit pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $numeroBillet = null;
 
     #[ORM\Column(name: 'date_depart', type: 'datetime', nullable: true)]
+    #[Assert\NotBlank(message: 'La date de départ est obligatoire.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'La date de départ est invalide.')]
     private ?\DateTimeInterface $dateDepart = null;
 
     #[ORM\Column(name: 'date_arrivee', type: 'datetime', nullable: true)]
+    #[Assert\NotBlank(message: 'La date d’arrivée est obligatoire.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'La date d’arrivée est invalide.')]
     private ?\DateTimeInterface $dateArrivee = null;
 
     #[ORM\Column(name: 'prix', type: 'float', nullable: true)]
+    #[Assert\NotBlank(message: 'Le prix est obligatoire.')]
+    #[Assert\PositiveOrZero(message: 'Le prix doit être positif ou égal à zéro.')]
     private ?float $prix = null;
 
     #[ORM\Column(name: 'statut', type: 'string', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
+    #[Assert\Choice(
+        choices: ['confirme', 'retarde', 'en_attente', 'annule'],
+        message: 'Le statut sélectionné est invalide.'
+    )]
     private ?string $statut = null;
 
     #[ORM\Column(name: 'booked_trip_type', type: 'string', length: 20, nullable: true)]
@@ -59,7 +83,22 @@ class Billet
 
     #[ORM\ManyToOne(inversedBy: 'billets')]
     #[ORM\JoinColumn(name: 'id_reservation', referencedColumnName: 'id_reservation', nullable: true)]
+    #[Assert\NotNull(message: 'La réservation liée est obligatoire.')]
     private ?Reservation $reservation = null;
+
+    #[Assert\Callback]
+    public function validateDates(ExecutionContextInterface $context): void
+    {
+        if (!$this->dateDepart instanceof \DateTimeInterface || !$this->dateArrivee instanceof \DateTimeInterface) {
+            return;
+        }
+
+        if ($this->dateArrivee < $this->dateDepart) {
+            $context->buildViolation('La date d’arrivée doit être supérieure ou égale à la date de départ.')
+                ->atPath('dateArrivee')
+                ->addViolation();
+        }
+    }
 
     #[Assert\NotBlank(message: 'Le mode de paiement est obligatoire.', groups: ['payment_default'])]
     #[Assert\Choice(choices: ['carte', 'virement', 'especes'], message: 'Le mode de paiement sélectionné est invalide.', groups: ['payment_default'])]

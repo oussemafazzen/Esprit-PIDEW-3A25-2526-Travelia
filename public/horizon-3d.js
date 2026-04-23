@@ -519,10 +519,16 @@
   // ─────────────────────────────────────────────
   const scrollWrap = document.getElementById('scroll-wrap');
   const navLinks = document.querySelectorAll('.nav-link');
+  const panels = document.querySelectorAll('.panel');
 
   function setScene(idx) {
+    idx = Math.max(0, Math.min(idx, panels.length - 1));
     activeScene = idx;
-    navLinks.forEach((l, i) => l.classList.toggle('active', i === idx));
+    panels.forEach((panel, i) => panel.classList.toggle('is-active', i === idx));
+    navLinks.forEach(link => {
+      const section = link.dataset.section;
+      link.classList.toggle('active', section !== undefined && parseInt(section, 10) === idx);
+    });
   }
 
   navLinks.forEach(link => {
@@ -551,10 +557,13 @@
 
   // Search — handled by validateAndExplore() in travelia.html
   // This listener is kept only as a fallback; the onclick attr runs first.
-  document.getElementById('search-go').addEventListener('click', () => {
-    // validateAndExplore() on the button handles validation + scroll to panel-2
-    // Nothing extra needed here.
-  });
+  const searchGo = document.getElementById('search-go');
+  if (searchGo) {
+    searchGo.addEventListener('click', () => {
+      // validateAndExplore() on the button opens the real flight booking module.
+      // Nothing extra needed here.
+    });
+  }
 
   // ─────────────────────────────────────────────
   //  SIDEBAR
@@ -639,6 +648,7 @@
   const hotelsRow = document.getElementById('hotels-row');
   const btnPrev = document.getElementById('hotel-prev');
   const btnNext = document.getElementById('hotel-next');
+  const hotelsApiUrl = hotelsRow?.dataset.apiUrl || '/hebergement/api/all';
 
   const updateArrows = () => {
     if (!hotelsRow) return;
@@ -658,9 +668,19 @@
     }
   };
 
-  fetch('/hebergement/api/all')
-    .then(response => response.json())
+  fetch(hotelsApiUrl, { headers: { 'Accept': 'application/json' } })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Hotel API failed with HTTP ${response.status}`);
+      }
+      return response.json();
+    })
     .then(hotels => {
+      if (!Array.isArray(hotels) || hotels.length === 0) {
+        hotelsRow.innerHTML = '<p>No luxury stays are available at the moment.</p>';
+        return;
+      }
+
       hotelsRow.innerHTML = hotels.map(h => `
         <div class="hotel-card" data-id="${h.id}">
           <div style="overflow:hidden;height:160px">
@@ -746,40 +766,8 @@
     }
   });
 
-  // FLIGHTS
-  const flights = [
-    { from:'CDG', fromCity:'Paris', to:'DXB', toCity:'Dubai', dur:'6h 45m', cls:'Business', price:'€2,140', seats:'3 left', emoji:'✈️' },
-    { from:'LHR', fromCity:'London', to:'MLE', toCity:'Malé', dur:'9h 20m', cls:'First Class', price:'€3,890', seats:'1 left', emoji:'✈️' },
-    { from:'JFK', fromCity:'New York', to:'NRT', toCity:'Tokyo', dur:'13h 10m', cls:'Business', price:'€1,960', seats:'5 left', emoji:'✈️' },
-    { from:'SIN', fromCity:'Singapore', to:'LAX', toCity:'Los Angeles', dur:'17h 30m', cls:'First Class', price:'€4,200', seats:'2 left', emoji:'✈️' },
-  ];
-  document.getElementById('flights-col').innerHTML = flights.map(f => `
-    <div class="flight-card">
-      <div class="flight-airline">✈</div>
-      <div class="flight-route">
-        <div class="flight-city"><strong>${f.from}</strong><small>${f.fromCity}</small></div>
-        <div class="flight-mid">
-          <div class="flight-dur">${f.dur}</div>
-          <svg class="flight-line-svg" viewBox="0 0 200 16"><line x1="0" y1="8" x2="188" y2="8" stroke="rgba(201,168,76,0.5)" stroke-width="1"/><polygon points="188,4 200,8 188,12" fill="rgba(201,168,76,0.7)"/></svg>
-          <div class="flight-cls">${f.cls}</div>
-        </div>
-        <div class="flight-city"><strong>${f.to}</strong><small>${f.toCity}</small></div>
-      </div>
-      <div class="flight-meta">
-        <div class="flight-price">${f.price}</div>
-        <div class="flight-seats">🔴 ${f.seats}</div>
-        <a href="javascript:void(0)" class="book-now-link"
-          onclick="quickBookAction('${f.toCity}', '${f.price}')"
-          style="display:inline-block; text-align:center; text-decoration:none;
-                 background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); color:var(--gold);
-                 padding:0.55rem 1.4rem; border-radius:100px; font-size:0.72rem; font-weight:700;
-                 text-transform:uppercase; letter-spacing:0.06em; cursor:pointer; transition:0.3s;"
-          onmouseover="this.style.background='var(--gold)'; this.style.color='var(--ink)';"
-          onmouseout="this.style.background='rgba(201,168,76,0.1)'; this.style.color='var(--gold)';"
-        >Book</a>
-      </div>
-    </div>`).join('');
-
+  // Static mock flight cards removed: the homepage links to the real /vols booking module.
+  
   // ACTIVITIES
   const acts = [
     { name:'Hot Air Balloon', sub:'Cappadocia, Türkiye', dur:'3h', price:'€180', img:'https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=500&q=75', pin:'Türkiye', emoji:'🎈' },
@@ -848,10 +836,8 @@
       const vid = panel.querySelector('.panel-vid');
       
       if (entry.isIntersecting) {
-        panel.classList.add('is-active');
         if (vid) vid.play().catch(() => {});
       } else {
-        panel.classList.remove('is-active');
         if (vid) vid.pause();
       }
     });

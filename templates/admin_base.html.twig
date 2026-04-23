@@ -392,14 +392,14 @@
       </a>
       
       {% set is_heberg_res = (route starts with 'app_reservationhebergement') %}
-      <a href="/hebergement/" class="nav-item {% if (route starts with 'app_hebergement') or is_heberg_res %}active{% endif %}">
+      <a href="{{ path('app_hebergement_index') }}" class="nav-item {% if (route starts with 'app_hebergement') or is_heberg_res %}active{% endif %}">
         <span class="nav-icon">{% if is_heberg_res %}📑{% else %}🏨{% endif %}</span>
         {{ is_heberg_res ? 'Resrv. Hotels' : 'Hotels' }}
       </a>
 
       {% set is_billet = (route starts with 'app_billet') %}
       {% set is_reservation_friend = (route starts with 'app_reservation') and not is_heberg_res %}
-      <a href="/reservation/" class="nav-item {% if is_reservation_friend or is_billet %}active{% endif %}">
+      <a href="{{ path('app_reservation_index') }}" class="nav-item {% if is_reservation_friend or is_billet %}active{% endif %}">
         <span class="nav-icon">{% if is_billet %}🎫{% else %}✈{% endif %}</span>
         {{ is_billet ? 'billets' : 'réservations' }}
       </a>

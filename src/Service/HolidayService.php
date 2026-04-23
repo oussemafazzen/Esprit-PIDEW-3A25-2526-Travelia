@@ -226,7 +226,15 @@ class HolidayService
         $merged = [];
         // Reverse so that earlier locales overwrite later ones (higher priority)
         foreach (array_reverse(self::INTL_LOCALES) as $locale) {
-            foreach (Countries::getNames($locale) as $iso => $name) {
+            try {
+                $countryNames = Countries::getNames($locale);
+            } catch (\Throwable) {
+                // Some local WAMP/PHP setups miss ext-intl data for locales such as "pt".
+                // Keep the admin page usable; enabling php_intl remains the correct fix.
+                continue;
+            }
+
+            foreach ($countryNames as $iso => $name) {
                 $merged[$this->normalize($name)] = $iso;
             }
         }

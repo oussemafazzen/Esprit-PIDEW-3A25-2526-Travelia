@@ -64,7 +64,7 @@
                 Tableau de bord
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="{{ path('app_hebergement_index') }}" class="nav-item">
                 <span class="nav-icon">🏨</span>
                 Hébergements
             </a>
@@ -79,7 +79,7 @@
                 Activités
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="{{ path('app_admin_travelers') }}" class="nav-item">
                 <span class="nav-icon">👥</span>
                 Clients
             </a>
@@ -120,7 +120,10 @@
                 <a href="{{ path('app_reservation_index') }}" class="back-btn">← Retour à la liste</a>
             </div>
 
-            {{ include('reservation/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+            {{ include('reservation/_form.html.twig', {
+                'button_label': 'Enregistrer',
+                'form_action': path('app_reservation_new')
+            }) }}
         </section>
     </main>
 

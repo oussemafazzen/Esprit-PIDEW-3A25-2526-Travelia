@@ -61,14 +61,13 @@ select {
   display: flex;
   align-items: center;
   padding: 120px 36px 48px;
-  background: linear-gradient(135deg, rgba(5, 8, 20, 0.58), rgba(8, 18, 45, 0.34));
+  background: transparent;
 }
 
 .flights-overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(90deg, rgba(4, 9, 28, 0.88) 0%, rgba(6, 15, 40, 0.58) 38%, rgba(8, 16, 38, 0.16) 100%);
+  background: linear-gradient(135deg, rgba(5,8,20,0.75) 0%, rgba(10,20,50,0.55) 50%, rgba(5,8,20,0.4) 100%);
   z-index: 1;
 }
 
@@ -236,7 +235,7 @@ select {
   min-height: 100vh;
   position: relative;
   z-index: 2;
-  background: linear-gradient(135deg, rgba(5, 8, 20, 0.66), rgba(10, 20, 50, 0.42));
+  background: transparent;
 }
 
 .flights-results-wrapper {

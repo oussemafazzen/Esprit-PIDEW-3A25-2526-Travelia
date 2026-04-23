@@ -7,8 +7,8 @@
     .payment-page {
         min-height: 100vh;
         color: #fff;
-        background: linear-gradient(rgba(5, 15, 35, 0.72), rgba(5, 15, 35, 0.82));
-        padding: 56px 20px;
+        background: transparent;
+        padding: 112px 20px 56px;
     }
 
     .payment-card {
@@ -257,6 +257,8 @@
         }
     }
 </style>
+
+{% include 'front/_site_nav.html.twig' with { active_nav: 'flights' } %}
 
 <div class="payment-page">
     <div class="payment-card">

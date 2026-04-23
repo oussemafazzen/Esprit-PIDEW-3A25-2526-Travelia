@@ -27,11 +27,11 @@ class BilletType extends AbstractType
                     'Bateau' => 'bateau',
                 ],
                 'placeholder' => 'Choisir un transport',
-                'required' => false,
+                'required' => true,
             ])
             ->add('numeroBillet', TextType::class, [
                 'label' => 'Numéro billet',
-                'required' => false,
+                'required' => true,
                 'attr' => [
                     'placeholder' => 'Ex: NO|BJ 520',
                 ],
@@ -40,18 +40,18 @@ class BilletType extends AbstractType
                 'label' => 'Date départ',
                 'widget' => 'single_text',
                 'html5' => false,
-                'required' => false,
+                'required' => true,
             ])
             ->add('dateArrivee', DateType::class, [
                 'label' => 'Date arrivée',
                 'widget' => 'single_text',
                 'html5' => false,
-                'required' => false,
+                'required' => true,
             ])
             ->add('prix', NumberType::class, [
                 'label' => 'Prix',
                 'scale' => 2,
-                'required' => false,
+                'required' => true,
                 'attr' => [
                     'placeholder' => 'Ex: 838.20',
                 ],
@@ -65,14 +65,14 @@ class BilletType extends AbstractType
                     'Annulé' => 'annule',
                 ],
                 'placeholder' => 'Choisir un statut',
-                'required' => false,
+                'required' => true,
             ])
             ->add('reservation', EntityType::class, [
                 'class' => Reservation::class,
                 'choice_label' => 'id',
                 'label' => 'Réservation liée',
                 'placeholder' => 'Choisir une réservation',
-                'required' => false,
+                'required' => true,
             ]);
     }
 

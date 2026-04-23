@@ -129,7 +129,7 @@
           <div class="auth-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
       {% endif %}
 
-      <form method="post">
+      <form method="post" action="{{ path('app_login') }}">
         <div class="auth-field">
           <label>Email Address</label>
           <input type="email" value="{{ last_username }}" name="email" id="inputEmail" autocomplete="email" required autofocus placeholder="name@luxury.com">

@@ -92,7 +92,7 @@ final class ReservationController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Reservations');
 
-        $headers = ['Date r�servation', 'Statut', 'Paiement', 'Client', 'Destination'];
+        $headers = ['Date réservation', 'Statut', 'Paiement', 'Client', 'Destination'];
         foreach ($headers as $index => $header) {
             $column = chr(ord('A') + $index);
             $sheet->setCellValue($column . '1', $header);
@@ -164,28 +164,16 @@ final class ReservationController extends AbstractController
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation ajoutée avec succès.');
+
+            return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                if (!$reservation->getModalitesPaiement()) {
-                    $reservation->setModalitesPaiement('carte');
-                }
-
-                if (!$reservation->getClientId()) {
-                    $reservation->setClientId(51);
-                }
-
-                if (!$reservation->getPaysDestination()) {
-                    $reservation->setPaysDestination('Non défini');
-                }
-
-                $entityManager->persist($reservation);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Réservation ajoutée avec succès.');
-
-                return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
-            }
-
             $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire.');
         }
 
@@ -194,7 +182,6 @@ final class ReservationController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
     public function show(Reservation $reservation): Response
     {
@@ -209,27 +196,15 @@ final class ReservationController extends AbstractController
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation modifiée avec succès.');
+
+            return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                if (!$reservation->getModalitesPaiement()) {
-                    $reservation->setModalitesPaiement('carte');
-                }
-
-                if (!$reservation->getClientId()) {
-                    $reservation->setClientId(51);
-                }
-
-                if (!$reservation->getPaysDestination()) {
-                    $reservation->setPaysDestination('Non défini');
-                }
-
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Réservation modifiée avec succès.');
-
-                return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
-            }
-
             $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire.');
         }
 
@@ -238,7 +213,6 @@ final class ReservationController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
@@ -250,6 +224,3 @@ final class ReservationController extends AbstractController
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
     }
 }
-
-
-

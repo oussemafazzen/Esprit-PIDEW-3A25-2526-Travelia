@@ -4,8 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}?v=24">
-    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}?v=24">
+    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}?v=26">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <style>
@@ -591,26 +590,7 @@
 {% block body %}
 <canvas id="live-canvas"></canvas>
 
-<nav class="nav" id="nav">
-    <div class="nav-logo">
-        <div class="nav-logo-mark">T</div>
-        <span class="nav-logo-text">Travelia</span>
-    </div>
-
-    <div class="nav-links">
-        <a href="{{ path('app_home') }}" class="nav-link">Home</a>
-        <a href="#" class="nav-link">Hotels</a>
-        <a href="{{ path('app_flights_search') }}" class="nav-link active">Flights</a>
-        <a href="#" class="nav-link">Activities</a>
-        <a href="#" class="nav-link">Reviews</a>
-        <a href="{{ path('app_user_reservations') }}" class="nav-link">Mes réservations</a>
-    </div>
-
-    <a href="#" class="trip-btn">
-        <span class="trip-icon">✦</span>
-        Sign in
-    </a>
-</nav>
+{% include 'front/_site_nav.html.twig' with { active_nav: 'flights' } %}
 
 <section class="flights-hero flights-hero--search">
     <div class="flights-overlay"></div>

@@ -1,4 +1,7 @@
-{{ form_start(form, {'attr': form.vars.attr|merge({'novalidate': 'novalidate'})}) }}
+{{ form_start(form, {
+    'action': form_action|default(form.vars.action),
+    'attr': form.vars.attr|merge({'novalidate': 'novalidate'})
+}) }}
 
 <style>
     .travelia-form {
@@ -35,9 +38,29 @@
         box-sizing: border-box;
     }
 
-    .field-group input:focus {
+    .field-group select {
+        width: 100%;
+        padding: 1.05rem 1.2rem;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        outline: none;
+        font-size: 0.95rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        backdrop-filter: blur(10px);
+        min-height: 56px;
+        box-sizing: border-box;
+    }
+
+    .field-group input:focus,
+    .field-group select:focus {
         border-color: rgba(201, 168, 76, 0.45);
         box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+    }
+
+    .field-group option {
+        color: #111;
     }
 
     .field-group input::placeholder {
@@ -147,6 +170,24 @@
             })
         }) }}
         <div class="field-errors">{{ form_errors(form.dateReservation) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.statut) }}
+        {{ form_widget(form.statut) }}
+        <div class="field-errors">{{ form_errors(form.statut) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.modalitesPaiement) }}
+        {{ form_widget(form.modalitesPaiement) }}
+        <div class="field-errors">{{ form_errors(form.modalitesPaiement) }}</div>
+    </div>
+
+    <div class="field-group">
+        {{ form_label(form.clientId) }}
+        {{ form_widget(form.clientId) }}
+        <div class="field-errors">{{ form_errors(form.clientId) }}</div>
     </div>
 
     {% if form.paysDestination is defined %}

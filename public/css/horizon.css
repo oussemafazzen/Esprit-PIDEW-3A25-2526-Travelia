@@ -38,7 +38,7 @@ body::after {
 body::before {
   z-index: 0;
   inset: -8vmax;
-  background: url('../images/pi.png') center center / cover no-repeat;
+  background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=85') center center / cover no-repeat;
   transform: translate3d(-2vmax, -1vmax, 0) scale(1);
   transform-origin: center center;
   animation: traveliaCinematicDrift 32s ease-in-out infinite alternate;
@@ -48,8 +48,7 @@ body::before {
 body::after {
   z-index: 1;
   background:
-    radial-gradient(circle at 72% 18%, rgba(232, 201, 122, 0.16), transparent 28%),
-    linear-gradient(135deg, rgba(3, 7, 20, 0.82) 0%, rgba(7, 15, 40, 0.68) 46%, rgba(3, 7, 20, 0.88) 100%);
+    linear-gradient(135deg, rgba(5,8,20,0.75) 0%, rgba(10,20,50,0.55) 50%, rgba(5,8,20,0.4) 100%);
 }
 
 body > * {
@@ -270,18 +269,13 @@ input {
   display: flex;
   align-items: center;
   padding: 120px 32px 40px;
-  background: linear-gradient(135deg, rgba(5, 8, 20, 0.5), rgba(8, 18, 45, 0.28));
+  background: transparent;
 }
 
 .flights-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(5, 8, 20, 0.7) 0%,
-    rgba(10, 20, 50, 0.35) 55%,
-    rgba(5, 8, 20, 0.2) 100%
-  );
+  background: linear-gradient(135deg, rgba(5,8,20,0.75) 0%, rgba(10,20,50,0.55) 50%, rgba(5,8,20,0.4) 100%);
   z-index: 1;
 }
 
@@ -477,7 +471,7 @@ input {
   min-height: 100vh;
   position: relative;
   z-index: 2;
-  background: linear-gradient(135deg, rgba(5, 8, 20, 0.66), rgba(10, 20, 50, 0.42));
+  background: transparent;
 }
 
 .flights-results-wrapper {
@@ -921,6 +915,97 @@ input {
    RESPONSIVE
 ========================================= */
 
+/* =========================================
+   HOMEPAGE SHELL PARITY
+   Matches the standalone homepage nav in public/horizon.css.
+========================================= */
+
+.nav {
+  padding: 0 3rem;
+  height: 72px;
+  background: rgba(8,10,22,0.6);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow: none;
+}
+
+.nav::after {
+  display: none;
+}
+
+.nav-logo {
+  gap: 0.75rem;
+}
+
+.nav-logo-mark {
+  width: 34px;
+  height: 34px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.nav-logo-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.nav-links {
+  gap: 2.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.nav-link {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+  padding: 0 0 2px;
+  border-radius: 0;
+  transition: color 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--white);
+  background: transparent;
+  text-shadow: none;
+}
+
+.nav-link::after {
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform-origin: left;
+}
+
+.trip-btn {
+  gap: 0.5rem;
+  border: none;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.55rem 1.3rem;
+  border-radius: 100px;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.35);
+  transition: all 0.3s var(--ease);
+}
+
+.trip-btn:hover {
+  transform: translateY(-2px);
+  filter: none;
+  box-shadow: 0 8px 32px rgba(201,168,76,0.5);
+}
+
 @media (max-width: 900px) {
   .nav {
     padding: 0 1rem;
@@ -1024,3 +1109,4 @@ input {
     max-width: none;
   }
 }
+

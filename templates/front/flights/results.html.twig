@@ -8,7 +8,7 @@
     .flights-results-page {
         min-height: 100vh;
         color: #fff;
-        background: linear-gradient(rgba(5, 15, 35, 0.55), rgba(5, 15, 35, 0.72));
+        background: transparent;
     }
 
     .results-navbar {
@@ -656,25 +656,7 @@
 
 <div class="flights-results-page">
 
-    <header class="results-navbar">
-        <div class="results-navbar-inner">
-            <a href="{{ path('app_home') }}" class="results-brand">
-                <div class="results-brand-logo">T</div>
-                <div>Travelia</div>
-            </a>
-
-            <nav class="results-nav-links">
-                <a href="{{ path('app_home') }}">Home</a>
-                <a href="#">Hotels</a>
-                <a href="{{ path('app_flights_search') }}" class="active">Flights</a>
-                <a href="#">Activities</a>
-                <a href="#">Reviews</a>
-                <a href="{{ path('app_user_reservations') }}">Mes réservations</a>
-            </nav>
-
-            <a href="#" class="results-signin">✦ Sign In</a>
-        </div>
-    </header>
+    {% include 'front/_site_nav.html.twig' with { active_nav: 'flights' } %}
 
     <section class="results-hero">
         <div class="results-hero-inner">

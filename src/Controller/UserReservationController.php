@@ -2,21 +2,31 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Reservation;
 use App\Form\ReservationType;
+use App\Repository\ClientRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 final class UserReservationController extends AbstractController
 {
     #[Route('/mes-reservations', name: 'app_user_reservations', methods: ['GET'])]
-    public function index(ReservationRepository $reservationRepository): Response
+    public function index(ReservationRepository $reservationRepository, ClientRepository $clientRepository): Response
     {
-        $reservations = $reservationRepository->findBy(['clientId' => 51], ['id' => 'DESC']);
+        $currentClient = $this->resolveAuthenticatedClient($clientRepository);
+
+        if (!$currentClient instanceof Client || $currentClient->getId() === null) {
+            $this->addFlash('error', 'Vous devez être connecté pour consulter vos réservations.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $reservations = $reservationRepository->findBy(['clientId' => $currentClient->getId()], ['id' => 'DESC']);
 
         return $this->render('front/user/reservations.html.twig', [
             'reservations' => $reservations,
@@ -24,8 +34,15 @@ final class UserReservationController extends AbstractController
     }
 
     #[Route('/mes-reservations/new', name: 'app_user_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, ClientRepository $clientRepository): Response
     {
+        $currentClient = $this->resolveAuthenticatedClient($clientRepository);
+
+        if (!$currentClient instanceof Client || $currentClient->getId() === null) {
+            $this->addFlash('error', 'Vous devez être connecté pour créer une réservation.');
+            return $this->redirectToRoute('app_login');
+        }
+
         $reservation = new Reservation();
 
         $form = $this->createForm(ReservationType::class, $reservation, [
@@ -48,7 +65,7 @@ final class UserReservationController extends AbstractController
             }
 
             if (!$reservation->getClientId()) {
-                $reservation->setClientId(51);
+                $reservation->setClientId($currentClient->getId());
             }
 
             if (!$reservation->getPaysDestination()) {
@@ -70,8 +87,19 @@ final class UserReservationController extends AbstractController
     }
 
     #[Route('/mes-reservations/{id}/edit', name: 'app_user_reservation_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $em): Response
+    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $em, ClientRepository $clientRepository): Response
     {
+        $currentClient = $this->resolveAuthenticatedClient($clientRepository);
+
+        if (!$currentClient instanceof Client || $currentClient->getId() === null) {
+            $this->addFlash('error', 'Vous devez être connecté pour modifier une réservation.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($reservation->getClientId() !== $currentClient->getId()) {
+            throw $this->createAccessDeniedException('Cette réservation ne vous appartient pas.');
+        }
+
         $form = $this->createForm(ReservationType::class, $reservation, [
             'action' => $this->generateUrl('app_user_reservation_edit', [
                 'id' => $reservation->getId()
@@ -94,7 +122,7 @@ final class UserReservationController extends AbstractController
             }
 
             if (!$reservation->getClientId()) {
-                $reservation->setClientId(51);
+                $reservation->setClientId($currentClient->getId());
             }
 
             if (!$reservation->getPaysDestination()) {
@@ -127,5 +155,30 @@ final class UserReservationController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_reservations');
+    }
+
+    private function resolveAuthenticatedClient(ClientRepository $clientRepository): ?Client
+    {
+        $user = $this->getUser();
+
+        if ($user instanceof Client) {
+            return $user;
+        }
+
+        $identifier = null;
+
+        if ($user instanceof UserInterface) {
+            $identifier = $user->getUserIdentifier();
+        } elseif (is_object($user) && method_exists($user, 'getEmail')) {
+            $identifier = (string) $user->getEmail();
+        }
+
+        $identifier = trim((string) $identifier);
+
+        if ($identifier === '') {
+            return null;
+        }
+
+        return $clientRepository->findOneBy(['email' => $identifier]);
     }
 }

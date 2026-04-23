@@ -18,19 +18,43 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\Column(name: 'date_reservation', type: 'date', nullable: true)]
-    #[Assert\NotNull(message: 'La date de réservation est obligatoire.')]
+    #[Assert\NotBlank(message: 'La date de réservation est obligatoire.')]
+    #[Assert\Type(type: \DateTimeInterface::class, message: 'La date de réservation est invalide.')]
+    #[Assert\GreaterThanOrEqual(
+        'today',
+        message: 'La date de réservation ne peut pas être dans le passé.'
+    )]
     private ?\DateTimeInterface $dateReservation = null;
 
     #[ORM\Column(name: 'statut', type: 'string', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
+    #[Assert\Choice(
+        choices: ['confirmé', 'confirme', 'en_attente', 'annulé', 'annule'],
+        message: 'Le statut sélectionné est invalide.'
+    )]
     private ?string $statut = null;
 
     #[ORM\Column(name: 'modalites_paiement', type: 'string', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Les modalités de paiement sont obligatoires.')]
+    #[Assert\Choice(
+        choices: ['carte', 'virement', 'especes'],
+        message: 'Le mode de paiement sélectionné est invalide.'
+    )]
     private ?string $modalitesPaiement = null;
 
     #[ORM\Column(name: 'id_client', type: 'integer', nullable: true)]
+    #[Assert\NotNull(message: 'Le client est obligatoire.')]
+    #[Assert\Positive(message: 'Le client sélectionné est invalide.')]
     private ?int $clientId = null;
 
     #[ORM\Column(name: 'paysdestination', type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'La destination est obligatoire.')]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'La destination doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'La destination ne doit pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $paysDestination = null;
 
     #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Billet::class)]

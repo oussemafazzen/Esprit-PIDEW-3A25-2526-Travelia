@@ -1,0 +1,43 @@
+{% set is_home_shell = home_shell|default(false) %}
+{% set current_nav = active_nav|default('') %}
+
+<nav class="nav" id="nav">
+    <div class="nav-logo">
+        <div class="nav-logo-mark">T</div>
+        <span class="nav-logo-text">Travelia</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="{{ is_home_shell ? '#' : path('app_home') }}" class="nav-link {{ current_nav == 'home' ? 'active' : '' }}"{% if is_home_shell %} data-section="0"{% endif %}>Home</a>
+        <a href="{{ is_home_shell ? '#' : path('app_home') ~ '#panel-1' }}" class="nav-link"{% if is_home_shell %} data-section="1"{% endif %}>Hotels</a>
+        <a href="{{ path('app_flights_search') }}" class="nav-link {{ active_nav|default('') == 'flights' ? 'active' : '' }}">Flights</a>
+        <a href="{{ is_home_shell ? '#' : path('app_home') ~ '#panel-3' }}" class="nav-link"{% if is_home_shell %} data-section="3"{% endif %}>Activities</a>
+        <a href="{{ is_home_shell ? '#' : path('app_home') ~ '#panel-4' }}" class="nav-link"{% if is_home_shell %} data-section="4"{% endif %}>Reviews</a>
+    </div>
+
+    {% if app.user and is_home_shell %}
+        <button id="user-panel-btn" onclick="openUserPanel()" style="
+            background:none; border:none; cursor:pointer;
+            color:#c9a84c; font-family:'Inter',sans-serif;
+            font-size:0.82rem; font-weight:600; letter-spacing:1px;
+            text-transform:uppercase; display:flex; align-items:center; gap:0.5rem;
+            transition:opacity 0.2s;
+        " onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+            <span style="font-size:1rem;">✦</span>
+            {{ app.user.prenom }} {{ app.user.nom }}
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="opacity:0.5;">
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </button>
+    {% elseif app.user %}
+        <a href="{{ path('app_user_reservations') }}" class="trip-btn" style="padding:0.6rem 1.4rem; font-size:0.8rem;">
+            <span class="trip-icon">✦</span>
+            MES RÉSERVATIONS
+        </a>
+    {% else %}
+        <div style="display:flex; align-items:center; gap: 1rem;">
+            <a href="{{ path('app_login') }}" class="nav-link" style="color:rgba(255,255,255,0.8); font-weight:600; text-transform:uppercase; font-size:0.75rem; letter-spacing:1px;">Connexion</a>
+            <a href="{{ path('app_register') }}" class="trip-btn" style="padding:0.6rem 1.4rem; font-size:0.8rem;">Inscription</a>
+        </div>
+    {% endif %}
+</nav>
