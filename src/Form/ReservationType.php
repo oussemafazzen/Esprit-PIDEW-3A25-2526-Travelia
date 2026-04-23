@@ -4,9 +4,7 @@ namespace App\Form;
 
 use App\Entity\Reservation;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,50 +17,23 @@ class ReservationType extends AbstractType
             ->add('dateReservation', DateType::class, [
                 'label' => 'Date réservation',
                 'widget' => 'single_text',
+                'html5' => true,
+                'required' => false,
                 'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
-            ->add('statut', ChoiceType::class, [
-                'label' => 'Statut',
-                'choices' => [
-                    'Confirmé' => 'confirmé',
-                    'En attente' => 'en_attente',
-                    'Annulé' => 'annulé',
-                ],
-                'placeholder' => 'Choisir un statut',
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
-            ->add('modalitesPaiement', ChoiceType::class, [
-                'label' => 'Modalités paiement',
-                'choices' => [
-                    'Carte' => 'carte',
-                    'Espèces' => 'especes',
-                    'Virement' => 'virement',
-                ],
-                'placeholder' => 'Choisir un mode de paiement',
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
-            ->add('clientId', IntegerType::class, [
-                'label' => 'Client ID',
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Ex: 59',
-                    'min' => 1,
+                    'class' => 'form-control js-travelia-datepicker',
+                    'autocomplete' => 'off',
+                    'placeholder' => 'Choisir une date',
                 ],
             ])
             ->add('paysDestination', TextType::class, [
-                'label' => 'Pays destination',
+                'label' => 'Destination (optionnel)',
+                'required' => false,
                 'attr' => [
                     'class' => 'form-control',
-                    'placeholder' => 'Ex: Paris',
+                    'autocomplete' => 'off',
+                    'placeholder' => 'Ex: Canada',
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

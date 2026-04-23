@@ -1,113 +1,769 @@
-{% extends 'admin_base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travelia Admin — Tableau de bord</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
-{% block title %}Dashboard | Travelia Admin{% endblock %}
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            z-index: 1;
+        }
 
-{% block body %}
-<!-- Top Stats Row -->
-<div class="dashboard-grid">
-  <div class="stat-card">
-    <div class="stat-label">Total Voyageurs</div>
-    <div class="stat-value">{{ totalClients }}</div>
-    <div class="stat-trend">+14.2% ↑</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">Monthly Revenue</div>
-    <div class="stat-value">€142,8K</div>
-    <div class="stat-trend">+5.8% ↑</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">Active Bookings</div>
-    <div class="stat-value">3,190</div>
-    <div class="stat-trend down">-2.4% ↓</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">User Satisfaction</div>
-    <div class="stat-value">98.4%</div>
-    <div class="stat-trend">+0.2% ↑</div>
-  </div>
+        .stat-card {
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            padding: 1.8rem;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            transition: transform 0.4s var(--ease);
+        }
 
-  <!-- Overview Section: Traveler Stats + Graph -->
-  <div class="overview-section">
-    
-    <!-- Traveler Statistics (Reused for Nationalities) -->
-    <div class="traveler-stats">
-      <div class="chart-title">Répartition par Nationalité (Top 5)</div>
-      
-      <div style="margin-top:1rem;">
-          {% for nat, count in nationalityStats %}
-          <div style="display:flex; justify-content:space-between; padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <span style="font-size:0.85rem; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px;">{{ nat }}</span>
-              <strong style="color:var(--gold); font-family:var(--sans); font-size:1.1rem;">{{ count }}</strong>
-          </div>
-          {% else %}
-          <p style="color:rgba(255,255,255,0.5); font-size:0.8rem; margin-top:1rem;">Aucune donnée disponible.</p>
-          {% endfor %}
-      </div>
-    </div>
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(201, 168, 76, 0.3);
+        }
 
-    <!-- Booking Overview Graph -->
-    <div class="booking-graph">
-      <div class="graph-header">
-        <div class="graph-title">
-          <h3>Booking Overview</h3>
-          <p style="font-size:0.75rem; opacity:0.3; font-weight:300;">Last 7 Days Performance</p>
+        .stat-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-trend {
+            font-size: 0.75rem;
+            color: #10b981;
+        }
+
+        .stat-trend.down {
+            color: #ef4444;
+        }
+
+        .overview-section {
+            grid-column: span 3;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .traveler-stats {
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            padding: 2rem;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chart-title {
+            width: 100%;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 2rem;
+        }
+
+        .circle-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        .circle-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: rgba(201, 168, 76, 0.1);
+            stroke-width: 12;
+        }
+
+        .circle-val {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 2s var(--ease);
+        }
+
+        .chart-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .chart-n {
+            font-family: var(--serif);
+            font-size: 2.2rem;
+            font-weight: 500;
+            color: var(--white);
+        }
+
+        .chart-l {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.3);
+            margin-top: 5px;
+        }
+
+        .booking-graph {
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            padding: 2.5rem;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+        }
+
+        .graph-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2.5rem;
+        }
+
+        .graph-title h3 {
+            font-family: var(--serif);
+            font-size: 1.6rem;
+            font-weight: 300;
+        }
+
+        .graph-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .g-btn {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.4);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .g-btn.active {
+            color: var(--gold2);
+        }
+
+        .svg-graph-lines {
+            width: 100%;
+            height: 240px;
+            overflow: visible;
+        }
+
+        .g-line {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.4));
+        }
+
+        .g-area {
+            fill: rgba(201, 168, 76, 0.08);
+        }
+
+        .g-points circle {
+            fill: var(--gold);
+            stroke: var(--ink);
+            stroke-width: 3;
+        }
+
+        .graph-labels {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 0.4rem;
+            margin-top: 1.5rem;
+            font-size: 0.62rem;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-align: center;
+        }
+
+        .bookings-list {
+            grid-column: span 3;
+            margin-top: 1.5rem;
+        }
+
+        .list-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .list-head h4 {
+            font-family: var(--serif);
+            font-size: 1.4rem;
+            font-weight: 400;
+        }
+
+        .dashboard-filter-form {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr auto;
+            gap: 0.8rem;
+            width: 100%;
+        }
+
+        .dashboard-filter-input,
+        .dashboard-filter-select {
+            min-height: 46px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            padding: 0 14px;
+            outline: none;
+        }
+
+        .dashboard-filter-select option {
+            color: #111;
+        }
+
+        .dashboard-filter-btn {
+            min-height: 46px;
+            border: none;
+            border-radius: 14px;
+            background: var(--gold);
+            color: #111827;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 0 18px;
+        }
+
+        .booking-item {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr 180px;
+            padding: 1.2rem 2rem;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 0.8rem;
+            transition: all 0.3s;
+            align-items: center;
+        }
+
+        .booking-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .b-cust {
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .b-dest {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .b-date {
+            font-size: 0.75rem;
+            color: var(--gold);
+        }
+
+        .b-status {
+            justify-self: end;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .b-status.pending {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .overview-section {
+                grid-column: span 2;
+                grid-template-columns: 1fr;
+            }
+
+            .bookings-list {
+                grid-column: span 2;
+            }
+
+            .booking-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .b-status {
+                justify-self: start;
+            }
+
+            .graph-labels {
+                grid-template-columns: repeat(6, 1fr);
+                row-gap: 0.8rem;
+            }
+
+            .dashboard-filter-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-section,
+            .bookings-list {
+                grid-column: span 1;
+            }
+
+            .graph-labels {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    {% set totalRevenue = totalRevenue|default(0) %}
+    {% set totalReservations = totalReservations|default(0) %}
+    {% set pendingReservations = pendingReservations|default(0) %}
+    {% set confirmedReservations = confirmedReservations|default(0) %}
+    {% set confirmationRate = confirmationRate|default(0) %}
+
+    {% set totalBillets = totalBillets|default(0) %}
+    {% set pendingBillets = pendingBillets|default(0) %}
+    {% set confirmedBillets = confirmedBillets|default(0) %}
+    {% set billetConfirmationRate = billetConfirmationRate|default(0) %}
+
+    {% set labels = labels|default(['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUI', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC']) %}
+    {% set chartData = chartData|default([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) %}
+    {% set recentReservations = recentReservations|default([]) %}
+    {% set recentBillets = recentBillets|default([]) %}
+
+    <aside class="app-sidebar">
+        <div class="logo-area">
+            Travel<em>ia</em>
         </div>
-        <div class="graph-controls">
-          <button class="g-btn">D</button>
-          <button class="g-btn active">W</button>
-          <button class="g-btn">M</button>
-          <button class="g-btn">Y</button>
-        </div>
-      </div>
-      
-      <div class="graph-canvas">
-        <svg class="svg-graph-lines" viewBox="0 0 800 240">
-          <defs>
-            <linearGradient id="graph-gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgba(201, 168, 76, 0.4)" />
-              <stop offset="100%" stop-color="rgba(10, 13, 26, 0)" />
-            </linearGradient>
-          </defs>
-          <path class="g-area" d="M0,200 Q150,120 300,160 T600,80 T800,120 L800,240 L0,240 Z"></path>
-          <path class="g-line" d="M0,200 Q150,120 300,160 T600,80 T800,120"></path>
-          <g class="g-points">
-            <circle cx="0" cy="200" r="5"></circle>
-            <circle cx="300" cy="160" r="5"></circle>
-            <circle cx="600" cy="80" r="5"></circle>
-            <circle cx="800" cy="120" r="5"></circle>
-          </g>
-        </svg>
-        <div class="graph-labels">
-          <span>Mon</span>
-          <span>Tue</span>
-          <span>Wed</span>
-          <span>Thu</span>
-          <span>Fri</span>
-          <span>Sat</span>
-          <span>Sun</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- Recent Bookings List (Reused for Age Groups) -->
-    <div class="bookings-list">
-      <div class="list-head">
-        <h4>Tranches d'Âge</h4>
-      </div>
-      
-      <div style="margin-top:1rem;">
-          {% for range, count in ageGroupStats %}
-          <div class="booking-item" style="display:flex; justify-content:space-between; align-items:center; border:none; border-bottom:1px solid rgba(255,255,255,0.03);">
-            <div>
-              <div class="b-cust" style="font-size:0.9rem; color:#fff;">{{ range }} ans</div>
-              <div class="b-dest" style="font-size:0.7rem; color:rgba(255,255,255,0.4);">Génération démographique</div>
+        <nav class="nav-menu">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item active">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏨</span>
+                Hébergements
+            </a>
+            <a href="{{ path('app_billet_index') }}" class="nav-item">
+                <span class="nav-icon">✈</span>
+                Billets
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🛶</span>
+                Activités
+            </a>
+            <a href="{{ path('app_reservation_index') }}" class="nav-item">
+                <span class="nav-icon">👥</span>
+                Réservations
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Paramètres
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin Portal</span>
+                <small>Accès complet</small>
             </div>
-            <div class="b-status" style="color:#6ee7b7; font-weight:600; font-size:1.1rem; padding:0; background:none;">{{ count }}</div>
-          </div>
-          {% endfor %}
-      </div>
-    </div>
+        </div>
+    </aside>
 
-  </div> <!-- End Overview -->
-</div> <!-- End Grid -->
-{% endblock %}
+    <main class="app-main">
+        <div class="glow-bg"></div>
+
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Bienvenue, <em>Admin</em></h1>
+                    <p style="font-size: 0.9rem; opacity: 0.5; margin-top: 0.5rem;">
+                        La plateforme Travelia fonctionne avec vos vraies données.
+                    </p>
+                </div>
+                <div class="date-pill">{{ "now"|date("d M, Y — l") }}</div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">Revenus totaux</div>
+                <div class="stat-value">{{ totalRevenue|number_format(1, ',', ' ') }} DT</div>
+                <div class="stat-trend">Montant total des billets</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Réservations</div>
+                <div class="stat-value">{{ totalReservations }}</div>
+                <div class="stat-trend">Toutes les réservations</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Réservations en attente</div>
+                <div class="stat-value">{{ pendingReservations }}</div>
+                <div class="stat-trend down">À traiter</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Taux confirmation réservations</div>
+                <div class="stat-value">{{ confirmationRate }}%</div>
+                <div class="stat-trend">{{ confirmedReservations }} confirmées</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Billets</div>
+                <div class="stat-value">{{ totalBillets }}</div>
+                <div class="stat-trend">Tous les billets</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Billets confirmés</div>
+                <div class="stat-value">{{ confirmedBillets }}</div>
+                <div class="stat-trend">{{ billetConfirmationRate }}% de confirmation</div>
+            </div>
+
+            <div class="overview-section">
+                <div class="traveler-stats">
+                    <div class="chart-title">Statistiques réservations</div>
+
+                    <div class="circle-wrap">
+                        <svg class="circle-svg" viewBox="0 0 160 160">
+                            <circle class="circle-bg" cx="80" cy="80" r="70"></circle>
+                            <circle
+                                class="circle-val"
+                                cx="80"
+                                cy="80"
+                                r="70"
+                                data-percent="{{ confirmationRate }}"
+                            ></circle>
+                        </svg>
+
+                        <div class="chart-center">
+                            <span class="chart-n">{{ confirmationRate }}%</span>
+                            <span class="chart-l">Confirmées</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:2rem; width:100%;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                            <span style="font-size:0.7rem; opacity:0.4;">Réservations validées</span>
+                            <span style="font-size:0.7rem; color:var(--gold);">{{ confirmedReservations }}</span>
+                        </div>
+                        <div style="width:100%; height:2px; background:rgba(255,255,255,0.05);">
+                            <div style="width:{{ confirmationRate }}%; height:100%; background:var(--gold);"></div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; margin-top:1.5rem; margin-bottom:0.5rem;">
+                            <span style="font-size:0.7rem; opacity:0.4;">Billets validés</span>
+                            <span style="font-size:0.7rem; color:var(--gold);">{{ confirmedBillets }}</span>
+                        </div>
+                        <div style="width:100%; height:2px; background:rgba(255,255,255,0.05);">
+                            <div style="width:{{ billetConfirmationRate }}%; height:100%; background:var(--gold);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="booking-graph">
+                    <div class="graph-header">
+                        <div class="graph-title">
+                            <h3>Évolution des réservations</h3>
+                            <p style="font-size:0.75rem; opacity:0.3; font-weight:300;">Réservations par mois</p>
+                        </div>
+                        <div class="graph-controls">
+                            <button class="g-btn active">A</button>
+                        </div>
+                    </div>
+
+                    {% set d0 = chartData[0]|default(0) %}
+                    {% set d1 = chartData[1]|default(0) %}
+                    {% set d2 = chartData[2]|default(0) %}
+                    {% set d3 = chartData[3]|default(0) %}
+                    {% set d4 = chartData[4]|default(0) %}
+                    {% set d5 = chartData[5]|default(0) %}
+                    {% set d6 = chartData[6]|default(0) %}
+                    {% set d7 = chartData[7]|default(0) %}
+                    {% set d8 = chartData[8]|default(0) %}
+                    {% set d9 = chartData[9]|default(0) %}
+                    {% set d10 = chartData[10]|default(0) %}
+                    {% set d11 = chartData[11]|default(0) %}
+
+                    {% set maxValue = 1 %}
+                    {% for value in [d0, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11] %}
+                        {% if value > maxValue %}
+                            {% set maxValue = value %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% set x0 = 0 %}
+                    {% set x1 = 73 %}
+                    {% set x2 = 146 %}
+                    {% set x3 = 219 %}
+                    {% set x4 = 292 %}
+                    {% set x5 = 365 %}
+                    {% set x6 = 438 %}
+                    {% set x7 = 511 %}
+                    {% set x8 = 584 %}
+                    {% set x9 = 657 %}
+                    {% set x10 = 730 %}
+                    {% set x11 = 800 %}
+
+                    {% set y0 = 220 - ((d0 / maxValue) * 160) %}
+                    {% set y1 = 220 - ((d1 / maxValue) * 160) %}
+                    {% set y2 = 220 - ((d2 / maxValue) * 160) %}
+                    {% set y3 = 220 - ((d3 / maxValue) * 160) %}
+                    {% set y4 = 220 - ((d4 / maxValue) * 160) %}
+                    {% set y5 = 220 - ((d5 / maxValue) * 160) %}
+                    {% set y6 = 220 - ((d6 / maxValue) * 160) %}
+                    {% set y7 = 220 - ((d7 / maxValue) * 160) %}
+                    {% set y8 = 220 - ((d8 / maxValue) * 160) %}
+                    {% set y9 = 220 - ((d9 / maxValue) * 160) %}
+                    {% set y10 = 220 - ((d10 / maxValue) * 160) %}
+                    {% set y11 = 220 - ((d11 / maxValue) * 160) %}
+
+                    <div class="graph-canvas">
+                        <svg class="svg-graph-lines" viewBox="0 0 800 240">
+                            <path class="g-area"
+                                  d="M {{ x0 }},{{ y0 }}
+                                     L {{ x1 }},{{ y1 }}
+                                     L {{ x2 }},{{ y2 }}
+                                     L {{ x3 }},{{ y3 }}
+                                     L {{ x4 }},{{ y4 }}
+                                     L {{ x5 }},{{ y5 }}
+                                     L {{ x6 }},{{ y6 }}
+                                     L {{ x7 }},{{ y7 }}
+                                     L {{ x8 }},{{ y8 }}
+                                     L {{ x9 }},{{ y9 }}
+                                     L {{ x10 }},{{ y10 }}
+                                     L {{ x11 }},{{ y11 }}
+                                     L 800,240 L 0,240 Z"></path>
+
+                            <path class="g-line"
+                                  d="M {{ x0 }},{{ y0 }}
+                                     L {{ x1 }},{{ y1 }}
+                                     L {{ x2 }},{{ y2 }}
+                                     L {{ x3 }},{{ y3 }}
+                                     L {{ x4 }},{{ y4 }}
+                                     L {{ x5 }},{{ y5 }}
+                                     L {{ x6 }},{{ y6 }}
+                                     L {{ x7 }},{{ y7 }}
+                                     L {{ x8 }},{{ y8 }}
+                                     L {{ x9 }},{{ y9 }}
+                                     L {{ x10 }},{{ y10 }}
+                                     L {{ x11 }},{{ y11 }}"></path>
+
+                            <g class="g-points">
+                                <circle cx="{{ x0 }}" cy="{{ y0 }}" r="5"></circle>
+                                <circle cx="{{ x1 }}" cy="{{ y1 }}" r="5"></circle>
+                                <circle cx="{{ x2 }}" cy="{{ y2 }}" r="5"></circle>
+                                <circle cx="{{ x3 }}" cy="{{ y3 }}" r="5"></circle>
+                                <circle cx="{{ x4 }}" cy="{{ y4 }}" r="5"></circle>
+                                <circle cx="{{ x5 }}" cy="{{ y5 }}" r="5"></circle>
+                                <circle cx="{{ x6 }}" cy="{{ y6 }}" r="5"></circle>
+                                <circle cx="{{ x7 }}" cy="{{ y7 }}" r="5"></circle>
+                                <circle cx="{{ x8 }}" cy="{{ y8 }}" r="5"></circle>
+                                <circle cx="{{ x9 }}" cy="{{ y9 }}" r="5"></circle>
+                                <circle cx="{{ x10 }}" cy="{{ y10 }}" r="5"></circle>
+                                <circle cx="{{ x11 }}" cy="{{ y11 }}" r="5"></circle>
+                            </g>
+                        </svg>
+
+                        <div class="graph-labels">
+                            {% for label in labels %}
+                                <span>{{ label }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bookings-list">
+                <div class="list-head">
+                    <h4>Réservations</h4>
+
+                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
+                        <input
+                            type="text"
+                            name="reservation_search"
+                            value="{{ reservationSearch }}"
+                            placeholder="Rechercher réservation..."
+                            class="dashboard-filter-input"
+                        >
+
+                        <select name="reservation_sort" class="dashboard-filter-select">
+                            <option value="date" {{ reservationSort == 'date' ? 'selected' : '' }}>Trier par date</option>
+                            <option value="id" {{ reservationSort == 'id' ? 'selected' : '' }}>ID</option>
+                            <option value="statut" {{ reservationSort == 'statut' ? 'selected' : '' }}>Statut</option>
+                            <option value="paiement" {{ reservationSort == 'paiement' ? 'selected' : '' }}>Paiement</option>
+                            <option value="client" {{ reservationSort == 'client' ? 'selected' : '' }}>Client</option>
+                            <option value="destination" {{ reservationSort == 'destination' ? 'selected' : '' }}>Destination</option>
+                        </select>
+
+                        <select name="reservation_direction" class="dashboard-filter-select">
+                            <option value="DESC" {{ reservationDirection == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                            <option value="ASC" {{ reservationDirection == 'ASC' ? 'selected' : '' }}>Ascendant</option>
+                        </select>
+
+                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
+
+                        <input type="hidden" name="billet_search" value="{{ billetSearch }}">
+                        <input type="hidden" name="billet_sort" value="{{ billetSort }}">
+                        <input type="hidden" name="billet_direction" value="{{ billetDirection }}">
+                    </form>
+                </div>
+
+                {% for reservation in recentReservations %}
+                    {% set statutReservation = reservation.statut|default('Inconnu') %}
+                    {% set statutReservationLower = statutReservation|lower %}
+
+                    <div class="booking-item">
+                        <div class="b-cust">Réservation #{{ reservation.id }}</div>
+                        <div class="b-dest">{{ attribute(reservation, 'paysDestination')|default('-') }}</div>
+                        <div class="b-date">
+                            {{ reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '' }}
+                        </div>
+                        <div class="b-status {% if 'attente' in statutReservationLower %}pending{% endif %}">
+                            {{ statutReservation }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="booking-item">
+                        <div class="b-cust">Aucune réservation</div>
+                        <div class="b-dest">-</div>
+                        <div class="b-date">-</div>
+                        <div class="b-status">Vide</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="bookings-list">
+                <div class="list-head">
+                    <h4>Billets</h4>
+
+                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
+                        <input
+                            type="text"
+                            name="billet_search"
+                            value="{{ billetSearch }}"
+                            placeholder="Rechercher billet..."
+                            class="dashboard-filter-input"
+                        >
+
+                        <select name="billet_sort" class="dashboard-filter-select">
+                            <option value="depart" {{ billetSort == 'depart' ? 'selected' : '' }}>Trier par départ</option>
+                            <option value="id" {{ billetSort == 'id' ? 'selected' : '' }}>ID</option>
+                            <option value="transport" {{ billetSort == 'transport' ? 'selected' : '' }}>Transport</option>
+                            <option value="numero" {{ billetSort == 'numero' ? 'selected' : '' }}>Numéro</option>
+                            <option value="arrivee" {{ billetSort == 'arrivee' ? 'selected' : '' }}>Arrivée</option>
+                            <option value="prix" {{ billetSort == 'prix' ? 'selected' : '' }}>Prix</option>
+                            <option value="statut" {{ billetSort == 'statut' ? 'selected' : '' }}>Statut</option>
+                        </select>
+
+                        <select name="billet_direction" class="dashboard-filter-select">
+                            <option value="DESC" {{ billetDirection == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                            <option value="ASC" {{ billetDirection == 'ASC' ? 'selected' : '' }}>Ascendant</option>
+                        </select>
+
+                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
+
+                        <input type="hidden" name="reservation_search" value="{{ reservationSearch }}">
+                        <input type="hidden" name="reservation_sort" value="{{ reservationSort }}">
+                        <input type="hidden" name="reservation_direction" value="{{ reservationDirection }}">
+                    </form>
+                </div>
+
+                {% for billet in recentBillets %}
+                    {% set statutBillet = billet.statut|default('Inconnu') %}
+                    {% set statutBilletLower = statutBillet|lower %}
+
+                    <div class="booking-item">
+                        <div class="b-cust">Billet #{{ billet.id }}</div>
+                        <div class="b-dest">{{ billet.typeTransport|default('-') }}</div>
+                        <div class="b-date">
+                            {{ billet.dateDepart ? billet.dateDepart|date('Y-m-d') : '' }}
+                        </div>
+                        <div class="b-status {% if 'attente' in statutBilletLower %}pending{% endif %}">
+                            {{ statutBillet }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="booking-item">
+                        <div class="b-cust">Aucun billet</div>
+                        <div class="b-dest">-</div>
+                        <div class="b-date">-</div>
+                        <div class="b-status">Vide</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const circle = document.querySelector('.circle-val');
+            if (circle) {
+                const percent = parseFloat(circle.dataset.percent || '0');
+                const safePercent = Math.max(0, Math.min(100, percent));
+                const circumference = 440;
+                const offset = circumference - ((safePercent / 100) * circumference);
+
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                }, 400);
+            }
+        });
+    </script>
+</body>
+</html>

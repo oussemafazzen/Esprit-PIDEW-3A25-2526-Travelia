@@ -22,24 +22,25 @@ final class BilletController extends AbstractController
     #[Route(name: 'app_billet_index', methods: ['GET'])]
     public function index(Request $request, BilletRepository $billetRepository, PaginatorInterface $paginator): Response
     {
-        $search    = trim((string) $request->query->get('search', ''));
-        $sort      = (string) $request->query->get('sort', 'id');
+        $search = trim((string) $request->query->get('search', ''));
+        $sort = (string) $request->query->get('sort', 'id');
         $direction = strtoupper((string) $request->query->get('direction', 'DESC'));
 
         $allowedSorts = [
-            'id'          => 'b.id',
-            'transport'   => 'b.typeTransport',
-            'numero'      => 'b.numeroBillet',
-            'depart'      => 'b.dateDepart',
-            'arrivee'     => 'b.dateArrivee',
-            'prix'        => 'b.prix',
-            'statut'      => 'b.statut',
+            'id' => 'b.id',
+            'transport' => 'b.typeTransport',
+            'numero' => 'b.numeroBillet',
+            'depart' => 'b.dateDepart',
+            'arrivee' => 'b.dateArrivee',
+            'prix' => 'b.prix',
+            'statut' => 'b.statut',
             'reservation' => 'r.id',
         ];
 
         if (!isset($allowedSorts[$sort])) {
             $sort = 'id';
         }
+
         if (!in_array($direction, ['ASC', 'DESC'], true)) {
             $direction = 'DESC';
         }
@@ -57,13 +58,13 @@ final class BilletController extends AbstractController
 
             if (ctype_digit($search)) {
                 $expr->add($qb->expr()->eq('b.id', ':idSearch'));
-                $expr->add($qb->expr()->eq('r.id', ':ridSearch'));
+                $expr->add($qb->expr()->eq('r.id', ':reservationSearch'));
                 $qb->setParameter('idSearch', (int) $search);
-                $qb->setParameter('ridSearch', (int) $search);
+                $qb->setParameter('reservationSearch', (int) $search);
             }
 
             $qb->andWhere($expr)
-               ->setParameter('q', '%' . mb_strtolower($search) . '%');
+                ->setParameter('q', '%' . mb_strtolower($search) . '%');
         }
 
         $qb->orderBy($allowedSorts[$sort], $direction);
@@ -71,48 +72,55 @@ final class BilletController extends AbstractController
         $billets = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            5,
-            [
-                PaginatorInterface::SORT_FIELD_PARAMETER_NAME => 'knp_sort',
-                PaginatorInterface::SORT_DIRECTION_PARAMETER_NAME => 'knp_dir',
-            ]
+            5
         );
 
         return $this->render('billet/index.html.twig', [
-            'billets'   => $billets,
-            'search'    => $search,
-            'sort'      => $sort,
+            'billets' => $billets,
+            'search' => $search,
+            'sort' => $sort,
             'direction' => $direction,
         ]);
     }
 
-    // ── Excel export ──
     #[Route('/export/excel', name: 'app_billet_export_excel', methods: ['GET'])]
     public function exportExcel(BilletRepository $billetRepository): StreamedResponse
     {
+        // We build the spreadsheet in memory, then Symfony streams the file
+        // directly to the browser for download in the admin area.
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Billets');
 
-        $headers = ['Transport', 'Numéro', 'Départ', 'Arrivée', 'Prix', 'Statut', 'Réservation'];
-        foreach ($headers as $i => $h) {
-            $sheet->setCellValue(chr(ord('A') + $i) . '1', $h);
+        $headers = [
+            'Type transport',
+            'Num�ro billet',
+            'Date d�part',
+            'Date arriv�e',
+            'Prix',
+            'Statut',
+            'R�servation li�e',
+        ];
+
+        foreach ($headers as $index => $header) {
+            $column = chr(ord('A') + $index);
+            $sheet->setCellValue($column . '1', $header);
         }
 
         $row = 2;
         foreach ($billetRepository->findBy([], ['id' => 'DESC']) as $billet) {
             $sheet->setCellValue("A{$row}", $billet->getTypeTransport() ?? '');
             $sheet->setCellValue("B{$row}", $billet->getNumeroBillet() ?? '');
-            $sheet->setCellValue("C{$row}", $billet->getDateDepart()?->format('Y-m-d') ?? '');
-            $sheet->setCellValue("D{$row}", $billet->getDateArrivee()?->format('Y-m-d') ?? '');
+            $sheet->setCellValue("C{$row}", $billet->getDateDepart()?->format('Y-m-d H:i') ?? '');
+            $sheet->setCellValue("D{$row}", $billet->getDateArrivee()?->format('Y-m-d H:i') ?? '');
             $sheet->setCellValue("E{$row}", $billet->getPrix() ?? '');
             $sheet->setCellValue("F{$row}", $billet->getStatut() ?? '');
             $sheet->setCellValue("G{$row}", $billet->getReservation()?->getId() ?? '');
             ++$row;
         }
 
-        foreach (range('A', 'G') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
+        foreach (range('A', 'G') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
         $response = new StreamedResponse(function () use ($spreadsheet): void {
@@ -121,27 +129,36 @@ final class BilletController extends AbstractController
         });
 
         $filename = 'billets-' . (new \DateTime())->format('Y-m-d-His') . '.xlsx';
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        $response->headers->set(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
         $response->headers->set('Cache-Control', 'max-age=0');
 
         return $response;
     }
 
-    // ── PDF export (uses wkhtmltopdf via KnpSnappy) ──
     #[Route('/export/pdf', name: 'app_billet_export_pdf', methods: ['GET'])]
     public function exportPdf(BilletRepository $billetRepository, Pdf $pdf): Response
     {
+        // We export the same business data as the Excel file to keep the admin
+        // reports consistent across formats.
         $billets = $billetRepository->findBy([], ['id' => 'DESC']);
 
+        // Twig generates a clean printable HTML view first.
         $html = $this->renderView('billet/pdf.html.twig', [
-            'billets'     => $billets,
+            'billets' => $billets,
             'generatedAt' => new \DateTime(),
         ]);
 
+        // Snappy delegates the HTML-to-PDF conversion to wkhtmltopdf.
         $output = $pdf->getOutputFromHtml($html);
+
         $filename = 'billets-' . (new \DateTime())->format('Y-m-d-His') . '.pdf';
 
+        // Symfony returns the binary PDF response so the browser downloads it.
         return new Response($output, Response::HTTP_OK, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -158,20 +175,22 @@ final class BilletController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($billet);
             $entityManager->flush();
-            $this->addFlash('success', 'Billet ajouté avec succès.');
-            return $this->redirectToRoute('app_user_reservations', [], Response::HTTP_SEE_OTHER);
+
+            return $this->redirectToRoute('app_billet_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('billet/new.html.twig', [
             'billet' => $billet,
-            'form'   => $form->createView(),
+            'form' => $form,
         ]);
     }
 
     #[Route('/{id}', name: 'app_billet_show', methods: ['GET'])]
     public function show(Billet $billet): Response
     {
-        return $this->render('billet/show.html.twig', ['billet' => $billet]);
+        return $this->render('billet/show.html.twig', [
+            'billet' => $billet,
+        ]);
     }
 
     #[Route('/{id}/edit', name: 'app_billet_edit', methods: ['GET', 'POST'])]
@@ -182,13 +201,13 @@ final class BilletController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'Billet modifié avec succès.');
-            return $this->redirectToRoute('app_user_reservations', [], Response::HTTP_SEE_OTHER);
+
+            return $this->redirectToRoute('app_billet_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('billet/edit.html.twig', [
             'billet' => $billet,
-            'form'   => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -199,6 +218,7 @@ final class BilletController extends AbstractController
             $entityManager->remove($billet);
             $entityManager->flush();
         }
-        return $this->redirectToRoute('app_user_reservations', [], Response::HTTP_SEE_OTHER);
+
+        return $this->redirectToRoute('app_billet_index', [], Response::HTTP_SEE_OTHER);
     }
 }

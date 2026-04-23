@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,56 +14,25 @@ class Reservation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'id_reservation')]
+    #[ORM\Column(name: 'id_reservation', type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(name: 'date_reservation', type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message: 'La date de réservation est obligatoire.')]
-    #[Assert\Type(type: \DateTimeInterface::class, message: 'La date de réservation est invalide.')]
+    #[ORM\Column(name: 'date_reservation', type: 'date', nullable: true)]
+    #[Assert\NotNull(message: 'La date de réservation est obligatoire.')]
     private ?\DateTimeInterface $dateReservation = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
-    #[Assert\Length(
-        min: 2,
-        max: 255,
-        minMessage: 'Le statut doit contenir au moins {{ limit }} caractères.',
-        maxMessage: 'Le statut ne doit pas dépasser {{ limit }} caractères.'
-    )]
+    #[ORM\Column(name: 'statut', type: 'string', length: 50, nullable: true)]
     private ?string $statut = null;
 
-    #[ORM\Column(name: 'modalites_paiement', length: 255)]
-    #[Assert\NotBlank(message: 'Les modalités de paiement sont obligatoires.')]
-    #[Assert\Length(
-        min: 2,
-        max: 255,
-        minMessage: 'Les modalités de paiement doivent contenir au moins {{ limit }} caractères.',
-        maxMessage: 'Les modalités de paiement ne doivent pas dépasser {{ limit }} caractères.'
-    )]
+    #[ORM\Column(name: 'modalites_paiement', type: 'string', length: 50, nullable: true)]
     private ?string $modalitesPaiement = null;
 
-    #[ORM\Column(name: 'id_client')]
-    #[Assert\NotBlank(message: 'Le client ID est obligatoire.')]
-    #[Assert\Positive(message: 'Le client ID doit être un nombre positif.')]
+    #[ORM\Column(name: 'id_client', type: 'integer', nullable: true)]
     private ?int $clientId = null;
 
-    #[ORM\Column(name: 'paysdestination', length: 255)]
-    #[Assert\NotBlank(message: 'Le pays de destination est obligatoire.')]
-    #[Assert\Length(
-        min: 2,
-        max: 255,
-        minMessage: 'Le pays de destination doit contenir au moins {{ limit }} caractères.',
-        maxMessage: 'Le pays de destination ne doit pas dépasser {{ limit }} caractères.'
-    )]
-    #[Assert\Regex(
-        pattern: '/^[\p{L}\s\-\'()]+$/u',
-        message: 'Le pays de destination ne doit contenir que des lettres, espaces, tirets ou apostrophes.'
-    )]
+    #[ORM\Column(name: 'paysdestination', type: 'string', length: 255, nullable: true)]
     private ?string $paysDestination = null;
 
-    /**
-     * @var Collection<int, Billet>
-     */
     #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Billet::class)]
     private Collection $billets;
 
@@ -83,7 +51,7 @@ class Reservation
         return $this->dateReservation;
     }
 
-    public function setDateReservation(\DateTimeInterface $dateReservation): static
+    public function setDateReservation(?\DateTimeInterface $dateReservation): static
     {
         $this->dateReservation = $dateReservation;
         return $this;
@@ -94,7 +62,7 @@ class Reservation
         return $this->statut;
     }
 
-    public function setStatut(string $statut): static
+    public function setStatut(?string $statut): static
     {
         $this->statut = $statut;
         return $this;
@@ -105,7 +73,7 @@ class Reservation
         return $this->modalitesPaiement;
     }
 
-    public function setModalitesPaiement(string $modalitesPaiement): static
+    public function setModalitesPaiement(?string $modalitesPaiement): static
     {
         $this->modalitesPaiement = $modalitesPaiement;
         return $this;
@@ -116,7 +84,7 @@ class Reservation
         return $this->clientId;
     }
 
-    public function setClientId(int $clientId): static
+    public function setClientId(?int $clientId): static
     {
         $this->clientId = $clientId;
         return $this;
@@ -127,7 +95,7 @@ class Reservation
         return $this->paysDestination;
     }
 
-    public function setPaysDestination(string $paysDestination): static
+    public function setPaysDestination(?string $paysDestination): static
     {
         $this->paysDestination = $paysDestination;
         return $this;
@@ -160,10 +128,5 @@ class Reservation
         }
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return 'Reservation #' . ($this->id ?? '');
     }
 }

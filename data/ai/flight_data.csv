@@ -1,0 +1,1201 @@
+﻿destination,current_price,days_before_departure,month,is_weekend,travel_class,stops_count,duration_minutes,departure_hour,airline,label
+Paris,155.89,9,3,0,economy,0,190,8,Tunisair,buy_now
+Madrid,415.54,22,11,1,business,0,219,16,British Airways,buy_now
+Bahrein,515.92,35,5,0,flex,0,343,14,Turkish Airlines,buy_now
+Paris,317.51,48,12,1,standard,0,283,9,Air France,buy_now
+Madrid,218.53,61,10,0,economy,0,312,18,Nouvelair,buy_now
+Bahrein,960.79,16,4,1,business,0,436,15,Qatar Airways,buy_now
+Paris,335.62,29,6,0,flex,0,376,10,Lufthansa,buy_now
+Madrid,251.43,42,9,1,standard,0,195,8,Air Algerie,buy_now
+Bahrein,389.54,55,3,0,economy,0,319,16,ITA Airways,buy_now
+Paris,436.16,10,11,1,business,0,259,14,Emirates,buy_now
+Madrid,226.5,23,5,0,flex,0,288,9,Tunisair,buy_now
+Bahrein,582.57,36,12,1,standard,0,412,18,British Airways,buy_now
+Paris,191.47,49,10,0,economy,0,352,15,Turkish Airlines,buy_now
+Madrid,391.3,62,4,1,business,0,381,10,Air France,buy_now
+Bahrein,613.54,17,6,0,flex,0,295,8,Nouvelair,buy_now
+Paris,252.3,30,9,1,standard,0,235,16,Qatar Airways,buy_now
+Madrid,183.9,43,3,0,economy,0,264,14,Lufthansa,buy_now
+Bahrein,606.64,56,11,1,business,0,388,9,Air Algerie,buy_now
+Paris,250.67,11,5,0,flex,0,328,18,ITA Airways,buy_now
+Madrid,288.24,24,12,1,standard,0,357,15,Emirates,buy_now
+Bahrein,317.53,37,10,0,economy,0,481,10,Tunisair,buy_now
+Paris,381.91,50,4,1,business,0,211,8,British Airways,buy_now
+Madrid,263.77,63,6,0,flex,0,240,16,Turkish Airlines,buy_now
+Bahrein,422.1,18,9,1,standard,0,364,14,Air France,buy_now
+Paris,184.75,31,3,0,economy,0,304,9,Nouvelair,buy_now
+Madrid,445.22,44,11,1,business,0,333,18,Qatar Airways,buy_now
+Bahrein,551.24,57,5,0,flex,0,457,15,Lufthansa,buy_now
+Paris,308.09,12,12,1,standard,0,397,10,Air Algerie,buy_now
+Madrid,217.53,25,10,0,economy,0,216,8,ITA Airways,buy_now
+Bahrein,926.84,38,4,1,business,0,340,16,Emirates,buy_now
+Paris,312.01,51,6,0,flex,0,280,14,Tunisair,buy_now
+Madrid,264.38,64,9,1,standard,0,309,9,British Airways,buy_now
+Bahrein,388.54,19,3,0,economy,0,433,18,Turkish Airlines,buy_now
+Paris,382.89,32,11,1,business,0,373,15,Air France,buy_now
+Madrid,225.5,45,5,0,flex,0,192,10,Nouvelair,buy_now
+Bahrein,624.64,58,12,1,standard,0,316,8,Qatar Airways,buy_now
+Paris,215.78,13,10,0,economy,0,256,16,Lufthansa,buy_now
+Madrid,360.42,26,4,1,business,0,285,14,Air Algerie,buy_now
+Bahrein,579.03,39,6,0,flex,0,409,9,ITA Airways,buy_now
+Paris,255.64,52,9,1,standard,0,349,18,Emirates,buy_now
+Madrid,170.42,65,3,0,economy,0,378,15,Tunisair,buy_now
+Bahrein,643.17,20,11,1,business,0,292,10,British Airways,buy_now
+Paris,235.51,33,5,0,flex,0,232,8,Turkish Airlines,buy_now
+Madrid,267.23,46,12,1,standard,0,261,16,Air France,buy_now
+Bahrein,316.53,59,10,0,economy,0,385,14,Nouvelair,buy_now
+Paris,434.23,14,4,1,business,0,325,9,Qatar Airways,buy_now
+Madrid,281.02,27,6,0,flex,0,354,18,Lufthansa,buy_now
+Bahrein,364.22,40,9,1,standard,0,478,15,Air Algerie,buy_now
+Paris,183.75,53,3,0,economy,0,208,10,ITA Airways,buy_now
+Madrid,451.89,66,11,1,business,0,237,8,Emirates,buy_now
+Bahrein,513.92,21,5,0,flex,0,361,16,Tunisair,buy_now
+Paris,309.36,34,12,1,standard,0,301,14,British Airways,buy_now
+Madrid,216.53,47,10,0,economy,0,330,9,Turkish Airlines,buy_now
+Bahrein,861.99,60,4,1,business,0,454,18,Air France,buy_now
+Paris,328.56,15,6,0,flex,0,394,15,Nouvelair,buy_now
+Madrid,281.97,28,9,1,standard,0,213,10,Qatar Airways,buy_now
+Bahrein,414.31,41,3,0,economy,0,337,8,Lufthansa,buy_now
+Paris,353.08,54,11,1,business,0,277,16,Air Algerie,buy_now
+Madrid,238.34,9,5,0,flex,0,306,14,ITA Airways,buy_now
+Bahrein,634.4,22,12,1,standard,0,430,9,Emirates,buy_now
+Paris,189.47,35,10,0,economy,0,370,18,Tunisair,buy_now
+Madrid,381.83,48,4,1,business,0,189,15,British Airways,buy_now
+Bahrein,578.03,61,6,0,flex,0,313,10,Turkish Airlines,buy_now
+Paris,251.4,16,9,1,standard,0,253,8,Air France,buy_now
+Madrid,169.42,29,3,0,economy,0,282,16,Nouvelair,buy_now
+Bahrein,733.22,42,11,1,business,0,406,14,Qatar Airways,buy_now
+Paris,250.37,55,5,0,flex,0,346,9,Lufthansa,buy_now
+Madrid,262.05,10,12,1,standard,0,375,18,Air Algerie,buy_now
+Bahrein,315.53,23,10,0,economy,0,289,15,ITA Airways,buy_now
+Paris,414.53,36,4,1,business,0,229,10,Emirates,buy_now
+Madrid,261.77,49,6,0,flex,0,258,8,Tunisair,buy_now
+Bahrein,385.67,62,9,1,standard,0,382,16,British Airways,buy_now
+Paris,193.89,17,3,0,economy,0,322,14,Turkish Airlines,buy_now
+Madrid,420.21,30,11,1,business,0,351,9,Air France,buy_now
+Bahrein,512.92,43,5,0,flex,0,475,18,Nouvelair,buy_now
+Paris,332.99,56,12,1,standard,0,205,15,Qatar Airways,buy_now
+Madrid,241.48,11,10,0,economy,0,234,10,Lufthansa,buy_now
+Bahrein,797.14,24,4,1,business,0,358,8,Air Algerie,buy_now
+Paris,310.01,37,6,0,flex,0,298,16,ITA Airways,buy_now
+Madrid,285.62,50,9,1,standard,0,327,14,Emirates,buy_now
+Bahrein,386.54,63,3,0,economy,0,451,9,Tunisair,buy_now
+Paris,395.13,18,11,1,business,0,391,18,British Airways,buy_now
+Madrid,223.5,31,5,0,flex,0,210,15,Turkish Airlines,buy_now
+Bahrein,590.34,44,12,1,standard,0,334,10,Air France,buy_now
+Paris,188.47,57,10,0,economy,0,274,8,Nouvelair,buy_now
+Madrid,435.74,12,4,1,business,0,303,16,Qatar Airways,buy_now
+Bahrein,616.44,25,6,0,flex,0,427,14,Lufthansa,buy_now
+Paris,218.93,38,9,1,standard,0,367,9,Air Algerie,buy_now
+Madrid,168.42,51,3,0,economy,0,396,18,ITA Airways,buy_now
+Bahrein,744.74,64,11,1,business,0,310,15,Emirates,buy_now
+Paris,233.51,19,5,0,flex,0,250,10,Tunisair,buy_now
+Madrid,260.22,32,12,1,standard,0,279,8,British Airways,buy_now
+Bahrein,314.53,45,10,0,economy,0,403,16,Turkish Airlines,buy_now
+Paris,385.84,58,4,1,business,0,343,14,Air France,buy_now
+Madrid,277.92,13,6,0,flex,0,372,9,Nouvelair,buy_now
+Bahrein,414.61,26,9,1,standard,0,286,18,Qatar Airways,buy_now
+Paris,193.29,39,3,0,economy,0,226,15,Lufthansa,buy_now
+Madrid,388.53,52,11,1,business,0,255,10,Air Algerie,buy_now
+Bahrein,511.92,65,5,0,flex,0,379,8,ITA Airways,buy_now
+Paris,338.14,20,12,1,standard,0,319,16,Emirates,buy_now
+Madrid,214.53,33,10,0,economy,0,348,14,Tunisair,buy_now
+Bahrein,844.02,46,4,1,business,0,472,9,British Airways,buy_now
+Paris,309.01,59,6,0,flex,0,202,18,Turkish Airlines,buy_now
+Madrid,279.82,14,9,1,standard,0,231,15,Air France,buy_now
+Bahrein,385.54,27,3,0,economy,0,355,10,Nouvelair,buy_now
+Paris,401.49,40,11,1,business,0,295,8,Qatar Airways,buy_now
+Madrid,280.55,53,5,0,flex,0,324,16,Lufthansa,buy_now
+Bahrein,546.28,66,12,1,standard,0,448,14,Air Algerie,buy_now
+Paris,187.47,21,10,0,economy,0,388,9,ITA Airways,buy_now
+Madrid,417.17,34,4,1,business,0,207,18,Emirates,buy_now
+Bahrein,576.03,47,6,0,flex,0,331,15,Tunisair,buy_now
+Paris,230.94,60,9,1,standard,0,271,10,British Airways,buy_now
+Madrid,178.29,15,3,0,economy,0,300,8,Turkish Airlines,buy_now
+Bahrein,693.69,28,11,1,business,0,424,16,Air France,buy_now
+Paris,232.51,41,5,0,flex,0,364,14,Nouvelair,buy_now
+Madrid,279.24,54,12,1,standard,0,393,9,Qatar Airways,buy_now
+Bahrein,359.48,9,10,0,economy,0,307,18,Lufthansa,buy_now
+Paris,357.15,22,4,1,business,0,247,15,Air Algerie,buy_now
+Madrid,259.77,35,6,0,flex,0,276,10,ITA Airways,buy_now
+Bahrein,421.1,48,9,1,standard,0,400,8,Emirates,buy_now
+Paris,180.75,61,3,0,economy,0,340,16,Tunisair,buy_now
+Madrid,431.5,16,11,1,business,0,369,14,British Airways,buy_now
+Bahrein,510.92,29,5,0,flex,0,283,9,Turkish Airlines,buy_now
+Paris,312.51,42,12,1,standard,0,223,18,Air France,buy_now
+Madrid,213.53,55,10,0,economy,0,252,15,Nouvelair,buy_now
+Bahrein,955.79,10,4,1,business,0,376,10,Qatar Airways,buy_now
+Paris,330.62,23,6,0,flex,0,316,8,Lufthansa,buy_now
+Madrid,246.43,36,9,1,standard,0,345,16,Air Algerie,buy_now
+Bahrein,384.54,49,3,0,economy,0,469,14,ITA Airways,buy_now
+Paris,407.69,62,11,1,business,0,199,9,Emirates,buy_now
+Madrid,276.34,17,5,0,flex,0,228,18,Tunisair,buy_now
+Bahrein,577.57,30,12,1,standard,0,352,15,British Airways,buy_now
+Paris,186.47,43,10,0,economy,0,292,10,Turkish Airlines,buy_now
+Madrid,386.3,56,4,1,business,0,321,8,Air France,buy_now
+Bahrein,608.54,11,6,0,flex,0,445,16,Nouvelair,buy_now
+Paris,247.3,24,9,1,standard,0,385,14,Qatar Airways,buy_now
+Madrid,178.9,37,3,0,economy,0,204,9,Lufthansa,buy_now
+Bahrein,642.64,50,11,1,business,0,328,18,Air Algerie,buy_now
+Paris,231.51,63,5,0,flex,0,268,15,ITA Airways,buy_now
+Madrid,301.61,18,12,1,standard,0,297,10,Emirates,buy_now
+Bahrein,312.53,31,10,0,economy,0,421,8,Tunisair,buy_now
+Paris,376.91,44,4,1,business,0,361,16,British Airways,buy_now
+Madrid,258.77,57,6,0,flex,0,390,14,Turkish Airlines,buy_now
+Bahrein,417.1,12,9,1,standard,0,304,9,Air France,buy_now
+Paris,179.75,25,3,0,economy,0,244,18,Nouvelair,buy_now
+Madrid,440.22,38,11,1,business,0,273,15,Qatar Airways,buy_now
+Bahrein,546.24,51,5,0,flex,0,397,10,Lufthansa,buy_now
+Paris,327.88,64,12,1,standard,0,337,8,Air Algerie,buy_now
+Madrid,212.53,19,10,0,economy,0,366,16,ITA Airways,buy_now
+Bahrein,921.84,32,4,1,business,0,490,14,Emirates,buy_now
+Paris,307.01,45,6,0,flex,0,220,9,Tunisair,buy_now
+Madrid,259.38,58,9,1,standard,0,249,18,British Airways,buy_now
+Bahrein,404.79,13,3,0,economy,0,373,15,Turkish Airlines,buy_now
+Paris,377.89,26,11,1,business,0,313,10,Air France,buy_now
+Madrid,261.5,39,5,0,flex,0,342,8,Nouvelair,buy_now
+Bahrein,619.64,52,12,1,standard,0,466,16,Qatar Airways,buy_now
+Paris,198.87,65,10,0,economy,0,196,14,Lufthansa,buy_now
+Madrid,355.42,20,4,1,business,0,225,9,Air Algerie,buy_now
+Bahrein,574.03,33,6,0,flex,0,349,18,ITA Airways,buy_now
+Paris,250.64,46,9,1,standard,0,289,15,Emirates,buy_now
+Madrid,165.42,59,3,0,economy,0,318,10,Tunisair,buy_now
+Bahrein,720.11,14,11,1,business,0,442,8,British Airways,buy_now
+Paris,230.51,27,5,0,flex,0,382,16,Turkish Airlines,buy_now
+Madrid,262.23,40,12,1,standard,0,201,14,Air France,buy_now
+Bahrein,311.53,53,10,0,economy,0,325,9,Nouvelair,buy_now
+Paris,403.61,66,4,1,business,0,265,18,Qatar Airways,buy_now
+Madrid,276.02,21,6,0,flex,0,294,15,Lufthansa,buy_now
+Bahrein,359.22,34,9,1,standard,0,418,10,Air Algerie,buy_now
+Paris,178.75,47,3,0,economy,0,358,8,ITA Airways,buy_now
+Madrid,446.89,60,11,1,business,0,387,16,Emirates,buy_now
+Bahrein,535.95,15,5,0,flex,0,301,14,Tunisair,buy_now
+Paris,345.36,28,12,1,standard,0,241,9,British Airways,buy_now
+Madrid,211.53,41,10,0,economy,0,270,18,Turkish Airlines,buy_now
+Bahrein,856.99,54,4,1,business,0,394,15,Air France,buy_now
+Paris,323.56,9,6,0,flex,0,334,10,Nouvelair,buy_now
+Madrid,276.97,22,9,1,standard,0,363,8,Qatar Airways,buy_now
+Bahrein,409.31,35,3,0,economy,0,487,16,Lufthansa,buy_now
+Paris,348.08,48,11,1,business,0,217,14,Air Algerie,buy_now
+Madrid,260.5,61,5,0,flex,0,246,9,ITA Airways,buy_now
+Bahrein,665.29,16,12,1,standard,0,370,18,Emirates,buy_now
+Paris,184.47,29,10,0,economy,0,310,15,Tunisair,buy_now
+Madrid,376.83,42,4,1,business,0,339,10,British Airways,buy_now
+Bahrein,573.03,55,6,0,flex,0,463,8,Turkish Airlines,buy_now
+Paris,246.4,10,9,1,standard,0,193,16,Air France,buy_now
+Madrid,164.42,23,3,0,economy,0,222,14,Nouvelair,buy_now
+Bahrein,728.22,36,11,1,business,0,346,9,Qatar Airways,buy_now
+Paris,245.37,49,5,0,flex,0,286,18,Lufthansa,buy_now
+Madrid,241.21,62,12,1,standard,0,315,15,Air Algerie,buy_now
+Bahrein,372.78,17,10,0,economy,0,439,10,ITA Airways,buy_now
+Paris,409.53,30,4,1,business,0,379,8,Emirates,buy_now
+Madrid,256.77,43,6,0,flex,0,198,16,Tunisair,buy_now
+Bahrein,380.67,56,9,1,standard,0,322,14,British Airways,buy_now
+Paris,188.89,11,3,0,economy,0,262,9,Turkish Airlines,buy_now
+Madrid,415.21,24,11,1,business,0,291,18,Air France,buy_now
+Bahrein,507.92,37,5,0,flex,0,415,15,Nouvelair,buy_now
+Paris,368.99,50,12,1,standard,0,355,10,Qatar Airways,buy_now
+Madrid,224.84,63,10,0,economy,0,384,8,Lufthansa,buy_now
+Bahrein,835.05,18,4,1,business,0,298,16,Air Algerie,buy_now
+Paris,305.01,31,6,0,flex,0,238,14,ITA Airways,buy_now
+Madrid,280.62,44,9,1,standard,0,267,9,Emirates,buy_now
+Bahrein,381.54,57,3,0,economy,0,391,18,Tunisair,buy_now
+Paris,390.13,12,11,1,business,0,331,15,British Airways,buy_now
+Madrid,259.5,25,5,0,flex,0,360,10,Turkish Airlines,buy_now
+Bahrein,585.34,38,12,1,standard,0,484,8,Air France,buy_now
+Paris,183.47,51,10,0,economy,0,214,16,Nouvelair,buy_now
+Madrid,405.7,64,4,1,business,0,243,14,Qatar Airways,buy_now
+Bahrein,611.44,19,6,0,flex,0,367,9,Lufthansa,buy_now
+Paris,213.93,32,9,1,standard,0,307,18,Air Algerie,buy_now
+Madrid,163.42,45,3,0,economy,0,336,15,ITA Airways,buy_now
+Bahrein,739.74,58,11,1,business,0,460,10,Emirates,buy_now
+Paris,242.67,13,5,0,flex,0,190,8,Tunisair,buy_now
+Madrid,255.22,26,12,1,standard,0,219,16,British Airways,buy_now
+Bahrein,350.53,39,10,0,economy,0,343,14,Turkish Airlines,buy_now
+Paris,380.84,52,4,1,business,0,283,9,Air France,buy_now
+Madrid,255.77,65,6,0,flex,0,312,18,Nouvelair,buy_now
+Bahrein,409.61,20,9,1,standard,0,436,15,Qatar Airways,buy_now
+Paris,188.29,33,3,0,economy,0,376,10,Lufthansa,buy_now
+Madrid,383.53,46,11,1,business,0,195,8,Air Algerie,buy_now
+Bahrein,506.92,59,5,0,flex,0,319,16,ITA Airways,buy_now
+Paris,392.94,14,12,1,standard,0,259,14,Emirates,buy_now
+Madrid,209.53,27,10,0,economy,0,288,9,Tunisair,buy_now
+Bahrein,839.02,40,4,1,business,0,412,18,British Airways,buy_now
+Paris,304.01,53,6,0,flex,0,352,15,Turkish Airlines,buy_now
+Madrid,261.03,66,9,1,standard,0,381,10,Air France,buy_now
+Bahrein,380.54,21,3,0,economy,0,295,8,Nouvelair,buy_now
+Paris,396.49,34,11,1,business,0,235,16,Qatar Airways,buy_now
+Madrid,275.55,47,5,0,flex,0,264,14,Lufthansa,buy_now
+Bahrein,541.28,60,12,1,standard,0,388,9,Air Algerie,buy_now
+Paris,193.6,15,10,0,economy,0,328,18,ITA Airways,buy_now
+Madrid,453.17,28,4,1,business,0,357,15,Emirates,buy_now
+Bahrein,571.03,41,6,0,flex,0,481,10,Tunisair,buy_now
+Paris,225.94,54,9,1,standard,0,211,8,British Airways,buy_now
+Madrid,173.29,9,3,0,economy,0,240,16,Turkish Airlines,buy_now
+Bahrein,688.69,22,11,1,business,0,364,14,Air France,buy_now
+Paris,227.51,35,5,0,flex,0,304,9,Nouvelair,buy_now
+Madrid,274.24,48,12,1,standard,0,333,18,Qatar Airways,buy_now
+Bahrein,372.74,61,10,0,economy,0,457,15,Lufthansa,buy_now
+Paris,374.62,16,4,1,business,0,397,10,Air Algerie,buy_now
+Madrid,254.77,29,6,0,flex,0,216,8,ITA Airways,buy_now
+Bahrein,416.1,42,9,1,standard,0,340,16,Emirates,buy_now
+Paris,175.75,55,3,0,economy,0,280,14,Tunisair,buy_now
+Madrid,426.5,10,11,1,business,0,309,9,British Airways,buy_now
+Bahrein,505.92,23,5,0,flex,0,433,18,Turkish Airlines,buy_now
+Paris,348.51,36,12,1,standard,0,373,15,Air France,buy_now
+Madrid,208.53,49,10,0,economy,0,192,10,Nouvelair,buy_now
+Bahrein,901.88,62,4,1,business,0,316,8,Qatar Airways,buy_now
+Paris,344.4,17,6,0,flex,0,256,16,Lufthansa,buy_now
+Madrid,241.43,30,9,1,standard,0,285,14,Air Algerie,buy_now
+Bahrein,379.54,43,3,0,economy,0,409,9,ITA Airways,buy_now
+Paris,402.69,56,11,1,business,0,349,18,Emirates,buy_now
+Madrid,271.34,11,5,0,flex,0,378,15,Tunisair,buy_now
+Bahrein,572.57,24,12,1,standard,0,292,10,British Airways,buy_now
+Paris,181.47,37,10,0,economy,0,232,8,Turkish Airlines,buy_now
+Madrid,422.3,50,4,1,business,0,261,16,Air France,buy_now
+Bahrein,570.03,63,6,0,flex,0,385,14,Nouvelair,buy_now
+Paris,257.2,18,9,1,standard,0,325,9,Qatar Airways,buy_now
+Madrid,173.9,31,3,0,economy,0,354,18,Lufthansa,buy_now
+Bahrein,637.64,44,11,1,business,0,478,15,Air Algerie,buy_now
+Paris,226.51,57,5,0,flex,0,208,10,ITA Airways,buy_now
+Madrid,296.61,12,12,1,standard,0,237,8,Emirates,buy_now
+Bahrein,348.53,25,10,0,economy,0,361,16,Tunisair,buy_now
+Paris,371.91,38,4,1,business,0,301,14,British Airways,buy_now
+Madrid,253.77,51,6,0,flex,0,330,9,Turkish Airlines,buy_now
+Bahrein,385.16,64,9,1,standard,0,454,18,Air France,buy_now
+Paris,174.75,19,3,0,economy,0,394,15,Nouvelair,buy_now
+Madrid,435.22,32,11,1,business,0,213,10,Qatar Airways,buy_now
+Bahrein,541.24,45,5,0,flex,0,337,8,Lufthansa,buy_now
+Paris,322.88,58,12,1,standard,0,277,16,Air Algerie,buy_now
+Madrid,218.4,13,10,0,economy,0,306,14,ITA Airways,buy_now
+Bahrein,916.84,26,4,1,business,0,430,9,Emirates,buy_now
+Paris,343.01,39,6,0,flex,0,370,18,Tunisair,buy_now
+Madrid,254.38,52,9,1,standard,0,189,15,British Airways,buy_now
+Bahrein,378.54,65,3,0,economy,0,313,10,Turkish Airlines,buy_now
+Paris,372.89,20,11,1,business,0,253,8,Air France,buy_now
+Madrid,256.5,33,5,0,flex,0,282,16,Nouvelair,buy_now
+Bahrein,614.64,46,12,1,standard,0,406,14,Qatar Airways,buy_now
+Paris,193.87,59,10,0,economy,0,346,9,Lufthansa,buy_now
+Madrid,413.39,14,4,1,business,0,375,18,Air Algerie,buy_now
+Bahrein,569.03,27,6,0,flex,0,289,15,ITA Airways,buy_now
+Paris,245.64,40,9,1,standard,0,229,10,Emirates,buy_now
+Madrid,160.42,53,3,0,economy,0,258,8,Tunisair,buy_now
+Bahrein,674.17,66,11,1,business,0,382,16,British Airways,buy_now
+Paris,225.51,21,5,0,flex,0,322,14,Turkish Airlines,buy_now
+Madrid,257.23,34,12,1,standard,0,351,9,Air France,buy_now
+Bahrein,347.53,47,10,0,economy,0,475,18,Nouvelair,buy_now
+Paris,398.61,60,4,1,business,0,205,15,Qatar Airways,buy_now
+Madrid,289.38,15,6,0,flex,0,234,10,Lufthansa,buy_now
+Bahrein,354.22,28,9,1,standard,0,358,8,Air Algerie,buy_now
+Paris,173.75,41,3,0,economy,0,298,16,ITA Airways,buy_now
+Madrid,441.89,54,11,1,business,0,327,14,Emirates,buy_now
+Bahrein,530.95,9,5,0,flex,0,451,9,Tunisair,buy_now
+Paris,340.36,22,12,1,standard,0,391,18,British Airways,buy_now
+Madrid,206.53,35,10,0,economy,0,210,15,Turkish Airlines,buy_now
+Bahrein,851.99,48,4,1,business,0,334,10,Air France,buy_now
+Paris,342.01,61,6,0,flex,0,274,8,Nouvelair,buy_now
+Madrid,286.53,16,9,1,standard,0,303,16,Qatar Airways,buy_now
+Bahrein,404.31,29,3,0,economy,0,427,14,Lufthansa,buy_now
+Paris,343.08,42,11,1,business,0,367,9,Air Algerie,buy_now
+Madrid,255.5,55,5,0,flex,0,396,18,ITA Airways,buy_now
+Bahrein,660.29,10,12,1,standard,0,310,15,Emirates,buy_now
+Paris,179.47,23,10,0,economy,0,250,10,Tunisair,buy_now
+Madrid,412.83,36,4,1,business,0,279,8,British Airways,buy_now
+Bahrein,568.03,49,6,0,flex,0,403,16,Turkish Airlines,buy_now
+Paris,227.28,62,9,1,standard,0,343,14,Air France,buy_now
+Madrid,170.29,17,3,0,economy,0,372,9,Nouvelair,buy_now
+Bahrein,723.22,30,11,1,business,0,286,18,Qatar Airways,buy_now
+Paris,240.37,43,5,0,flex,0,226,15,Lufthansa,buy_now
+Madrid,236.21,56,12,1,standard,0,255,10,Air Algerie,buy_now
+Bahrein,367.78,11,10,0,economy,0,379,8,ITA Airways,buy_now
+Paris,404.53,24,4,1,business,0,319,16,Emirates,buy_now
+Madrid,251.77,37,6,0,flex,0,348,14,Tunisair,buy_now
+Bahrein,416.67,50,9,1,standard,0,472,9,British Airways,buy_now
+Paris,172.75,63,3,0,economy,0,202,18,Turkish Airlines,buy_now
+Madrid,431.56,18,11,1,business,0,231,15,Air France,buy_now
+Bahrein,502.92,31,5,0,flex,0,355,10,Nouvelair,buy_now
+Paris,363.99,44,12,1,standard,0,295,8,Qatar Airways,buy_now
+Madrid,219.84,57,10,0,economy,0,324,16,Lufthansa,buy_now
+Bahrein,830.05,12,4,1,business,0,448,14,Air Algerie,buy_now
+Paris,341.01,25,6,0,flex,0,388,9,ITA Airways,buy_now
+Madrid,275.62,38,9,1,standard,0,207,18,Emirates,buy_now
+Bahrein,376.54,51,3,0,economy,0,331,15,Tunisair,buy_now
+Paris,363.69,64,11,1,business,0,271,10,British Airways,buy_now
+Madrid,254.5,19,5,0,flex,0,300,8,Turkish Airlines,buy_now
+Bahrein,580.34,32,12,1,standard,0,424,16,Air France,buy_now
+Paris,178.47,45,10,0,economy,0,364,14,Nouvelair,buy_now
+Madrid,441.7,58,4,1,business,0,393,9,Qatar Airways,buy_now
+Bahrein,642.3,13,6,0,flex,0,307,18,Lufthansa,buy_now
+Paris,208.93,26,9,1,standard,0,247,15,Air Algerie,buy_now
+Madrid,158.42,39,3,0,economy,0,276,10,ITA Airways,buy_now
+Bahrein,734.74,52,11,1,business,0,400,8,Emirates,buy_now
+Paris,223.51,65,5,0,flex,0,340,16,Tunisair,buy_now
+Madrid,250.22,20,12,1,standard,0,369,14,British Airways,buy_now
+Bahrein,345.53,33,10,0,economy,0,283,9,Turkish Airlines,buy_now
+Paris,375.84,46,4,1,business,0,223,18,Air France,buy_now
+Madrid,250.77,59,6,0,flex,0,252,15,Nouvelair,buy_now
+Bahrein,474.05,14,9,1,standard,0,376,10,Qatar Airways,buy_now
+Paris,183.29,27,3,0,economy,0,316,8,Lufthansa,buy_now
+Madrid,378.53,40,11,1,business,0,345,16,Air Algerie,buy_now
+Bahrein,501.92,53,5,0,flex,0,469,14,ITA Airways,buy_now
+Paris,369.14,66,12,1,standard,0,199,9,Emirates,buy_now
+Madrid,204.53,21,10,0,economy,0,228,18,Tunisair,buy_now
+Bahrein,834.02,34,4,1,business,0,352,15,British Airways,buy_now
+Paris,340.01,47,6,0,flex,0,292,10,Turkish Airlines,buy_now
+Madrid,256.03,60,9,1,standard,0,321,8,Air France,buy_now
+Bahrein,396.79,15,3,0,economy,0,445,16,Nouvelair,buy_now
+Paris,391.49,28,11,1,business,0,385,14,Qatar Airways,buy_now
+Madrid,270.55,41,5,0,flex,0,204,9,Lufthansa,buy_now
+Bahrein,536.28,54,12,1,standard,0,328,18,Air Algerie,buy_now
+Paris,188.6,9,10,0,economy,0,268,15,ITA Airways,buy_now
+Madrid,448.17,22,4,1,business,0,297,10,Emirates,buy_now
+Bahrein,566.03,35,6,0,flex,0,421,8,Tunisair,buy_now
+Paris,220.94,48,9,1,standard,0,361,16,British Airways,buy_now
+Madrid,198.42,61,3,0,economy,0,390,14,Turkish Airlines,buy_now
+Bahrein,725.4,16,11,1,business,0,304,9,Air France,buy_now
+Paris,222.51,29,5,0,flex,0,244,18,Nouvelair,buy_now
+Madrid,269.24,42,12,1,standard,0,273,15,Qatar Airways,buy_now
+Bahrein,367.74,55,10,0,economy,0,397,10,Lufthansa,buy_now
+Paris,369.62,10,4,1,business,0,337,8,Air Algerie,buy_now
+Madrid,249.77,23,6,0,flex,0,366,16,ITA Airways,buy_now
+Bahrein,452.1,36,9,1,standard,0,490,14,Emirates,buy_now
+Paris,170.75,49,3,0,economy,0,220,9,Tunisair,buy_now
+Madrid,400.54,62,11,1,business,0,249,18,British Airways,buy_now
+Bahrein,527.95,17,5,0,flex,0,373,15,Turkish Airlines,buy_now
+Paris,343.51,30,12,1,standard,0,313,10,Air France,buy_now
+Madrid,203.53,43,10,0,economy,0,342,8,Nouvelair,buy_now
+Bahrein,896.88,56,4,1,business,0,466,16,Qatar Airways,buy_now
+Paris,380.4,11,6,0,flex,0,196,14,Lufthansa,buy_now
+Madrid,236.43,24,9,1,standard,0,225,9,Air Algerie,buy_now
+Bahrein,374.54,37,3,0,economy,0,349,18,ITA Airways,buy_now
+Paris,397.69,50,11,1,business,0,289,15,Emirates,buy_now
+Madrid,252.5,63,5,0,flex,0,318,10,Tunisair,buy_now
+Bahrein,600.37,18,12,1,standard,0,442,8,British Airways,buy_now
+Paris,176.47,31,10,0,economy,0,382,16,Turkish Airlines,buy_now
+Madrid,417.3,44,4,1,business,0,201,14,Air France,buy_now
+Bahrein,565.03,57,6,0,flex,0,325,9,Nouvelair,buy_now
+Paris,252.2,12,9,1,standard,0,265,18,Qatar Airways,buy_now
+Madrid,209.9,25,3,0,economy,0,294,15,Lufthansa,buy_now
+Bahrein,632.64,38,11,1,business,0,418,10,Air Algerie,buy_now
+Paris,221.51,51,5,0,flex,0,358,8,ITA Airways,buy_now
+Madrid,273.24,64,12,1,standard,0,387,16,Emirates,buy_now
+Bahrein,343.53,19,10,0,economy,0,301,14,Tunisair,buy_now
+Paris,366.91,32,4,1,business,0,241,9,British Airways,buy_now
+Madrid,248.77,45,6,0,flex,0,270,18,Turkish Airlines,buy_now
+Bahrein,421.16,58,9,1,standard,0,394,15,Air France,buy_now
+Paris,180.89,13,3,0,economy,0,334,10,Nouvelair,buy_now
+Madrid,430.22,26,11,1,business,0,363,8,Qatar Airways,buy_now
+Bahrein,536.24,39,5,0,flex,0,487,16,Lufthansa,buy_now
+Paris,317.88,52,12,1,standard,0,217,14,Air Algerie,buy_now
+Madrid,202.53,65,10,0,economy,0,246,9,ITA Airways,buy_now
+Bahrein,911.84,20,4,1,business,0,370,18,Emirates,buy_now
+Paris,338.01,33,6,0,flex,0,310,15,Tunisair,buy_now
+Madrid,249.38,46,9,1,standard,0,339,10,British Airways,buy_now
+Bahrein,373.54,59,3,0,economy,0,463,8,Turkish Airlines,buy_now
+Paris,430.73,14,11,1,business,0,193,16,Air France,buy_now
+Madrid,251.5,27,5,0,flex,0,222,14,Nouvelair,buy_now
+Bahrein,609.64,40,12,1,standard,0,346,9,Qatar Airways,buy_now
+Paris,188.87,53,10,0,economy,0,286,18,Lufthansa,buy_now
+Madrid,386.42,66,4,1,business,0,315,15,Air Algerie,buy_now
+Bahrein,564.03,21,6,0,flex,0,439,10,ITA Airways,buy_now
+Paris,240.64,34,9,1,standard,0,379,8,Emirates,buy_now
+Dubai,446.80,62,1,1,standard,1,360,0,Lufthansa,wait
+Alger,196.25,73,10,0,economy,2,351,11,Air Algerie,wait
+Cairo,398.17,84,1,0,business,2,411,23,ITA Airways,wait
+Dubai,642.27,95,10,0,flex,1,453,5,Emirates,wait
+Alger,171.11,106,1,0,standard,0,294,22,Tunisair,wait
+Cairo,337.51,117,10,1,economy,1,429,1,British Airways,wait
+Dubai,747.45,128,1,0,business,2,621,13,Turkish Airlines,wait
+Alger,227.13,139,10,0,flex,2,327,0,Air France,wait
+Cairo,263.55,150,1,0,standard,1,312,11,Nouvelair,wait
+Dubai,536.81,70,10,0,economy,0,354,23,Qatar Airways,wait
+Alger,380.56,81,1,1,business,1,345,5,Lufthansa,wait
+Cairo,284.39,92,10,0,flex,2,480,22,Air Algerie,wait
+Dubai,410.54,103,1,0,standard,2,597,1,ITA Airways,wait
+Alger,209.48,114,10,0,economy,1,438,13,Emirates,wait
+Cairo,436.54,125,1,0,business,0,213,0,Tunisair,wait
+Dubai,744.11,136,10,1,flex,1,405,11,British Airways,wait
+Alger,177.82,147,1,0,standard,2,396,23,Turkish Airlines,wait
+Cairo,236.07,67,10,0,economy,2,456,5,Air France,wait
+Dubai,697.56,78,1,0,business,1,498,22,Nouvelair,wait
+Alger,278.59,89,10,0,flex,0,339,1,Qatar Airways,wait
+Cairo,300.33,100,1,1,standard,1,474,13,Lufthansa,wait
+Dubai,418.06,111,10,0,economy,2,456,0,Air Algerie,wait
+Alger,298.5,122,1,0,business,2,372,11,ITA Airways,wait
+Cairo,362.71,133,10,0,flex,1,357,23,Emirates,wait
+Dubai,449.76,144,1,0,standard,0,399,5,Tunisair,wait
+Alger,241.17,64,10,1,economy,1,390,22,British Airways,wait
+Cairo,397.17,75,1,0,business,2,525,1,Turkish Airlines,wait
+Dubai,541.45,86,10,0,flex,2,642,13,Air France,wait
+Alger,149.7,97,1,0,standard,1,273,0,Nouvelair,wait
+Cairo,363.64,108,10,0,economy,0,258,11,Qatar Airways,wait
+Dubai,949.82,119,1,1,business,1,450,23,Lufthansa,wait
+Alger,208.5,130,10,0,flex,2,441,5,Air Algerie,wait
+Cairo,240,141,1,0,standard,2,501,22,ITA Airways,wait
+Dubai,504.19,152,10,0,economy,1,543,1,Emirates,wait
+Alger,368.47,72,1,0,business,0,174,13,Tunisair,wait
+Cairo,362.19,83,10,1,flex,1,309,0,British Airways,wait
+Dubai,409.54,94,1,0,standard,2,501,11,Turkish Airlines,wait
+Alger,169.78,105,10,0,economy,2,417,23,Air France,wait
+Cairo,386.5,116,1,0,business,1,402,5,Nouvelair,wait
+Dubai,828.84,127,10,0,flex,0,444,22,Qatar Airways,wait
+Alger,224.17,138,1,1,standard,1,435,1,Lufthansa,wait
+Cairo,224.85,149,10,0,economy,2,360,13,Air Algerie,wait
+Dubai,671.66,69,1,0,business,2,477,0,ITA Airways,wait
+Alger,252.4,80,10,0,flex,1,318,11,Emirates,wait
+Cairo,290.62,91,1,0,standard,0,303,23,Tunisair,wait
+Dubai,512.15,102,10,1,economy,1,495,5,British Airways,wait
+Alger,297.5,113,1,0,business,2,486,22,Turkish Airlines,wait
+Cairo,305.99,124,10,0,flex,2,546,1,Air France,wait
+Dubai,398.6,135,1,0,standard,1,378,13,Nouvelair,wait
+Alger,274.41,146,10,0,economy,0,219,0,Qatar Airways,wait
+Cairo,502.48,66,1,1,business,1,354,11,Lufthansa,wait
+Dubai,499.97,77,10,0,flex,2,546,23,Air Algerie,wait
+Alger,133.39,88,1,0,standard,2,462,5,ITA Airways,wait
+Cairo,329.78,99,10,0,economy,1,447,22,Emirates,wait
+Dubai,892.29,110,1,0,business,0,489,1,Tunisair,wait
+Alger,264.95,121,10,1,flex,1,270,13,British Airways,wait
+Cairo,239,132,1,0,standard,2,405,0,Turkish Airlines,wait
+Dubai,426.08,143,10,0,economy,2,522,11,Air France,wait
+Alger,326.51,63,1,0,business,1,363,23,Nouvelair,wait
+Cairo,406.07,74,10,0,flex,0,348,5,Qatar Airways,wait
+Dubai,517.4,85,1,1,standard,1,540,22,Lufthansa,wait
+Alger,156.05,96,10,0,economy,2,321,1,Air Algerie,wait
+Cairo,335.49,107,1,0,business,2,381,13,ITA Airways,wait
+Dubai,751.78,118,10,0,flex,1,423,0,Emirates,wait
+Alger,216.83,129,1,0,standard,0,264,11,Tunisair,wait
+Cairo,284.78,140,10,1,economy,1,399,23,British Airways,wait
+Dubai,694.36,151,1,0,business,2,591,5,Turkish Airlines,wait
+Alger,213.65,71,10,0,flex,2,507,22,Air France,wait
+Cairo,257.48,82,1,0,standard,1,282,1,Nouvelair,wait
+Dubai,573.34,93,10,0,economy,0,324,13,Qatar Airways,wait
+Alger,361.74,104,1,1,business,1,315,0,Lufthansa,wait
+Cairo,282.4,115,10,0,flex,2,450,11,Air Algerie,wait
+Dubai,359.98,126,1,0,standard,2,567,23,ITA Airways,wait
+Alger,249.44,137,10,0,economy,1,408,5,Emirates,wait
+Cairo,503.58,148,1,0,business,0,393,22,Tunisair,wait
+Dubai,630.81,68,10,1,flex,1,375,1,British Airways,wait
+Alger,132.39,79,1,0,standard,2,366,13,Turkish Airlines,wait
+Cairo,279.54,90,10,0,economy,2,426,0,Air France,wait
+Dubai,793.84,101,1,0,business,1,468,11,Nouvelair,wait
+Alger,296.68,112,10,0,flex,0,309,23,Qatar Airways,wait
+Cairo,298.76,123,1,1,standard,1,444,5,Lufthansa,wait
+Dubai,393.81,134,10,0,economy,2,636,22,Air Algerie,wait
+Alger,304.43,145,1,0,business,2,342,1,ITA Airways,wait
+Cairo,406.25,65,10,0,flex,1,327,13,Emirates,wait
+Dubai,501.81,76,1,0,standard,0,369,0,Tunisair,wait
+Alger,196.5,87,10,1,economy,1,360,11,British Airways,wait
+Cairo,334.49,98,1,0,business,2,495,23,Turkish Airlines,wait
+Dubai,617.47,109,10,0,flex,2,612,5,Air France,wait
+Alger,192.39,120,1,0,standard,1,453,22,Nouvelair,wait
+Cairo,318.49,131,10,0,economy,0,228,1,Qatar Airways,wait
+Dubai,877.37,142,1,1,business,1,420,13,Lufthansa,wait
+Alger,197.34,62,10,0,flex,2,411,0,Air Algerie,wait
+Cairo,232.38,73,1,0,standard,2,471,11,ITA Airways,wait
+Dubai,517.16,84,10,0,economy,1,513,23,Emirates,wait
+Alger,350.71,95,1,0,business,0,354,5,Tunisair,wait
+Cairo,342.38,106,10,1,flex,1,279,22,British Airways,wait
+Dubai,358.98,117,1,0,standard,2,471,1,Turkish Airlines,wait
+Alger,212.54,128,10,0,economy,2,387,13,Air France,wait
+Cairo,448.19,139,1,0,business,1,372,0,Nouvelair,wait
+Dubai,730.14,150,10,0,flex,0,414,11,Qatar Airways,wait
+Alger,172.64,70,1,1,standard,1,405,23,Lufthansa,wait
+Cairo,258.57,81,10,0,economy,2,540,5,Air Algerie,wait
+Dubai,719.75,92,1,0,business,2,447,22,ITA Airways,wait
+Alger,257.33,103,10,0,flex,1,288,1,Emirates,wait
+Cairo,289.62,114,1,0,standard,0,273,13,Tunisair,wait
+Dubai,494.65,125,10,1,economy,1,465,0,British Airways,wait
+Alger,303.43,136,1,0,business,2,456,11,Turkish Airlines,wait
+Cairo,356.38,147,10,0,flex,2,516,23,Air France,wait
+Dubai,446.94,67,1,0,standard,1,558,5,Nouvelair,wait
+Alger,219.1,78,10,0,economy,0,189,22,Qatar Airways,wait
+Cairo,428.99,89,1,1,business,1,324,1,Lufthansa,wait
+Dubai,571.7,100,10,0,flex,2,516,13,Air Algerie,wait
+Alger,173.82,111,1,0,standard,2,432,0,ITA Airways,wait
+Cairo,286.7,122,10,0,economy,1,417,11,Emirates,wait
+Dubai,851.71,133,1,0,business,0,459,23,Tunisair,wait
+Alger,255.38,144,10,1,flex,1,450,5,British Airways,wait
+Cairo,231.38,64,1,0,standard,2,375,22,Turkish Airlines,wait
+Dubai,433.5,75,10,0,economy,2,492,1,Air France,wait
+Alger,312.65,86,1,0,business,1,333,13,Nouvelair,wait
+Cairo,381.81,97,10,0,flex,0,318,0,Qatar Airways,wait
+Dubai,441.8,108,1,1,standard,1,510,11,Lufthansa,wait
+Alger,196.98,119,10,0,economy,2,501,23,Air Algerie,wait
+Cairo,406.4,130,1,0,business,2,351,5,ITA Airways,wait
+Dubai,660.15,141,10,0,flex,1,393,22,Emirates,wait
+Alger,214.04,152,1,0,standard,0,234,1,Tunisair,wait
+Cairo,322.6,72,10,1,economy,1,369,13,British Airways,wait
+Dubai,718.75,83,1,0,business,2,561,0,Turkish Airlines,wait
+Alger,214.26,94,10,0,flex,2,477,11,Air France,wait
+Cairo,250.08,105,1,0,standard,1,462,23,Nouvelair,wait
+Dubai,551.65,116,10,0,economy,0,294,5,Qatar Airways,wait
+Alger,387.83,127,1,1,business,1,285,22,Lufthansa,wait
+Cairo,330.39,138,10,0,flex,2,420,1,Air Algerie,wait
+Dubai,419.32,149,1,0,standard,2,537,13,ITA Airways,wait
+Alger,197.16,69,10,0,economy,1,378,0,Emirates,wait
+Cairo,415.19,80,1,0,business,0,363,11,Tunisair,wait
+Dubai,716.54,91,10,1,flex,1,555,23,British Airways,wait
+Alger,167.21,102,1,0,standard,2,336,5,Turkish Airlines,wait
+Cairo,239.56,113,10,0,economy,2,396,22,Air France,wait
+Dubai,759.65,124,1,0,business,1,438,1,Nouvelair,wait
+Alger,283.86,135,10,0,flex,0,279,13,Qatar Airways,wait
+Cairo,305.11,146,1,1,standard,1,414,0,Lufthansa,wait
+Dubai,398.98,66,10,0,economy,2,606,11,Air Algerie,wait
+Alger,283.86,77,1,0,business,2,522,23,ITA Airways,wait
+Cairo,344.94,88,10,0,flex,1,297,5,Emirates,wait
+Dubai,427.73,99,1,0,standard,0,339,22,Tunisair,wait
+Alger,236.17,110,10,1,economy,1,330,1,British Airways,wait
+Cairo,405.4,121,1,0,business,2,465,13,Turkish Airlines,wait
+Dubai,555.79,132,10,0,flex,2,582,0,Air France,wait
+Alger,191.87,143,1,0,standard,1,423,11,Nouvelair,wait
+Cairo,358.64,63,10,0,economy,0,408,23,Qatar Airways,wait
+Dubai,914.67,74,1,1,business,1,390,5,Lufthansa,wait
+Alger,196.21,85,10,0,flex,2,381,22,Air Algerie,wait
+Cairo,227.31,96,1,0,standard,2,441,1,ITA Airways,wait
+Dubai,481.2,107,10,0,economy,1,483,13,Emirates,wait
+Alger,375.39,118,1,0,business,0,324,0,Tunisair,wait
+Cairo,410.79,129,10,1,flex,1,459,11,British Airways,wait
+Dubai,418.32,140,1,0,standard,2,441,23,Turkish Airlines,wait
+Alger,170.97,151,10,0,economy,2,357,5,Air France,wait
+Cairo,366.93,71,1,0,business,1,342,22,Nouvelair,wait
+Dubai,798.61,82,10,0,flex,0,384,1,Qatar Airways,wait
+Alger,212.04,93,1,1,standard,1,375,13,Lufthansa,wait
+Cairo,211.99,104,10,0,economy,2,510,0,Air Algerie,wait
+Dubai,690.36,115,1,0,business,2,627,11,ITA Airways,wait
+Alger,256.71,126,10,0,flex,1,258,23,Emirates,wait
+Cairo,295.13,137,1,0,standard,0,243,5,Tunisair,wait
+Dubai,565.91,148,10,1,economy,1,435,22,British Airways,wait
+Alger,282.86,68,1,0,business,2,426,1,Turkish Airlines,wait
+Cairo,290.2,79,10,0,flex,2,486,13,Air France,wait
+Dubai,378.43,90,1,0,standard,1,528,0,Nouvelair,wait
+Alger,261.33,101,10,0,economy,0,369,11,Qatar Airways,wait
+Cairo,514.31,112,1,1,business,1,294,23,Lufthansa,wait
+Dubai,512.88,123,10,0,flex,2,486,5,Air Algerie,wait
+Alger,175,134,1,0,standard,2,402,22,ITA Airways,wait
+Cairo,334.82,145,10,0,economy,1,387,1,Emirates,wait
+Dubai,887.29,65,1,0,business,0,429,13,Tunisair,wait
+Alger,250.76,76,10,1,flex,1,420,0,British Airways,wait
+Cairo,226.31,87,1,0,standard,2,555,11,Turkish Airlines,wait
+Dubai,405.87,98,10,0,economy,2,462,23,Air France,wait
+Alger,321.51,109,1,0,business,1,303,5,Nouvelair,wait
+Cairo,456.15,120,10,0,flex,0,288,22,Qatar Airways,wait
+Dubai,529.93,131,1,1,standard,1,480,1,Lufthansa,wait
+Alger,156.78,142,10,0,economy,2,471,13,Air Algerie,wait
+Cairo,330.49,62,1,0,business,2,531,0,ITA Airways,wait
+Dubai,723.91,73,10,0,flex,1,363,11,Emirates,wait
+Alger,204.9,84,1,0,standard,0,204,23,Tunisair,wait
+Cairo,269.87,95,10,1,economy,1,339,5,British Airways,wait
+Dubai,665.66,106,1,0,business,2,531,22,Turkish Airlines,wait
+Alger,216.52,117,10,0,flex,2,447,1,Air France,wait
+Cairo,260.95,128,1,0,standard,1,432,13,Nouvelair,wait
+Dubai,629.18,139,10,0,economy,0,474,0,Qatar Airways,wait
+Alger,369.01,150,1,1,business,1,255,11,Lufthansa,wait
+Cairo,267.4,70,10,0,flex,2,390,23,Air Algerie,wait
+Dubai,341.21,81,1,0,standard,2,507,5,ITA Airways,wait
+Alger,237.12,92,10,0,economy,1,348,22,Emirates,wait
+Cairo,482.23,103,1,0,business,0,333,1,Tunisair,wait
+Dubai,648.38,114,10,1,flex,1,525,13,British Airways,wait
+Alger,174,125,1,0,standard,2,516,0,Turkish Airlines,wait
+Cairo,283.03,136,10,0,economy,2,366,11,Air France,wait
+Dubai,814.93,147,1,0,business,1,408,23,Nouvelair,wait
+Alger,281.41,67,10,0,flex,0,249,5,Qatar Airways,wait
+Cairo,283.97,78,1,1,standard,1,384,22,Lufthansa,wait
+Dubai,374.73,89,10,0,economy,2,576,1,Air Algerie,wait
+Alger,289.79,100,1,0,business,2,492,13,ITA Airways,wait
+Cairo,414.02,111,10,0,flex,1,477,0,Emirates,wait
+Dubai,513.84,122,1,0,standard,0,309,11,Tunisair,wait
+Alger,198.72,133,10,1,economy,1,300,23,British Airways,wait
+Cairo,383.72,144,1,0,business,2,435,5,Turkish Airlines,wait
+Dubai,612.47,64,10,0,flex,2,552,22,Air France,wait
+Alger,181.22,75,1,0,standard,1,393,1,Nouvelair,wait
+Cairo,302.42,86,10,0,economy,0,378,13,Qatar Airways,wait
+Dubai,842.21,97,1,1,business,1,360,0,Lufthansa,wait
+Alger,192.34,108,10,0,flex,2,351,11,Air Algerie,wait
+Cairo,235.07,119,1,0,standard,2,411,23,ITA Airways,wait
+Dubai,571.15,130,10,0,economy,1,453,5,Emirates,wait
+Alger,357.63,141,1,0,business,0,294,22,Tunisair,wait
+Cairo,349.98,152,10,1,flex,1,429,1,British Airways,wait
+Dubai,340.21,72,1,0,standard,2,621,13,Turkish Airlines,wait
+Alger,201.35,83,10,0,economy,2,327,0,Air France,wait
+Cairo,428.63,94,1,0,business,1,312,11,Nouvelair,wait
+Dubai,699.9,105,10,0,flex,0,354,23,Qatar Airways,wait
+Alger,215.77,116,1,1,standard,1,345,5,Lufthansa,wait
+Cairo,261.43,127,10,0,economy,2,480,22,Air Algerie,wait
+Dubai,738.45,138,1,0,business,2,597,1,ITA Airways,wait
+Alger,261.64,149,10,0,flex,1,438,13,Emirates,wait
+Cairo,275.11,69,1,0,standard,0,213,0,Tunisair,wait
+Dubai,471.89,80,10,1,economy,1,405,11,British Airways,wait
+Alger,288.79,91,1,0,business,2,396,23,Turkish Airlines,wait
+Cairo,340.59,102,10,0,flex,2,456,5,Air France,wait
+Dubai,457.11,113,1,0,standard,1,498,22,Nouvelair,wait
+Alger,222.18,124,10,0,economy,0,339,1,Qatar Airways,wait
+Cairo,481.82,135,1,1,business,1,474,13,Lufthansa,wait
+Dubai,584.61,146,10,0,flex,2,456,0,Air Algerie,wait
+Alger,163.21,66,1,0,standard,2,372,11,ITA Airways,wait
+Cairo,271.66,77,10,0,economy,1,357,23,Emirates,wait
+Dubai,817.42,88,1,0,business,0,399,5,Tunisair,wait
+Alger,241.2,99,10,1,flex,1,390,22,British Airways,wait
+Cairo,226.38,110,1,0,standard,2,525,1,Turkish Airlines,wait
+Dubai,484.71,121,10,0,economy,2,642,13,Air France,wait
+Alger,318.27,132,1,0,business,1,273,0,Nouvelair,wait
+Cairo,390.9,143,10,0,flex,0,258,11,Qatar Airways,wait
+Dubai,436.8,63,1,1,standard,1,450,23,Lufthansa,wait
+Alger,186.25,74,10,0,economy,2,441,5,Air Algerie,wait
+Cairo,388.17,85,1,0,business,2,501,22,ITA Airways,wait
+Dubai,632.27,96,10,0,flex,1,543,1,Emirates,wait
+Alger,202.11,107,1,0,standard,0,174,13,Tunisair,wait
+Cairo,327.51,118,10,1,economy,1,309,0,British Airways,wait
+Dubai,737.45,129,1,0,business,2,501,11,Turkish Airlines,wait
+Alger,258.13,140,10,0,flex,2,417,23,Air France,wait
+Cairo,253.55,151,1,0,standard,1,402,5,Nouvelair,wait
+Dubai,526.81,71,10,0,economy,0,444,22,Qatar Airways,wait
+Alger,370.56,82,1,1,business,1,435,1,Lufthansa,wait
+Cairo,315.39,93,10,0,flex,2,360,13,Air Algerie,wait
+Dubai,400.54,104,1,0,standard,2,477,0,ITA Airways,wait
+Alger,199.48,115,10,0,economy,1,318,11,Emirates,wait
+Cairo,467.54,126,1,0,business,0,303,23,Tunisair,wait
+Dubai,734.11,137,10,1,flex,1,495,5,British Airways,wait
+Alger,167.82,148,1,0,standard,2,486,22,Turkish Airlines,wait
+Cairo,226.07,68,10,0,economy,2,546,1,Air France,wait
+Dubai,728.56,79,1,0,business,1,378,13,Nouvelair,wait
+Alger,268.59,90,10,0,flex,0,219,0,Qatar Airways,wait
+Cairo,290.33,101,1,1,standard,1,354,11,Lufthansa,wait
+Dubai,449.06,112,10,0,economy,2,546,23,Air Algerie,wait
+Alger,288.5,123,1,0,business,2,462,5,ITA Airways,wait
+Cairo,352.71,134,10,0,flex,1,447,22,Emirates,wait
+Dubai,439.76,145,1,0,standard,0,489,1,Tunisair,wait
+Alger,231.17,65,10,1,economy,1,270,13,British Airways,wait
+Cairo,387.17,76,1,0,business,2,405,0,Turkish Airlines,wait
+Dubai,531.45,87,10,0,flex,2,522,11,Air France,wait
+Alger,180.7,98,1,0,standard,1,363,23,Nouvelair,wait
+Cairo,353.64,109,10,0,economy,0,348,5,Qatar Airways,wait
+Dubai,939.82,120,1,1,business,1,540,22,Lufthansa,wait
+Alger,239.5,131,10,0,flex,2,321,1,Air Algerie,wait
+Cairo,230,142,1,0,standard,2,381,13,ITA Airways,wait
+Dubai,476.2,62,10,0,economy,1,423,0,Emirates,wait
+Alger,358.47,73,1,0,business,0,264,11,Tunisair,wait
+Cairo,393.19,84,10,1,flex,1,399,23,British Airways,wait
+Dubai,399.54,95,1,0,standard,2,591,5,Turkish Airlines,wait
+Alger,159.78,106,10,0,economy,2,507,22,Air France,wait
+Cairo,417.5,117,1,0,business,1,282,1,Nouvelair,wait
+Dubai,818.84,128,10,0,flex,0,324,13,Qatar Airways,wait
+Alger,214.17,139,1,1,standard,1,315,0,Lufthansa,wait
+Cairo,214.85,150,10,0,economy,2,450,11,Air Algerie,wait
+Dubai,661.66,70,1,0,business,2,567,23,ITA Airways,wait
+Alger,242.4,81,10,0,flex,1,408,5,Emirates,wait
+Cairo,280.62,92,1,0,standard,0,393,22,Tunisair,wait
+Dubai,543.15,103,10,1,economy,1,375,1,British Airways,wait
+Alger,287.5,114,1,0,business,2,366,13,Turkish Airlines,wait
+Cairo,295.99,125,10,0,flex,2,426,0,Air France,wait
+Dubai,429.6,136,1,0,standard,1,468,11,Nouvelair,wait
+Alger,264.41,147,10,0,economy,0,309,23,Qatar Airways,wait
+Cairo,492.48,67,1,1,business,1,444,5,Lufthansa,wait
+Dubai,489.97,78,10,0,flex,2,636,22,Air Algerie,wait
+Alger,164.39,89,1,0,standard,2,342,1,ITA Airways,wait
+Cairo,319.78,100,10,0,economy,1,327,13,Emirates,wait
+Dubai,911.58,111,1,0,business,0,369,0,Tunisair,wait
+Alger,295.95,122,10,1,flex,1,360,11,British Airways,wait
+Cairo,229,133,1,0,standard,2,495,23,Turkish Airlines,wait
+Dubai,416.08,144,10,0,economy,2,612,5,Air France,wait
+Alger,316.51,64,1,0,business,1,453,22,Nouvelair,wait
+Cairo,437.07,75,10,0,flex,0,228,1,Qatar Airways,wait
+Dubai,507.4,86,1,1,standard,1,420,13,Lufthansa,wait
+Alger,146.05,97,10,0,economy,2,411,0,Air Algerie,wait
+Cairo,366.49,108,1,0,business,2,471,11,ITA Airways,wait
+Dubai,741.78,119,10,0,flex,1,513,23,Emirates,wait
+Alger,206.83,130,1,0,standard,0,354,5,Tunisair,wait
+Cairo,274.78,141,10,1,economy,1,279,22,British Airways,wait
+Dubai,684.36,152,1,0,business,2,471,1,Turkish Airlines,wait
+Alger,203.65,72,10,0,flex,2,387,13,Air France,wait
+Cairo,247.48,83,1,0,standard,1,372,0,Nouvelair,wait
+Dubai,604.34,94,10,0,economy,0,414,11,Qatar Airways,wait
+Alger,351.74,105,1,1,business,1,405,23,Lufthansa,wait
+Cairo,272.4,116,10,0,flex,2,540,5,Air Algerie,wait
+Dubai,390.98,127,1,0,standard,2,447,22,ITA Airways,wait
+Alger,239.44,138,10,0,economy,1,288,1,Emirates,wait
+Cairo,493.58,149,1,0,business,0,273,13,Tunisair,wait
+Dubai,620.81,69,10,1,flex,1,465,0,British Airways,wait
+Alger,163.39,80,1,0,standard,2,456,11,Turkish Airlines,wait
+Cairo,269.54,91,10,0,economy,2,516,23,Air France,wait
+Dubai,783.84,102,1,0,business,1,558,5,Nouvelair,wait
+Alger,327.68,113,10,0,flex,0,189,22,Qatar Airways,wait
+Cairo,288.76,124,1,1,standard,1,324,1,Lufthansa,wait
+Dubai,383.81,135,10,0,economy,2,516,13,Air Algerie,wait
+Alger,294.43,146,1,0,business,2,432,0,ITA Airways,wait
+Cairo,396.25,66,10,0,flex,1,417,11,Emirates,wait
+Dubai,491.81,77,1,0,standard,0,459,23,Tunisair,wait
+Alger,186.5,88,10,1,economy,1,450,5,British Airways,wait
+Cairo,365.49,99,1,0,business,2,375,22,Turkish Airlines,wait
+Dubai,607.47,110,10,0,flex,2,492,1,Air France,wait
+Alger,182.39,121,1,0,standard,1,333,13,Nouvelair,wait
+Cairo,349.49,132,10,0,economy,0,318,0,Qatar Airways,wait
+Dubai,867.37,143,1,1,business,1,510,11,Lufthansa,wait
+Alger,187.34,63,10,0,flex,2,501,23,Air Algerie,wait
+Cairo,222.38,74,1,0,standard,2,351,5,ITA Airways,wait
+Dubai,548.16,85,10,0,economy,1,393,22,Emirates,wait
+Alger,340.71,96,1,0,business,0,234,1,Tunisair,wait
+Cairo,332.38,107,10,1,flex,1,369,13,British Airways,wait
+Dubai,389.98,118,1,0,standard,2,561,0,Turkish Airlines,wait
+Alger,202.54,129,10,0,economy,2,477,11,Air France,wait
+Cairo,438.19,140,1,0,business,1,462,23,Nouvelair,wait
+Dubai,720.14,151,10,0,flex,0,294,5,Qatar Airways,wait
+Alger,203.64,71,1,1,standard,1,285,22,Lufthansa,wait
+Cairo,248.57,82,10,0,economy,2,420,1,Air Algerie,wait
+Dubai,709.75,93,1,0,business,2,537,13,ITA Airways,wait
+Alger,288.33,104,10,0,flex,1,378,0,Emirates,wait
+Cairo,279.62,115,1,0,standard,0,363,11,Tunisair,wait
+Dubai,484.65,126,10,1,economy,1,555,23,British Airways,wait
+Alger,293.43,137,1,0,business,2,336,5,Turkish Airlines,wait
+Cairo,346.38,148,10,0,flex,2,396,22,Air France,wait
+Dubai,436.94,68,1,0,standard,1,438,1,Nouvelair,wait
+Alger,209.1,79,10,0,economy,0,279,13,Qatar Airways,wait
+Cairo,459.99,90,1,1,business,1,414,0,Lufthansa,wait
+Dubai,561.7,101,10,0,flex,2,606,11,Air Algerie,wait
+Alger,163.82,112,1,0,standard,2,522,23,ITA Airways,wait
+Cairo,317.7,123,10,0,economy,1,297,5,Emirates,wait
+Dubai,841.71,134,1,0,business,0,339,22,Tunisair,wait
+Alger,245.38,145,10,1,flex,1,330,1,British Airways,wait
+Cairo,221.38,65,1,0,standard,2,465,13,Turkish Airlines,wait
+Dubai,464.5,76,10,0,economy,2,582,0,Air France,wait
+Alger,302.65,87,1,0,business,1,423,11,Nouvelair,wait
+Cairo,371.81,98,10,0,flex,0,408,23,Qatar Airways,wait
+Dubai,472.8,109,1,1,standard,1,390,5,Lufthansa,wait
+Alger,186.98,120,10,0,economy,2,381,22,Air Algerie,wait
+Cairo,396.4,131,1,0,business,2,441,1,ITA Airways,wait
+Dubai,650.15,142,10,0,flex,1,483,13,Emirates,wait
+Alger,197.11,62,1,0,standard,0,324,0,Tunisair,wait
+Cairo,312.6,73,10,1,economy,1,459,11,British Airways,wait
+Dubai,708.75,84,1,0,business,2,441,23,Turkish Airlines,wait
+Alger,245.26,95,10,0,flex,2,357,5,Air France,wait
+Cairo,240.08,106,1,0,standard,1,342,22,Nouvelair,wait
+Dubai,541.65,117,10,0,economy,0,384,1,Qatar Airways,wait
+Alger,418.83,128,1,1,business,1,375,13,Lufthansa,wait
+Cairo,320.39,139,10,0,flex,2,510,0,Air Algerie,wait
+Dubai,409.32,150,1,0,standard,2,627,11,ITA Airways,wait
+Alger,187.16,70,10,0,economy,1,258,23,Emirates,wait
+Cairo,446.19,81,1,0,business,0,243,5,Tunisair,wait
+Dubai,706.54,92,10,1,flex,1,435,22,British Airways,wait
+Alger,157.21,103,1,0,standard,2,426,1,Turkish Airlines,wait
+Cairo,270.56,114,10,0,economy,2,486,13,Air France,wait
+Dubai,749.65,125,1,0,business,1,528,0,Nouvelair,wait
+Alger,273.86,136,10,0,flex,0,369,11,Qatar Airways,wait
+Cairo,295.11,147,1,1,standard,1,294,23,Lufthansa,wait
+Dubai,429.98,67,10,0,economy,2,486,5,Air Algerie,wait
+Alger,273.86,78,1,0,business,2,402,22,ITA Airways,wait
+Cairo,334.94,89,10,0,flex,1,387,1,Emirates,wait
+Dubai,458.73,100,1,0,standard,0,429,13,Tunisair,wait
+Alger,233.4,111,10,1,economy,1,420,0,British Airways,wait
+Cairo,395.4,122,1,0,business,2,555,11,Turkish Airlines,wait
+Dubai,545.79,133,10,0,flex,2,462,23,Air France,wait
+Alger,181.87,144,1,0,standard,1,303,5,Nouvelair,wait
+Cairo,348.64,64,10,0,economy,0,288,22,Qatar Airways,wait
+Dubai,904.67,75,1,1,business,1,480,1,Lufthansa,wait
+Alger,227.21,86,10,0,flex,2,471,13,Air Algerie,wait
+Cairo,217.31,97,1,0,standard,2,531,0,ITA Airways,wait
+Dubai,471.2,108,10,0,economy,1,363,11,Emirates,wait
+Alger,406.39,119,1,0,business,0,204,23,Tunisair,wait
+Cairo,400.79,130,10,1,flex,1,339,5,British Airways,wait
+Dubai,408.32,141,1,0,standard,2,531,22,Turkish Airlines,wait
+Alger,160.97,152,10,0,economy,2,447,1,Air France,wait
+Cairo,397.93,72,1,0,business,1,432,13,Nouvelair,wait
+Dubai,788.61,83,10,0,flex,0,474,0,Qatar Airways,wait
+Berlin,444.54,3,6,0,flex,0,197,6,Turkish Airlines,increase_risk
+Tunis,277.03,10,8,1,standard,1,264,8,Air France,increase_risk
+London,329.62,17,5,1,economy,0,263,18,Nouvelair,increase_risk
+Berlin,737.45,24,6,1,business,2,440,20,Qatar Airways,increase_risk
+Tunis,273.4,31,8,0,flex,1,357,7,Lufthansa,increase_risk
+London,329.36,6,5,1,standard,0,356,17,Air Algerie,increase_risk
+Berlin,375.19,13,6,1,economy,1,458,19,ITA Airways,increase_risk
+Tunis,515.82,20,8,1,business,0,165,6,Emirates,increase_risk
+London,329.86,27,5,0,flex,2,389,8,Tunisair,increase_risk
+Berlin,419.12,34,6,1,standard,1,341,18,British Airways,increase_risk
+Tunis,248.95,9,8,1,economy,0,258,20,Turkish Airlines,increase_risk
+London,614.38,16,5,1,business,1,407,7,Air France,increase_risk
+Berlin,423.54,23,6,0,flex,0,359,17,Nouvelair,increase_risk
+Tunis,285.15,30,8,1,standard,2,501,19,Qatar Airways,increase_risk
+London,334.95,5,5,1,economy,1,290,6,Lufthansa,increase_risk
+Berlin,658.84,12,6,1,business,0,242,8,Air Algerie,increase_risk
+Tunis,292.25,19,8,0,flex,1,309,18,ITA Airways,increase_risk
+London,404.78,26,5,1,standard,0,308,20,Emirates,increase_risk
+Berlin,341.45,33,6,1,economy,2,485,7,Tunisair,increase_risk
+Tunis,497.36,8,8,1,business,1,402,17,British Airways,increase_risk
+London,367.46,15,5,0,flex,0,401,19,Turkish Airlines,increase_risk
+Berlin,432.35,22,6,1,standard,1,293,6,Air France,increase_risk
+Tunis,227.95,29,8,1,economy,0,210,8,Nouvelair,increase_risk
+London,682.55,4,5,1,business,2,434,18,Qatar Airways,increase_risk
+Berlin,451.46,11,6,0,flex,1,386,20,Lufthansa,increase_risk
+Tunis,243.11,18,8,1,standard,0,303,7,Air Algerie,increase_risk
+London,332.9,25,5,1,economy,1,452,17,ITA Airways,increase_risk
+Berlin,841.75,32,6,1,business,0,404,19,Emirates,increase_risk
+Tunis,222.54,7,8,0,flex,2,336,6,Tunisair,increase_risk
+London,331.08,14,5,1,standard,1,335,8,British Airways,increase_risk
+Berlin,380.45,21,6,1,economy,0,287,18,Turkish Airlines,increase_risk
+Tunis,485.37,28,8,1,business,1,354,20,Air France,increase_risk
+London,396.91,3,5,0,flex,0,353,7,Nouvelair,increase_risk
+Berlin,395.98,10,6,1,standard,2,530,17,Qatar Airways,increase_risk
+Tunis,252.05,17,8,1,economy,1,237,19,Lufthansa,increase_risk
+London,577.73,24,5,1,business,0,236,6,Air Algerie,increase_risk
+Berlin,427.72,31,6,0,flex,1,338,8,ITA Airways,increase_risk
+Tunis,344.78,6,8,1,standard,0,255,18,Emirates,increase_risk
+London,239.65,13,5,1,economy,2,479,20,Tunisair,increase_risk
+Berlin,710.38,20,6,1,business,1,431,7,British Airways,increase_risk
+Tunis,296.47,27,8,0,flex,0,348,17,Turkish Airlines,increase_risk
+London,380.07,34,5,1,standard,1,287,19,Air France,increase_risk
+Berlin,410.4,9,6,1,economy,0,239,6,Nouvelair,increase_risk
+Tunis,415.13,16,8,1,business,2,381,8,Qatar Airways,increase_risk
+London,397.76,23,5,0,flex,1,380,18,Lufthansa,increase_risk
+Berlin,406.96,30,6,1,standard,0,332,20,Air Algerie,increase_risk
+Tunis,243.8,5,8,1,economy,1,399,7,ITA Airways,increase_risk
+London,737.9,12,5,1,business,0,398,17,Emirates,increase_risk
+Berlin,345.92,19,6,0,flex,2,365,19,Tunisair,increase_risk
+Tunis,261.36,26,8,1,standard,1,282,6,British Airways,increase_risk
+London,338.33,33,5,1,economy,0,281,8,Turkish Airlines,increase_risk
+Berlin,835.73,8,6,1,business,1,383,18,Air France,increase_risk
+Tunis,294.62,15,8,0,flex,0,300,20,Nouvelair,increase_risk
+London,289.73,22,5,1,standard,2,524,7,Qatar Airways,increase_risk
+Berlin,410.76,29,6,1,economy,1,476,17,Lufthansa,increase_risk
+Tunis,488.28,4,8,1,business,0,183,19,Air Algerie,increase_risk
+London,295.01,11,5,0,flex,1,332,6,ITA Airways,increase_risk
+Berlin,525,18,6,1,standard,0,284,8,Emirates,increase_risk
+Tunis,193.8,25,8,1,economy,2,426,18,Tunisair,increase_risk
+London,619.78,32,5,1,business,1,425,20,British Airways,increase_risk
+Berlin,507.54,7,6,0,flex,0,377,7,Turkish Airlines,increase_risk
+Tunis,244,14,8,1,standard,1,234,17,Air France,increase_risk
+London,338.75,21,5,1,economy,0,233,19,Nouvelair,increase_risk
+Berlin,626.57,28,6,1,business,2,410,6,Qatar Airways,increase_risk
+Tunis,337.04,3,8,0,flex,1,327,8,Lufthansa,increase_risk
+London,382.29,10,5,1,standard,0,326,18,Air Algerie,increase_risk
+Berlin,306.79,17,6,1,economy,1,428,20,ITA Airways,increase_risk
+Tunis,586.73,24,8,1,business,0,345,7,Emirates,increase_risk
+London,307.04,31,5,0,flex,2,359,17,Tunisair,increase_risk
+Berlin,461.5,6,6,1,standard,1,311,19,British Airways,increase_risk
+Tunis,234.08,13,8,1,economy,0,228,6,Turkish Airlines,increase_risk
+London,555.31,20,5,1,business,1,377,8,Air France,increase_risk
+Berlin,486.54,27,6,0,flex,0,329,18,Nouvelair,increase_risk
+Tunis,229.54,34,8,1,standard,2,471,20,Qatar Airways,increase_risk
+London,383.58,9,5,1,economy,1,470,7,Lufthansa,increase_risk
+Berlin,748.29,16,6,1,business,0,212,17,Air Algerie,increase_risk
+Tunis,235.13,23,8,0,flex,1,279,19,ITA Airways,increase_risk
+London,422.29,30,5,1,standard,0,278,6,Emirates,increase_risk
+Berlin,338.84,5,6,1,economy,2,455,8,Tunisair,increase_risk
+Tunis,488.72,12,8,1,business,1,372,18,British Airways,increase_risk
+London,382.3,19,5,0,flex,0,371,20,Turkish Airlines,increase_risk
+Berlin,397.05,26,6,1,standard,1,473,7,Air France,increase_risk
+Tunis,270.34,33,8,1,economy,0,180,17,Nouvelair,increase_risk
+London,585.67,8,5,1,business,2,404,19,Qatar Airways,increase_risk
+Berlin,412.26,15,6,0,flex,1,356,6,Lufthansa,increase_risk
+Tunis,287.63,22,8,1,standard,0,273,8,Air Algerie,increase_risk
+London,271.73,29,5,1,economy,1,422,18,ITA Airways,increase_risk
+Berlin,956.89,4,6,1,business,0,374,20,Emirates,increase_risk
+Tunis,248.29,11,8,0,flex,2,516,7,Tunisair,increase_risk
+London,305.1,18,5,1,standard,1,305,17,British Airways,increase_risk
+Berlin,395.67,25,6,1,economy,0,257,19,Turkish Airlines,increase_risk
+Tunis,444.86,32,8,1,business,1,324,6,Air France,increase_risk
+London,452.75,7,5,0,flex,0,323,8,Nouvelair,increase_risk
+Berlin,385.75,14,6,1,standard,2,500,18,Qatar Airways,increase_risk
+Tunis,198.05,21,8,1,economy,1,417,20,Lufthansa,increase_risk
+London,655.8,28,5,1,business,0,206,7,Air Algerie,increase_risk
+Berlin,418.99,3,6,0,flex,1,308,17,ITA Airways,increase_risk
+Tunis,352.54,10,8,1,standard,0,225,19,Emirates,increase_risk
+London,283.65,17,5,1,economy,2,449,6,Tunisair,increase_risk
+Berlin,638.41,24,6,1,business,1,401,8,British Airways,increase_risk
+Tunis,302.2,31,8,0,flex,0,318,18,Turkish Airlines,increase_risk
+London,375.67,6,5,1,standard,1,467,20,Air France,increase_risk
+Berlin,441.14,13,6,1,economy,0,209,7,Nouvelair,increase_risk
+Tunis,434.2,20,8,1,business,2,351,17,Qatar Airways,increase_risk
+London,326.66,27,5,0,flex,1,350,19,Lufthansa,increase_risk
+Berlin,466.5,34,6,1,standard,0,302,6,Air Algerie,increase_risk
+Tunis,232.83,9,8,1,economy,1,369,8,ITA Airways,increase_risk
+London,784.59,16,5,1,business,0,368,18,Emirates,increase_risk
+Berlin,400.33,23,6,0,flex,2,545,20,Tunisair,increase_risk
+Tunis,245.98,30,8,1,standard,1,252,7,British Airways,increase_risk
+London,368.89,5,5,1,economy,0,251,17,Turkish Airlines,increase_risk
+Berlin,675.23,12,6,1,business,1,353,19,Air France,increase_risk
+Tunis,274.32,19,8,0,flex,0,270,6,Nouvelair,increase_risk
+London,339.95,26,5,1,standard,2,494,8,Qatar Airways,increase_risk
+Berlin,339.18,33,6,1,economy,1,446,18,Lufthansa,increase_risk
+Tunis,551.89,8,8,1,business,0,363,20,Air Algerie,increase_risk
+London,346.72,15,5,0,flex,1,302,7,ITA Airways,increase_risk
+Berlin,437.75,22,6,1,standard,0,254,17,Emirates,increase_risk
+Tunis,190.54,29,8,1,economy,2,396,19,Tunisair,increase_risk
+London,599.96,4,5,1,business,1,395,6,British Airways,increase_risk
+Berlin,499.54,11,6,0,flex,0,347,8,Turkish Airlines,increase_risk
+Tunis,246.51,18,8,1,standard,1,414,18,Air France,increase_risk
+London,313.91,25,5,1,economy,0,203,20,Nouvelair,increase_risk
+Berlin,710.48,32,6,1,business,2,380,7,Qatar Airways,increase_risk
+Tunis,277.53,7,8,0,flex,1,297,17,Lufthansa,increase_risk
+London,411.93,14,5,1,standard,0,296,19,Air Algerie,increase_risk
+Berlin,358.84,21,6,1,economy,1,398,6,ITA Airways,increase_risk
+Tunis,493.19,28,8,1,business,0,315,8,Emirates,increase_risk
+London,335.06,3,5,0,flex,2,539,18,Tunisair,increase_risk
+Berlin,427.19,10,6,1,standard,1,281,20,British Airways,increase_risk
+Tunis,276.48,17,8,1,economy,0,198,7,Turkish Airlines,increase_risk
+London,590.11,24,5,1,business,1,347,17,Air France,increase_risk
+Berlin,444.54,31,6,0,flex,0,299,19,Nouvelair,increase_risk
+Tunis,288.3,6,8,1,standard,2,441,6,Qatar Airways,increase_risk
+London,299.32,13,5,1,economy,1,440,8,Lufthansa,increase_risk
+Berlin,796.75,20,6,1,business,0,392,18,Air Algerie,increase_risk
+Tunis,278.72,27,8,0,flex,1,249,20,ITA Airways,increase_risk
+London,386.27,34,5,1,standard,0,248,7,Emirates,increase_risk
+Berlin,346.76,9,6,1,economy,2,425,17,Tunisair,increase_risk
+Tunis,449.29,16,8,1,business,1,342,19,British Airways,increase_risk
+London,349.85,23,5,0,flex,0,341,6,Turkish Airlines,increase_risk
+Berlin,414.03,30,6,1,standard,1,443,8,Air France,increase_risk
+Tunis,272.08,5,8,1,economy,0,360,18,Nouvelair,increase_risk
+London,622.14,12,5,1,business,2,374,20,Qatar Airways,increase_risk
+Berlin,432.16,19,6,0,flex,1,326,7,Lufthansa,increase_risk
+Tunis,229.27,26,8,1,standard,0,243,17,Air Algerie,increase_risk
+London,318.36,33,5,1,economy,1,392,19,ITA Airways,increase_risk
+Berlin,864.38,8,6,1,business,0,344,6,Emirates,increase_risk
+Tunis,248.53,15,8,0,flex,2,486,8,Tunisair,increase_risk
+London,356.09,22,5,1,standard,1,485,18,British Airways,increase_risk
+Berlin,362.71,29,6,1,economy,0,227,20,Turkish Airlines,increase_risk
+Tunis,495,4,8,1,business,1,294,7,Air France,increase_risk
+London,354.07,11,5,0,flex,0,293,17,Nouvelair,increase_risk
+Berlin,442.06,18,6,1,standard,2,470,19,Qatar Airways,increase_risk
+Tunis,239.3,25,8,1,economy,1,387,6,Lufthansa,increase_risk
+London,552.7,32,5,1,business,0,386,8,Air Algerie,increase_risk
+Berlin,477.08,7,6,0,flex,1,278,18,ITA Airways,increase_risk
+Tunis,309.02,14,8,1,standard,0,195,20,Emirates,increase_risk
+London,286.65,21,5,1,economy,2,419,7,Tunisair,increase_risk
+Berlin,682.88,28,6,1,business,1,371,17,British Airways,increase_risk
+Tunis,301.05,3,8,0,flex,0,288,19,Turkish Airlines,increase_risk
+London,386.27,10,5,1,standard,1,437,6,Air France,increase_risk
+Berlin,367.19,17,6,1,economy,0,389,8,Nouvelair,increase_risk
+Tunis,494.26,24,8,1,business,2,321,18,Qatar Airways,increase_risk
+London,380.73,31,5,0,flex,1,320,20,Lufthansa,increase_risk
+Berlin,415.81,6,6,1,standard,0,272,7,Air Algerie,increase_risk
+Tunis,258.07,13,8,1,economy,1,339,17,ITA Airways,increase_risk
+London,709.67,20,5,1,business,0,338,19,Emirates,increase_risk
+Berlin,328.78,27,6,0,flex,2,515,6,Tunisair,increase_risk
+Tunis,248.02,34,8,1,standard,1,432,8,British Airways,increase_risk
+London,344.04,9,5,1,economy,0,221,18,Turkish Airlines,increase_risk
+Berlin,761.98,16,6,1,business,1,323,20,Air France,increase_risk
+Tunis,280.05,23,8,0,flex,0,240,7,Nouvelair,increase_risk
+London,314.99,30,5,1,standard,2,464,17,Qatar Airways,increase_risk
+Berlin,417.9,5,6,1,economy,1,416,19,Lufthansa,increase_risk
+Tunis,437.68,12,8,1,business,0,333,6,Air Algerie,increase_risk
+London,357.43,19,5,0,flex,1,482,8,ITA Airways,increase_risk
+Berlin,503.93,26,6,1,standard,0,224,18,Emirates,increase_risk
+Tunis,182.22,33,8,1,economy,2,366,20,Tunisair,increase_risk
+London,633.7,8,5,1,business,1,365,7,British Airways,increase_risk
+Berlin,457.54,15,6,0,flex,0,317,17,Turkish Airlines,increase_risk
+Tunis,290.03,22,8,1,standard,1,384,19,Air France,increase_risk
+London,323.04,29,5,1,economy,0,383,6,Nouvelair,increase_risk
+Berlin,684.54,4,6,1,business,2,350,8,Qatar Airways,increase_risk
+Tunis,304.66,11,8,0,flex,1,267,18,Lufthansa,increase_risk
+London,342.36,18,5,1,standard,0,266,20,Air Algerie,increase_risk
+Berlin,369.89,25,6,1,economy,1,368,7,ITA Airways,increase_risk
+Tunis,564.09,32,8,1,business,0,285,17,Emirates,increase_risk
+London,312.24,7,5,0,flex,2,509,19,Tunisair,increase_risk
+Berlin,417.27,14,6,1,standard,1,461,6,British Airways,increase_risk
+Tunis,261.95,21,8,1,economy,0,168,8,Turkish Airlines,increase_risk
+London,665.92,28,5,1,business,1,317,18,Air France,increase_risk
+Berlin,496.54,3,6,0,flex,0,269,20,Nouvelair,increase_risk
+Tunis,232.69,10,8,1,standard,2,411,7,Qatar Airways,increase_risk
+London,347.95,17,5,1,economy,1,410,17,Lufthansa,increase_risk
+Berlin,719.48,24,6,1,business,0,362,19,Air Algerie,increase_risk
+Tunis,221.59,31,8,0,flex,1,429,6,ITA Airways,increase_risk
+London,471.8,6,5,1,standard,0,218,8,Emirates,increase_risk
+Berlin,302.92,13,6,1,economy,2,395,18,Tunisair,increase_risk
+Tunis,469.36,20,8,1,business,1,312,20,British Airways,increase_risk
+London,364.68,27,5,0,flex,0,311,7,Turkish Airlines,increase_risk
+Berlin,378.73,34,6,1,standard,1,413,17,Air France,increase_risk
+Tunis,273.48,9,8,1,economy,0,330,19,Nouvelair,increase_risk
+London,525.26,16,5,1,business,2,554,6,Qatar Airways,increase_risk
+Berlin,493.06,23,6,0,flex,1,296,8,Lufthansa,increase_risk
+Tunis,273.79,30,8,1,standard,0,213,18,Air Algerie,increase_risk
+London,276.28,5,5,1,economy,1,362,20,ITA Airways,increase_risk
+Berlin,910.01,12,6,1,business,0,314,7,Emirates,increase_risk
+Tunis,235.54,19,8,0,flex,2,456,17,Tunisair,increase_risk
+London,366.07,26,5,1,standard,1,455,19,British Airways,increase_risk
+Berlin,377.93,33,6,1,economy,0,197,6,Turkish Airlines,increase_risk
+Tunis,454.49,8,8,1,business,1,264,8,Air France,increase_risk
+London,409.91,15,5,0,flex,0,263,18,Nouvelair,increase_risk
+Berlin,367.98,22,6,1,standard,2,440,20,Qatar Airways,increase_risk
+Tunis,280.56,29,8,1,economy,1,357,7,Lufthansa,increase_risk
+London,670.83,4,5,1,business,0,356,17,Air Algerie,increase_risk
+Berlin,373.9,11,6,0,flex,1,458,19,ITA Airways,increase_risk
+Tunis,316.78,18,8,1,standard,0,165,6,Emirates,increase_risk
+London,269.99,25,5,1,economy,2,389,8,Tunisair,increase_risk
+Berlin,768.36,32,6,1,business,1,341,18,British Airways,increase_risk
+Tunis,306.77,7,8,0,flex,0,258,20,Turkish Airlines,increase_risk
+London,337.06,14,5,1,standard,1,407,7,Air France,increase_risk
+Berlin,423.4,21,6,1,economy,0,359,17,Nouvelair,increase_risk
+Tunis,415.18,28,8,1,business,2,501,19,Qatar Airways,increase_risk
+London,374.69,3,5,0,flex,1,290,6,Lufthansa,increase_risk
+Berlin,475.35,10,6,1,standard,0,242,8,Air Algerie,increase_risk
+Tunis,206.09,17,8,1,economy,1,309,18,ITA Airways,increase_risk
+London,756.36,24,5,1,business,0,308,20,Emirates,increase_risk
+Berlin,383.19,31,6,0,flex,2,485,7,Tunisair,increase_risk
+Tunis,249.32,6,8,1,standard,1,402,17,British Airways,increase_risk
+London,331.75,13,5,1,economy,0,401,19,Turkish Airlines,increase_risk
+Berlin,688.31,20,6,1,business,1,293,6,Air France,increase_risk
+Tunis,326.77,27,8,0,flex,0,210,8,Nouvelair,increase_risk
+London,324.21,34,5,1,standard,2,434,18,Qatar Airways,increase_risk
+Berlin,346.33,9,6,1,economy,1,386,20,Lufthansa,increase_risk
+Tunis,501.28,16,8,1,business,0,303,7,Air Algerie,increase_risk
+London,330.48,23,5,0,flex,1,452,17,ITA Airways,increase_risk
+Berlin,529.12,30,6,1,standard,0,404,19,Emirates,increase_risk
+Tunis,233.11,5,8,1,economy,2,336,6,Tunisair,increase_risk
+London,538.23,12,5,1,business,1,335,8,British Airways,increase_risk
+Berlin,479.54,19,6,0,flex,0,287,18,Turkish Airlines,increase_risk
+Tunis,233.01,26,8,1,standard,1,354,20,Air France,increase_risk
+London,373.17,33,5,1,economy,0,353,7,Nouvelair,increase_risk
+Berlin,727.45,8,6,1,business,2,530,17,Qatar Airways,increase_risk
+Tunis,245.14,15,8,0,flex,1,237,19,Lufthansa,increase_risk
+London,395.29,22,5,1,standard,0,236,6,Air Algerie,increase_risk
+Berlin,342.49,29,6,1,economy,1,338,8,ITA Airways,increase_risk
+Tunis,629.27,4,8,1,business,0,255,18,Emirates,increase_risk
+London,340.45,11,5,0,flex,2,479,20,Tunisair,increase_risk
+Berlin,382.96,18,6,1,standard,1,431,7,British Airways,increase_risk
+Tunis,263.34,25,8,1,economy,0,348,17,Turkish Airlines,increase_risk
+London,565.85,32,5,1,business,1,287,19,Air France,increase_risk
+Berlin,454.54,7,6,0,flex,0,239,6,Nouvelair,increase_risk
+Tunis,258.84,14,8,1,standard,2,381,8,Qatar Airways,increase_risk
+London,284.1,21,5,1,economy,1,380,18,Lufthansa,increase_risk
+Berlin,808.93,28,6,1,business,0,332,20,Air Algerie,increase_risk
+Tunis,282.25,3,8,0,flex,1,399,7,ITA Airways,increase_risk
+London,394.78,10,5,1,standard,0,398,17,Emirates,increase_risk
+Berlin,310.84,17,6,1,economy,2,365,19,Tunisair,increase_risk
+Tunis,429.94,24,8,1,business,1,282,6,British Airways,increase_risk
+London,420.52,31,5,0,flex,0,281,8,Turkish Airlines,increase_risk
+Berlin,422.35,6,6,1,standard,1,383,18,Air France,increase_risk
+Tunis,242.69,13,8,1,economy,0,300,20,Nouvelair,increase_risk
+London,598.67,20,5,1,business,2,524,7,Qatar Airways,increase_risk
+Berlin,412.86,27,6,0,flex,1,476,17,Lufthansa,increase_risk
+Tunis,318.31,34,8,1,standard,0,183,19,Air Algerie,increase_risk
+London,322.9,9,5,1,economy,1,332,6,ITA Airways,increase_risk
+Berlin,776.5,16,6,1,business,0,284,8,Emirates,increase_risk
+Tunis,235.79,23,8,0,flex,2,426,18,Tunisair,increase_risk
+London,340.09,30,5,1,standard,1,425,20,British Airways,increase_risk
+Berlin,459.62,5,6,1,economy,0,377,7,Turkish Airlines,increase_risk
+Tunis,446.11,12,8,1,business,1,234,17,Air France,increase_risk
+London,377.46,19,5,0,flex,0,233,19,Nouvelair,increase_risk
+Berlin,424.29,26,6,1,standard,2,410,6,Qatar Airways,increase_risk
+Tunis,226.55,33,8,1,economy,1,327,8,Lufthansa,increase_risk
+London,707.9,8,5,1,business,0,326,18,Air Algerie,increase_risk
+Berlin,431.99,15,6,0,flex,1,428,20,ITA Airways,increase_risk
+Tunis,293.77,22,8,1,standard,0,345,7,Emirates,increase_risk
+London,272.98,29,5,1,economy,2,359,17,Tunisair,increase_risk
+Berlin,741.38,4,6,1,business,1,311,19,British Airways,increase_risk
+Tunis,267.32,11,8,0,flex,0,228,6,Turkish Airlines,increase_risk
+London,347.67,18,5,1,standard,1,377,8,Air France,increase_risk
+Berlin,349.45,25,6,1,economy,0,329,18,Nouvelair,increase_risk
+Tunis,475.24,32,8,1,business,2,471,20,Qatar Airways,increase_risk
+London,387.76,7,5,0,flex,1,470,7,Lufthansa,increase_risk
+Berlin,369.26,14,6,1,standard,0,212,17,Air Algerie,increase_risk
+Tunis,245.83,21,8,1,economy,1,279,19,ITA Airways,increase_risk
+London,681.45,28,5,1,business,0,278,6,Emirates,increase_risk
+Berlin,420.88,3,6,0,flex,2,455,8,Tunisair,increase_risk
+Tunis,292.36,10,8,1,standard,1,372,18,British Airways,increase_risk
+London,306.91,17,5,1,economy,0,371,20,Turkish Airlines,increase_risk
+Berlin,734.06,24,6,1,business,1,473,7,Air France,increase_risk
+Tunis,265.47,31,8,0,flex,0,180,17,Nouvelair,increase_risk
+London,395.9,6,5,1,standard,2,404,19,Qatar Airways,increase_risk
+Berlin,376.47,13,6,1,economy,1,356,6,Lufthansa,increase_risk
+Tunis,417.47,20,8,1,business,0,273,8,Air Algerie,increase_risk
+London,382.19,27,5,0,flex,1,422,18,ITA Airways,increase_risk
+Berlin,482.87,34,6,1,standard,0,374,20,Emirates,increase_risk
+Tunis,229.85,9,8,1,economy,2,516,7,Tunisair,increase_risk
+London,571.96,16,5,1,business,1,305,17,British Airways,increase_risk
+Berlin,437.54,23,6,0,flex,0,257,19,Turkish Airlines,increase_risk
+Tunis,276.52,30,8,1,standard,1,324,6,Air France,increase_risk
+London,328.75,5,5,1,economy,0,323,8,Nouvelair,increase_risk
+Berlin,767.41,12,6,1,business,2,500,18,Qatar Airways,increase_risk
+Tunis,290.53,19,8,0,flex,1,417,20,Lufthansa,increase_risk
+London,325.72,26,5,1,standard,0,206,7,Air Algerie,increase_risk
+Berlin,394.54,33,6,1,economy,1,308,17,ITA Airways,increase_risk
+Tunis,576.73,8,8,1,business,0,225,19,Emirates,increase_risk
+London,276.63,15,5,0,flex,2,449,6,Tunisair,increase_risk
+Berlin,399.19,22,6,1,standard,1,401,8,British Airways,increase_risk
+Tunis,248.82,29,8,1,economy,0,318,18,Turkish Airlines,increase_risk
+London,680.18,4,5,1,business,1,467,20,Air France,increase_risk
+Berlin,446.54,11,6,0,flex,0,209,7,Nouvelair,increase_risk
+Tunis,244.23,18,8,1,standard,2,351,17,Qatar Airways,increase_risk
+London,332.74,25,5,1,economy,1,350,19,Lufthansa,increase_risk
+Berlin,690.66,32,6,1,business,0,302,6,Air Algerie,increase_risk
+Tunis,284.84,7,8,0,flex,1,369,8,ITA Airways,increase_risk
+London,426.28,14,5,1,standard,0,368,18,Emirates,increase_risk
+Berlin,287.61,21,6,1,economy,2,545,20,Tunisair,increase_risk
+Tunis,450.01,28,8,1,business,1,252,7,British Airways,increase_risk
+London,413.3,3,5,0,flex,0,251,17,Turkish Airlines,increase_risk
+Berlin,480.32,10,6,1,standard,1,353,19,Air France,increase_risk
+Tunis,244.08,17,8,1,economy,0,270,6,Nouvelair,increase_risk
+London,501.78,24,5,1,business,2,494,8,Qatar Airways,increase_risk
+Berlin,473.76,31,6,0,flex,1,446,18,Lufthansa,increase_risk
+Tunis,277.63,6,8,1,standard,0,363,20,Air Algerie,increase_risk
+London,309.45,13,5,1,economy,1,302,7,ITA Airways,increase_risk
+Berlin,877.38,20,6,1,business,0,254,17,Emirates,increase_risk
+Tunis,222.8,27,8,0,flex,2,396,19,Tunisair,increase_risk
+London,350.08,34,5,1,standard,1,395,6,British Airways,increase_risk
+Berlin,426.67,9,6,1,economy,0,347,8,Turkish Airlines,increase_risk
+Tunis,508,16,8,1,business,1,414,18,Air France,increase_risk
+London,392.3,23,5,0,flex,0,203,20,Nouvelair,increase_risk
+Berlin,350.2,30,6,1,standard,2,380,7,Qatar Airways,increase_risk
+Tunis,283.31,5,8,1,economy,1,297,17,Lufthansa,increase_risk
+London,605.75,12,5,1,business,0,296,19,Air Algerie,increase_risk
+Berlin,355.53,19,6,0,flex,1,398,6,ITA Airways,increase_risk
+Tunis,342.53,26,8,1,standard,0,315,8,Emirates,increase_risk
+London,256.32,33,5,1,economy,2,539,18,Tunisair,increase_risk
+Berlin,785.85,8,6,1,business,1,281,20,British Airways,increase_risk
+Tunis,273.05,15,8,0,flex,0,198,7,Turkish Airlines,increase_risk
+London,320.86,22,5,1,standard,1,347,17,Air France,increase_risk
+Berlin,405.67,29,6,1,economy,0,299,19,Nouvelair,increase_risk
+Tunis,424.2,4,8,1,business,2,441,6,Qatar Airways,increase_risk
+London,417.78,11,5,0,flex,1,440,8,Lufthansa,increase_risk
+Berlin,428.81,18,6,1,standard,0,392,18,Air Algerie,increase_risk
+Tunis,193.85,25,8,1,economy,1,249,20,ITA Airways,increase_risk
+London,769.13,32,5,1,business,0,248,7,Emirates,increase_risk
+Berlin,390.33,7,6,0,flex,2,425,17,Tunisair,increase_risk
+Tunis,277.71,14,8,1,standard,1,342,19,British Airways,increase_risk
+London,316.04,21,5,1,economy,0,341,6,Turkish Airlines,increase_risk
+Berlin,660.4,28,6,1,business,1,443,8,Air France,increase_risk
+Tunis,331.35,3,8,0,flex,0,360,18,Nouvelair,increase_risk
+London,329.95,10,5,1,standard,2,374,20,Qatar Airways,increase_risk
+Berlin,430.9,17,6,1,economy,1,326,7,Lufthansa,increase_risk
+Tunis,481.08,24,8,1,business,0,243,17,Air Algerie,increase_risk
+London,314.25,31,5,0,flex,1,392,19,ITA Airways,increase_risk
+Berlin,540.19,6,6,1,standard,0,344,6,Emirates,increase_risk
+Tunis,208.38,13,8,1,economy,2,486,8,Tunisair,increase_risk
+London,646.7,20,5,1,business,1,485,18,British Airways,increase_risk
+Berlin,459.54,27,6,0,flex,0,227,20,Turkish Airlines,increase_risk
+Tunis,260.5,34,8,1,standard,1,294,7,Air France,increase_risk
+London,378.89,9,5,1,economy,0,293,17,Nouvelair,increase_risk
+Berlin,656.54,16,6,1,business,2,470,19,Qatar Airways,increase_risk
+Tunis,231.02,23,8,0,flex,1,387,6,Lufthansa,increase_risk
+London,378.65,30,5,1,standard,0,386,8,Air Algerie,increase_risk
+Berlin,348.84,5,6,1,economy,1,278,18,ITA Airways,increase_risk
+Tunis,571.36,12,8,1,business,0,195,20,Emirates,increase_risk
+London,325.24,19,5,0,flex,2,419,7,Tunisair,increase_risk
+Berlin,364.88,26,6,1,standard,1,371,17,British Airways,increase_risk
+Tunis,250.21,33,8,1,economy,0,288,19,Turkish Airlines,increase_risk
+London,621.11,8,5,1,business,1,437,6,Air France,increase_risk
+Berlin,509.54,15,6,0,flex,0,389,8,Nouvelair,increase_risk
+Tunis,245.69,22,8,1,standard,2,321,18,Qatar Airways,increase_risk
+London,268.89,29,5,1,economy,1,320,20,Lufthansa,increase_risk
+Berlin,827.75,4,6,1,business,0,272,7,Air Algerie,increase_risk
+Tunis,251.66,11,8,0,flex,1,339,17,ITA Airways,increase_risk
+London,443.8,18,5,1,standard,0,338,19,Emirates,increase_risk
+Berlin,336.53,25,6,1,economy,2,515,6,Tunisair,increase_risk
+Tunis,410.58,32,8,1,business,1,432,8,British Airways,increase_risk
+London,428.13,7,5,0,flex,0,221,18,Turkish Airlines,increase_risk
+Berlin,377.38,14,6,1,standard,1,323,20,Air France,increase_risk
+Tunis,286.48,21,8,1,economy,0,240,7,Nouvelair,increase_risk
+London,575.2,28,5,1,business,2,464,17,Qatar Airways,increase_risk
+Berlin,422.16,3,6,0,flex,1,416,19,Lufthansa,increase_risk
+Tunis,322.15,10,8,1,standard,0,333,6,Air Algerie,increase_risk
+London,289.28,17,5,1,economy,1,482,8,ITA Airways,increase_risk
+Berlin,937.27,24,6,1,business,0,224,18,Emirates,increase_risk
+Tunis,264.04,31,8,0,flex,2,366,20,Tunisair,increase_risk
+London,346.09,6,5,1,standard,1,365,7,British Airways,increase_risk
+Berlin,416.4,13,6,1,economy,0,317,17,Turkish Airlines,increase_risk
+Tunis,426.49,20,8,1,business,1,384,19,Air France,increase_risk
+London,359.85,27,5,0,flex,0,383,6,Nouvelair,increase_risk
+Berlin,406.52,34,6,1,standard,2,350,8,Qatar Airways,increase_risk
+Tunis,229.3,9,8,1,economy,1,267,18,Lufthansa,increase_risk
+London,683.83,16,5,1,business,0,266,20,Air Algerie,increase_risk
+Berlin,413.63,23,6,0,flex,1,368,7,ITA Airways,increase_risk
+Tunis,278.52,30,8,1,standard,0,285,17,Emirates,increase_risk
+London,276.65,5,5,1,economy,2,509,19,Tunisair,increase_risk
+Berlin,668.9,12,6,1,business,1,461,6,British Airways,increase_risk

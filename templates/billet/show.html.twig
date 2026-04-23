@@ -1,25 +1,185 @@
-{% extends 'admin_base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détail billet</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
-{% block title %}Détail billet{% endblock %}
+    <style>
+        .content-card {
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            margin-top: 1.5rem;
+        }
 
-{% block body %}
-    <div class="page-switch" style="display:flex; gap:1rem; margin-bottom:2rem;">
-        <a href="/billet/" class="switch-btn active">Tables billets</a>
-        <a href="/reservation/" class="switch-btn">Tables réservations</a>
-    </div>
-    <section style="background:var(--panel); border:1px solid var(--gbord); border-radius:28px; padding:2.2rem; backdrop-filter:blur(20px);">
-        <h2 style="font-family:var(--serif); font-size:2.4rem; font-weight:400; margin-bottom:1.5rem;">Billet <em style="color:var(--gold); font-style:italic;">#{{ billet.id }}</em></h2>
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:1.5rem;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Type transport</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.typeTransport }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Numéro billet</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.numeroBillet }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Date départ</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.dateDepart ? billet.dateDepart|date('d/m/Y') : '–' }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Date arrivée</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.dateArrivee ? billet.dateArrivee|date('d/m/Y') : '–' }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Prix</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.prix }} €</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Statut</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ billet.statut }}</div></div>
+        .section-header h2 {
+            font-family: var(--serif);
+            font-size: 2.1rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+
+        .detail-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 1.2rem;
+        }
+
+        .detail-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 0.55rem;
+            font-weight: 700;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .action-left {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            padding: 0.85rem 1.2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--gold2);
+        }
+
+        .delete-wrap button {
+            border: none;
+            border-radius: 12px;
+            padding: 0.85rem 1.2rem;
+            cursor: pointer;
+            background: rgba(239, 68, 68, 0.14);
+            color: #ef4444;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <aside class="app-sidebar">
+        <div class="logo-area">Travel<em>ia</em></div>
+        <nav class="nav-menu">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+            <a href="{{ path('app_billet_index') }}" class="nav-item active">
+                <span class="nav-icon">✈</span>
+                Billets
+            </a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin</span>
+                <small>Accès complet</small>
+            </div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <a href="{{ path('app_billet_index') }}" class="crud-action-btn">← Retour</a>
-            <a href="{{ path('app_billet_edit', {'id': billet.id}) }}" class="crud-action-btn">✏ Modifier</a>
-        </div>
-    </section>
-{% endblock %}
+    </aside>
+
+    <main class="app-main">
+        <div class="glow-bg"></div>
+
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Détail du <em>billet</em></h1>
+                    <p style="font-size: 0.9rem; opacity: 0.5; margin-top: 0.5rem;">
+                        Visualisation complète du billet.
+                    </p>
+                </div>
+                <div class="date-pill">Consultation</div>
+            </div>
+        </header>
+
+        <section class="content-card">
+            <div class="section-header">
+                <h2>Billet #{{ billet.id }}</h2>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">ID</div>
+                    <div class="detail-value">{{ billet.id }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Type transport</div>
+                    <div class="detail-value">{{ billet.typeTransport }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Numéro billet</div>
+                    <div class="detail-value">{{ billet.numeroBillet }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date départ</div>
+                    <div class="detail-value">{{ billet.dateDepart ? billet.dateDepart|date('Y-m-d') : '' }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date arrivée</div>
+                    <div class="detail-value">{{ billet.dateArrivee ? billet.dateArrivee|date('Y-m-d') : '' }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Prix</div>
+                    <div class="detail-value">{{ billet.prix }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Statut</div>
+                    <div class="detail-value">{{ billet.statut }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Réservation liée</div>
+                    <div class="detail-value">{{ billet.reservation ? billet.reservation.id : '' }}</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <div class="action-left">
+                    <a href="{{ path('app_billet_index') }}" class="action-btn">← Retour</a>
+                    <a href="{{ path('app_billet_edit', {'id': billet.id}) }}" class="action-btn">Modifier</a>
+                </div>
+
+                <div class="delete-wrap">
+                    {{ include('billet/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ asset('js/admin.js') }}"></script>
+    {{ include('partials/delete_modal.html.twig') }}
+</body>
+</html>

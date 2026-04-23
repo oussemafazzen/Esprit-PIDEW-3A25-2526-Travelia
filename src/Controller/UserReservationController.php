@@ -16,11 +16,7 @@ final class UserReservationController extends AbstractController
     #[Route('/mes-reservations', name: 'app_user_reservations', methods: ['GET'])]
     public function index(ReservationRepository $reservationRepository): Response
     {
-        /** @var \App\Entity\Client $user */
-        $user = $this->getUser();
-        $clientId = $user ? $user->getId() : 0;
-
-        $reservations = $reservationRepository->findBy(['clientId' => $clientId], ['id' => 'DESC']);
+        $reservations = $reservationRepository->findBy(['clientId' => 51], ['id' => 'DESC']);
 
         return $this->render('front/user/reservations.html.twig', [
             'reservations' => $reservations,
@@ -52,9 +48,7 @@ final class UserReservationController extends AbstractController
             }
 
             if (!$reservation->getClientId()) {
-                /** @var \App\Entity\Client $user */
-                $user = $this->getUser();
-                $reservation->setClientId($user ? $user->getId() : 51);
+                $reservation->setClientId(51);
             }
 
             if (!$reservation->getPaysDestination()) {
@@ -100,9 +94,7 @@ final class UserReservationController extends AbstractController
             }
 
             if (!$reservation->getClientId()) {
-                /** @var \App\Entity\Client $user */
-                $user = $this->getUser();
-                $reservation->setClientId($user ? $user->getId() : 51);
+                $reservation->setClientId(51);
             }
 
             if (!$reservation->getPaysDestination()) {

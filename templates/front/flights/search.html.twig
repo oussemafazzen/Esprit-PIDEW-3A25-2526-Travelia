@@ -4,8 +4,588 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}?v=24">
+    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}?v=24">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        .flights-search-shell {
+            width: 100%;
+            max-width: 1180px;
+        }
+
+        .flight-errors-top {
+            margin-bottom: 14px;
+            color: #ffbcbc;
+            font-size: 13px;
+        }
+
+        .flight-errors-top ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .flights-search-bar {
+            display: grid !important;
+            grid-template-columns: 1.6fr 1fr 0.6fr auto !important;
+            align-items: center !important;
+            width: 100%;
+            min-height: 118px;
+            border-radius: 28px;
+            overflow: hidden;
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+        }
+
+        .flight-search-field {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            text-align: left !important;
+            gap: 6px;
+            min-width: 0;
+            min-height: 118px;
+            padding: 18px 24px !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .flight-search-field--small {
+            border-right: none;
+            min-width: 110px;
+        }
+
+        .flight-search-field > div {
+            width: 100%;
+        }
+
+        .flight-search-field label {
+            margin: 0;
+            text-align: left !important;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.46);
+            font-weight: 700;
+        }
+
+        .flight-search-input {
+            width: 100%;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: #ffffff !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            font-family: inherit;
+            text-align: left !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .flight-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.30);
+        }
+
+        .flatpickr-calendar {
+            background: rgba(17, 25, 40, 0.82) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+            border-radius: 22px !important;
+            overflow: hidden !important;
+            color: #fff !important;
+            padding: 10px !important;
+        }
+
+        .flatpickr-months,
+        .flatpickr-weekdays,
+        .flatpickr-days,
+        .dayContainer,
+        .flatpickr-rContainer,
+        .flatpickr-month {
+            background: transparent !important;
+        }
+
+        .flatpickr-current-month,
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: #fff !important;
+            background: transparent !important;
+            font-weight: 700;
+        }
+
+        span.flatpickr-weekday {
+            background: transparent !important;
+            color: rgba(255,255,255,0.60) !important;
+            font-weight: 600;
+        }
+
+        .flatpickr-day {
+            color: #fff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            background: transparent !important;
+        }
+
+        .flatpickr-day:hover {
+            background: rgba(255,255,255,0.08) !important;
+        }
+
+        .flatpickr-day.today {
+            border: 1px solid rgba(215, 184, 90, 0.55) !important;
+            color: #f2d47a !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: linear-gradient(135deg, #d7b85a, #e7c86e) !important;
+            color: #111 !important;
+            box-shadow: 0 6px 18px rgba(201, 168, 76, 0.25);
+        }
+
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            color: rgba(255,255,255,0.24) !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            fill: rgba(255,255,255,0.85) !important;
+            color: rgba(255,255,255,0.85) !important;
+        }
+
+        .flatpickr-prev-month:hover svg,
+        .flatpickr-next-month:hover svg {
+            fill: #f2d47a !important;
+        }
+
+        .flight-search-field ul {
+            margin: 3px 0 0 0;
+            padding: 0;
+            list-style: none;
+            color: #ffbcbc;
+            font-size: 12px;
+            line-height: 1.35;
+            text-align: left !important;
+        }
+
+        .flights-search-btn {
+            align-self: center;
+            justify-self: center;
+            width: 120px !important;
+            min-width: 120px;
+            height: 60px !important;
+            margin: 0 14px !important;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #c9a84c, #e8c97a);
+            color: #0a0d1a;
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(201, 168, 76, 0.34);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .flights-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(201, 168, 76, 0.42);
+        }
+
+        .premium-booking-engine {
+            width: 100%;
+            padding: 18px;
+            border-radius: 34px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035)),
+                rgba(6, 12, 32, 0.72);
+            border: 1px solid rgba(232, 201, 122, 0.18);
+            box-shadow:
+                0 24px 70px rgba(0, 0, 0, 0.34),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+        }
+
+        .trip-type-tabs {
+            display: inline-flex;
+            gap: 6px;
+            padding: 5px;
+            margin-bottom: 18px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.055);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .trip-type-tab {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 18px;
+            background: transparent;
+            color: rgba(255,255,255,0.68);
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .trip-type-tab:hover {
+            color: #f2d47a;
+            background: rgba(232, 201, 122, 0.10);
+        }
+
+        .trip-type-tab.is-active {
+            color: #0a0d1a;
+            background: linear-gradient(135deg, #c9a84c, #e8c97a);
+            box-shadow: 0 10px 26px rgba(201, 168, 76, 0.26);
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(260px, 1.25fr) 170px;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .booking-secondary-row {
+            display: flex;
+            align-items: stretch;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .booking-field-card {
+            position: relative;
+            min-height: 104px;
+            padding: 16px 18px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.075);
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+            transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+        }
+
+        .booking-field-card:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,0.095);
+            border-color: rgba(232, 201, 122, 0.26);
+        }
+
+        .booking-field-card--destination,
+        .booking-field-card--class {
+            z-index: 20;
+        }
+
+        .booking-field-card.is-hidden {
+            display: none;
+        }
+
+        .booking-secondary-row .booking-field-card {
+            flex: 0 1 240px;
+            min-height: 78px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.052);
+        }
+
+        .booking-field-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            color: rgba(255,255,255,0.54);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .booking-field-icon {
+            color: #e8c97a;
+            font-size: 0.84rem;
+        }
+
+        .booking-field-card .flight-search-input,
+        .booking-select {
+            width: 100%;
+            min-height: 36px;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 800;
+            padding: 0;
+        }
+
+        .booking-select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .native-select-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .booking-field-card .flight-search-input::placeholder,
+        .booking-select:invalid {
+            color: rgba(255,255,255,0.34);
+        }
+
+        .booking-field-help {
+            color: rgba(255,255,255,0.44);
+            font-size: 0.76rem;
+        }
+
+        .premium-dropdown-panel {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            top: calc(100% + 10px);
+            z-index: 60;
+            display: none;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid rgba(232, 201, 122, 0.22);
+            background:
+                linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025)),
+                rgba(6, 12, 32, 0.96);
+            box-shadow:
+                0 24px 60px rgba(0, 0, 0, 0.42),
+                0 0 24px rgba(201, 168, 76, 0.10),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+            backdrop-filter: blur(22px) saturate(150%);
+            -webkit-backdrop-filter: blur(22px) saturate(150%);
+        }
+
+        .premium-dropdown-panel.is-open {
+            display: block;
+        }
+
+        .premium-dropdown-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .premium-dropdown-panel::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.04);
+            border-radius: 999px;
+        }
+
+        .premium-dropdown-panel::-webkit-scrollbar-thumb {
+            background: rgba(232, 201, 122, 0.44);
+            border-radius: 999px;
+        }
+
+        .premium-dropdown-option {
+            width: 100%;
+            min-height: 40px;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: transparent;
+            color: rgba(255,255,255,0.82);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: left;
+            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .premium-dropdown-option:hover,
+        .premium-dropdown-option.is-highlighted {
+            color: #f2d47a;
+            background: rgba(232, 201, 122, 0.12);
+            transform: translateX(2px);
+        }
+
+        .premium-dropdown-empty {
+            padding: 12px;
+            color: rgba(255,255,255,0.52);
+            font-size: 0.86rem;
+        }
+
+        .premium-select {
+            position: relative;
+        }
+
+        .premium-select-trigger {
+            width: 100%;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border: none;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 800;
+            padding: 0;
+            text-align: left;
+        }
+
+        .premium-select-trigger::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #e8c97a;
+            border-bottom: 2px solid #e8c97a;
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform 0.18s ease;
+        }
+
+        .premium-select.is-open .premium-select-trigger::after {
+            transform: rotate(225deg) translateY(-2px);
+        }
+
+        .booking-date-card {
+            gap: 10px;
+        }
+
+        .date-range-inline {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+        }
+
+        .date-segment {
+            min-width: 0;
+        }
+
+        .date-segment + .date-segment {
+            padding-left: 12px;
+            border-left: 1px solid rgba(255,255,255,0.10);
+        }
+
+        .date-segment.is-hidden {
+            display: none;
+        }
+
+        .date-mini-label {
+            display: block;
+            margin-bottom: 5px;
+            color: rgba(232, 201, 122, 0.74);
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .booking-search-card {
+            min-height: 104px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background:
+                linear-gradient(135deg, rgba(232, 201, 122, 0.98), rgba(201, 168, 76, 0.94)),
+                #c9a84c;
+            color: #0a0d1a;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow:
+                0 14px 34px rgba(201, 168, 76, 0.30),
+                inset 0 1px 0 rgba(255,255,255,0.44);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .booking-search-card:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 18px 42px rgba(201, 168, 76, 0.40),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 980px) {
+            .flights-search-bar {
+                grid-template-columns: 1fr;
+                min-height: auto;
+                border-radius: 22px;
+            }
+
+            .flight-search-field {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                min-height: auto;
+                padding: 18px 20px !important;
+            }
+
+            .flight-search-field--small {
+                border-bottom: none;
+            }
+
+            .flights-search-btn {
+                width: calc(100% - 20px) !important;
+                margin: 10px !important;
+            }
+
+            .premium-booking-engine {
+                border-radius: 26px;
+                padding: 14px;
+            }
+
+            .booking-grid,
+            .booking-secondary-row {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-secondary-row {
+                flex-direction: column;
+            }
+
+            .booking-secondary-row .booking-field-card {
+                flex-basis: auto;
+            }
+
+            .date-range-inline {
+                grid-template-columns: 1fr;
+            }
+
+            .date-segment + .date-segment {
+                padding-left: 0;
+                padding-top: 10px;
+                border-left: none;
+                border-top: 1px solid rgba(255,255,255,0.10);
+            }
+
+            .trip-type-tabs {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .trip-type-tab {
+                flex: 1 1 120px;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -48,19 +628,55 @@
         </p>
 
         <div class="flights-search-shell">
-            <form method="get" action="{{ path('app_flights_results') }}" class="flights-search-bar">
+            {% set selectedTripType = app.request.query.get('trip_type', 'return') == 'one_way' ? 'one_way' : 'return' %}
+            {% set selectedTravelClass = app.request.query.get('travel_class', 'business') %}
+            {% set returnDate = app.request.query.get('date_arrivee', '') %}
 
-                <div class="flight-search-field flight-search-field--destination">
-                    <label>Where</label>
-                    <input
-                        type="text"
-                        name="destination"
-                        id="destination-input"
-                        placeholder="Choisissez ou tapez un pays"
-                        list="countries-list"
-                        autocomplete="off"
-                        required
-                    >
+            {% if not form.vars.valid %}
+                <div class="flight-errors-top">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {
+                action: path('app_flights_search'),
+                method: 'GET',
+                attr: {
+                    class: 'premium-booking-engine',
+                    novalidate: 'novalidate'
+                }
+            }) }}
+
+                {% if reservation_id is defined and reservation_id %}
+                    <input type="hidden" name="reservation_id" value="{{ reservation_id }}">
+                {% endif %}
+                <input type="hidden" name="trip_type" id="trip-type-input" value="{{ selectedTripType }}">
+
+                <div class="trip-type-tabs" role="group" aria-label="Trip type">
+                    <button type="button" class="trip-type-tab {{ selectedTripType == 'return' ? 'is-active' : '' }}" data-trip-type="return" aria-pressed="{{ selectedTripType == 'return' ? 'true' : 'false' }}">Return</button>
+                    <button type="button" class="trip-type-tab {{ selectedTripType == 'one_way' ? 'is-active' : '' }}" data-trip-type="one_way" aria-pressed="{{ selectedTripType == 'one_way' ? 'true' : 'false' }}">One way</button>
+                </div>
+
+                <div class="booking-grid">
+
+                <div class="booking-field-card">
+                    <label class="booking-field-label" for="departure-airport"><span class="booking-field-icon">✦</span> Departure</label>
+                    <input id="departure-airport" class="flight-search-input" type="text" value="Tunis (TUN)" readonly>
+                    <div class="booking-field-help">Origin airport</div>
+                </div>
+
+                <div class="booking-field-card booking-field-card--destination">
+                    <label class="booking-field-label" for="{{ form.destination.vars.id }}"><span class="booking-field-icon">✦</span> Arrival</label>
+                    {{ form_widget(form.destination, {
+                        attr: {
+                            id: 'destination-input',
+                            class: 'flight-search-input',
+                            placeholder: 'Country or destination',
+                            autocomplete: 'off'
+                        }
+                    }) }}
+                    {{ form_errors(form.destination) }}
+                    <div class="premium-dropdown-panel" id="destination-dropdown" role="listbox" aria-label="Destination countries"></div>
 
                     <datalist id="countries-list">
                         <option value="Afghanistan">
@@ -218,45 +834,262 @@
                     </datalist>
                 </div>
 
-                <div class="flight-search-divider"></div>
-
-                <div class="flight-search-field">
-                    <label>Date départ</label>
-                    <input type="date" name="date_depart" required>
+                <div class="booking-field-card booking-date-card">
+                    <label class="booking-field-label"><span class="booking-field-icon">✦</span> Dates</label>
+                    <div class="date-range-inline">
+                        <div class="date-segment">
+                            <span class="date-mini-label">Departing</span>
+                            {{ form_widget(form.dateDepart, {
+                                attr: {
+                                    class: 'flight-search-input js-travelia-datepicker',
+                                    autocomplete: 'off'
+                                }
+                            }) }}
+                            {{ form_errors(form.dateDepart) }}
+                        </div>
+                        <div class="date-segment" id="return-date-segment">
+                            <span class="date-mini-label">Returning</span>
+                            <input
+                                type="text"
+                                id="date-arrivee-input"
+                                name="date_arrivee"
+                                value="{{ returnDate }}"
+                                class="flight-search-input js-travelia-datepicker"
+                                autocomplete="off"
+                                placeholder="Choose date"
+                            >
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flight-search-divider"></div>
-
-                <div class="flight-search-field">
-                    <label>Date arrivée</label>
-                    <input type="date" name="date_arrivee">
-                </div>
-
-                <div class="flight-search-divider"></div>
-
-                <div class="flight-search-field">
-                    <label>Transport</label>
-                    <select name="type_transport" class="flight-search-select">
-                        <option value="">Tous</option>
-                        <option value="avion">Avion</option>
-                        <option value="train">Train</option>
-                        <option value="bus">Bus</option>
-                        <option value="bateau">Bateau</option>
-                    </select>
-                </div>
-
-                <div class="flight-search-divider"></div>
-
-                <div class="flight-search-field flight-search-field--small">
-                    <label>Who</label>
-                    <input type="number" name="passagers" min="1" value="1">
-                </div>
-
-                <button type="submit" class="flights-search-btn">
-                    Explore
+                <button type="submit" class="booking-search-card">
+                    Search flights
                 </button>
-            </form>
+                </div>
+
+                <div class="booking-secondary-row">
+                    <div class="booking-field-card">
+                        <label class="booking-field-label" for="{{ form.passagers.vars.id }}"><span class="booking-field-icon">✦</span> Passengers</label>
+                        {{ form_widget(form.passagers, {
+                            attr: {
+                                class: 'flight-search-input',
+                                placeholder: '1',
+                                min: '1'
+                            }
+                        }) }}
+                        {{ form_errors(form.passagers) }}
+                    </div>
+
+                    <div class="booking-field-card booking-field-card--class">
+                        <label class="booking-field-label" for="travel-class-input"><span class="booking-field-icon">✦</span> Class</label>
+                        <select id="travel-class-input" name="travel_class" class="booking-select native-select-hidden" tabindex="-1" aria-hidden="true">
+                            <option value="economy" {{ selectedTravelClass == 'economy' ? 'selected' : '' }}>Economy</option>
+                            <option value="business" {{ selectedTravelClass == 'business' ? 'selected' : '' }}>Business</option>
+                            <option value="first" {{ selectedTravelClass == 'first' ? 'selected' : '' }}>First Class</option>
+                        </select>
+                        <div class="premium-select" data-premium-select>
+                            <button type="button" class="premium-select-trigger" id="travel-class-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                Business
+                            </button>
+                            <div class="premium-dropdown-panel" id="travel-class-dropdown" role="listbox" aria-labelledby="travel-class-trigger"></div>
+                        </div>
+                    </div>
+                </div>
+
+            {{ form_end(form) }}
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof flatpickr !== 'undefined') {
+                document.querySelectorAll('.js-travelia-datepicker').forEach((input) => {
+                    if (input.dataset.flatpickrInit === '1') {
+                        return;
+                    }
+
+                    input.dataset.flatpickrInit = '1';
+
+                    flatpickr(input, {
+                        dateFormat: 'Y-m-d',
+                        altInput: true,
+                        altFormat: 'd/m/Y',
+                        allowInput: false,
+                        clickOpens: true,
+                        disableMobile: true,
+                        minDate: 'today',
+                        monthSelectorType: 'static',
+                        onReady: function (selectedDates, dateStr, instance) {
+                            instance.input.setAttribute('readonly', 'readonly');
+
+                            if (instance.altInput) {
+                                instance.altInput.setAttribute('readonly', 'readonly');
+                                instance.altInput.setAttribute('placeholder', 'Choisir une date');
+                                instance.altInput.classList.add('flight-search-input');
+                            }
+                        }
+                    });
+                });
+            }
+
+            const tripInput = document.getElementById('trip-type-input');
+            const returnCard = document.getElementById('return-date-segment');
+            const returnInput = document.getElementById('date-arrivee-input');
+            const tripTabs = document.querySelectorAll('[data-trip-type]');
+            const destinationInput = document.getElementById('destination-input');
+            const countriesList = document.getElementById('countries-list');
+            const destinationDropdown = document.getElementById('destination-dropdown');
+            const classSelect = document.getElementById('travel-class-input');
+            const classTrigger = document.getElementById('travel-class-trigger');
+            const classDropdown = document.getElementById('travel-class-dropdown');
+            const classShell = document.querySelector('[data-premium-select]');
+
+            const normalizeText = (value) => String(value || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+
+            const closeDropdown = (panel) => {
+                if (panel) {
+                    panel.classList.remove('is-open');
+                }
+            };
+
+            const applyTripType = (tripType) => {
+                if (tripInput) {
+                    tripInput.value = tripType;
+                }
+
+                tripTabs.forEach((tab) => {
+                    const isActive = tab.dataset.tripType === tripType;
+                    tab.classList.toggle('is-active', isActive);
+                    tab.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+
+                const showReturn = tripType === 'return';
+                if (returnCard) {
+                    returnCard.classList.toggle('is-hidden', !showReturn);
+                }
+
+                if (returnInput) {
+                    returnInput.disabled = !showReturn;
+                }
+
+            };
+
+            tripTabs.forEach((tab) => {
+                tab.addEventListener('click', () => applyTripType(tab.dataset.tripType || 'return'));
+            });
+
+            applyTripType(tripInput ? tripInput.value : 'return');
+
+            if (destinationInput && countriesList && destinationDropdown) {
+                const countries = Array.from(countriesList.querySelectorAll('option'))
+                    .map((option) => option.value)
+                    .filter(Boolean);
+
+                const renderDestinationOptions = () => {
+                    const query = normalizeText(destinationInput.value);
+                    const matches = countries
+                        .filter((country) => normalizeText(country).includes(query))
+                        .slice(0, 18);
+
+                    destinationDropdown.innerHTML = '';
+
+                    if (matches.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = 'premium-dropdown-empty';
+                        empty.textContent = 'No destination found';
+                        destinationDropdown.appendChild(empty);
+                    } else {
+                        matches.forEach((country) => {
+                            const option = document.createElement('button');
+                            option.type = 'button';
+                            option.className = 'premium-dropdown-option';
+                            option.setAttribute('role', 'option');
+                            option.textContent = country;
+                            option.addEventListener('mousedown', (event) => {
+                                event.preventDefault();
+                                destinationInput.value = country;
+                                destinationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                closeDropdown(destinationDropdown);
+                            });
+                            destinationDropdown.appendChild(option);
+                        });
+                    }
+
+                    destinationDropdown.classList.add('is-open');
+                };
+
+                destinationInput.addEventListener('focus', renderDestinationOptions);
+                destinationInput.addEventListener('input', renderDestinationOptions);
+                destinationInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        closeDropdown(destinationDropdown);
+                    }
+                });
+            }
+
+            if (classSelect && classTrigger && classDropdown && classShell) {
+                const syncClassTrigger = () => {
+                    const selectedOption = classSelect.options[classSelect.selectedIndex];
+                    classTrigger.textContent = selectedOption ? selectedOption.textContent : 'Business';
+                };
+
+                Array.from(classSelect.options).forEach((selectOption) => {
+                    const option = document.createElement('button');
+                    option.type = 'button';
+                    option.className = 'premium-dropdown-option';
+                    option.setAttribute('role', 'option');
+                    option.dataset.value = selectOption.value;
+                    option.textContent = selectOption.textContent;
+
+                    if (selectOption.selected) {
+                        option.classList.add('is-highlighted');
+                    }
+
+                    option.addEventListener('click', () => {
+                        classSelect.value = selectOption.value;
+                        classSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                        classDropdown.querySelectorAll('.premium-dropdown-option').forEach((item) => {
+                            item.classList.toggle('is-highlighted', item.dataset.value === selectOption.value);
+                        });
+                        syncClassTrigger();
+                        closeDropdown(classDropdown);
+                        classShell.classList.remove('is-open');
+                        classTrigger.setAttribute('aria-expanded', 'false');
+                    });
+
+                    classDropdown.appendChild(option);
+                });
+
+                syncClassTrigger();
+
+                classTrigger.addEventListener('click', () => {
+                    const isOpen = classDropdown.classList.toggle('is-open');
+                    classShell.classList.toggle('is-open', isOpen);
+                    classTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+            }
+
+            document.addEventListener('click', (event) => {
+                if (destinationDropdown && destinationInput && !destinationDropdown.contains(event.target) && event.target !== destinationInput) {
+                    closeDropdown(destinationDropdown);
+                }
+
+                if (classDropdown && classShell && !classShell.contains(event.target)) {
+                    closeDropdown(classDropdown);
+                    classShell.classList.remove('is-open');
+                    if (classTrigger) {
+                        classTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

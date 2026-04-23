@@ -4,8 +4,9 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/horizon.css') }}?v=24">
+    <link rel="stylesheet" href="{{ asset('css/flights-results.css') }}?v=24">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
 
 {% block body %}
@@ -41,15 +42,55 @@
         </div>
 
         <div class="reservation-box" style="display:block;">
-            {{ form_start(form) }}
-                {{ form_widget(form) }}
+            {{ include('reservation/_form.html.twig', {
+                form: form,
+                button_label: button_label|default('Voir les vols disponibles')
+            }) }}
 
-                <div style="margin-top: 20px; display:flex; gap:12px; flex-wrap:wrap;">
-                    <button type="submit" class="premium-flight-book-btn">Enregistrer</button>
-                    <a href="{{ path('app_user_reservations') }}" class="premium-flight-back-btn">Retour</a>
-                </div>
-            {{ form_end(form) }}
+            <div style="margin-top: 20px; display:flex; gap:12px; flex-wrap:wrap;">
+                <a href="{{ path('app_user_reservations') }}" class="premium-flight-back-btn">Retour</a>
+            </div>
         </div>
     </section>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof flatpickr === 'undefined') {
+                return;
+            }
+
+            document.querySelectorAll('.js-travelia-datepicker').forEach((input) => {
+                if (input.dataset.flatpickrInit === '1') {
+                    return;
+                }
+
+                input.dataset.flatpickrInit = '1';
+
+                flatpickr(input, {
+                    dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd/m/Y',
+                    allowInput: false,
+                    clickOpens: true,
+                    disableMobile: true,
+                    minDate: 'today',
+                    monthSelectorType: 'static',
+                    onReady: function (selectedDates, dateStr, instance) {
+                        instance.input.setAttribute('readonly', 'readonly');
+
+                        if (instance.altInput) {
+                            instance.altInput.setAttribute('readonly', 'readonly');
+                            instance.altInput.setAttribute('placeholder', 'Choisir une date');
+                            instance.altInput.classList.add('form-control');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

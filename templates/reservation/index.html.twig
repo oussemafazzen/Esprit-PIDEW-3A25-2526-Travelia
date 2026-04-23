@@ -621,7 +621,7 @@
         </div>
 
         <nav class="nav-menu">
-            <a href="{{ path('app_admin_dashboard') }}" class="nav-item">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item">
                 <span class="nav-icon">⬚</span>
                 Tableau de bord
             </a>
@@ -753,7 +753,7 @@
                                     <div class="billet-status-summary" aria-label="Statuts des billets">
                                         {% for billet in reservation.billets %}
                                             {% if billet.statut %}
-                                                {% set billetStatusKey = billet.statut|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e', 'é':'e', 'è':'e', 'ê':'e'}) %}
+                                                {% set billetStatusKey = billet.statut|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e', 'Ã©':'e', 'Ã¨':'e', 'Ãª':'e'}) %}
                                                 <span class="status-pill {{ billetStatusKey }}">
                                                     {{ billetStatusLabels[billetStatusKey]|default(billet.statut) }}
                                                 </span>

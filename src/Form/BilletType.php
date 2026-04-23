@@ -24,11 +24,14 @@ class BilletType extends AbstractType
                     'Avion' => 'avion',
                     'Train' => 'train',
                     'Bus' => 'bus',
+                    'Bateau' => 'bateau',
                 ],
                 'placeholder' => 'Choisir un transport',
+                'required' => false,
             ])
             ->add('numeroBillet', TextType::class, [
                 'label' => 'Numéro billet',
+                'required' => false,
                 'attr' => [
                     'placeholder' => 'Ex: NO|BJ 520',
                 ],
@@ -36,36 +39,41 @@ class BilletType extends AbstractType
             ->add('dateDepart', DateType::class, [
                 'label' => 'Date départ',
                 'widget' => 'single_text',
+                'html5' => false,
+                'required' => false,
             ])
             ->add('dateArrivee', DateType::class, [
                 'label' => 'Date arrivée',
                 'widget' => 'single_text',
+                'html5' => false,
+                'required' => false,
             ])
             ->add('prix', NumberType::class, [
                 'label' => 'Prix',
                 'scale' => 2,
+                'required' => false,
                 'attr' => [
                     'placeholder' => 'Ex: 838.20',
-                    'min' => 0,
-                    'step' => '0.01',
                 ],
             ])
             ->add('statut', ChoiceType::class, [
                 'label' => 'Statut',
                 'choices' => [
                     'Confirmé' => 'confirme',
+                    'Retardé' => 'retarde',
                     'En attente' => 'en_attente',
                     'Annulé' => 'annule',
                 ],
                 'placeholder' => 'Choisir un statut',
+                'required' => false,
             ])
             ->add('reservation', EntityType::class, [
                 'class' => Reservation::class,
                 'choice_label' => 'id',
                 'label' => 'Réservation liée',
                 'placeholder' => 'Choisir une réservation',
-            ])
-        ;
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

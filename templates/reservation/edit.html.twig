@@ -1,17 +1,109 @@
-{% extends 'admin_base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier réservation</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
-{% block title %}Modifier réservation{% endblock %}
+    <style>
+        .content-card {
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            margin-top: 1.5rem;
+        }
 
-{% block body %}
-    <div class="page-switch" style="display:flex; gap:1rem; margin-bottom:2rem;">
-        <a href="/billet/" class="switch-btn">Tables billets</a>
-        <a href="/reservation/" class="switch-btn active">Tables réservations</a>
-    </div>
-    <section style="background:var(--panel); border:1px solid var(--gbord); border-radius:28px; padding:2.2rem; backdrop-filter:blur(20px);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.6rem;">
-            <h2 style="font-family:var(--serif); font-size:2.4rem; font-weight:400;">Modifier la <em style="color:var(--gold); font-style:italic;">réservation</em></h2>
-            <a href="{{ path('app_reservation_index') }}" class="crud-action-btn">← Retour</a>
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--serif);
+            font-size: 2.1rem;
+            font-weight: 300;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem 1.2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--gold2);
+        }
+
+        .delete-wrap {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <aside class="app-sidebar">
+        <div class="logo-area">Travel<em>ia</em></div>
+        <nav class="nav-menu">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+            <a href="{{ path('app_reservation_index') }}" class="nav-item active">
+                <span class="nav-icon">📘</span>
+                Réservations
+            </a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin</span>
+                <small>Accès complet</small>
+            </div>
         </div>
-        {{ include('reservation/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
-    </section>
-{% endblock %}
+    </aside>
+
+    <main class="app-main">
+        <div class="glow-bg"></div>
+
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Modifier la <em>réservation</em></h1>
+                    <p style="font-size: 0.9rem; opacity: 0.5; margin-top: 0.5rem;">
+                        Mets à jour les informations de la réservation.
+                    </p>
+                </div>
+                <div class="date-pill">Mise à jour</div>
+            </div>
+        </header>
+
+        <section class="content-card">
+            <div class="section-header">
+                <h2>Formulaire d’édition</h2>
+                <a href="{{ path('app_reservation_index') }}" class="back-btn">← Retour à la liste</a>
+            </div>
+
+            {{ include('reservation/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+            <div class="delete-wrap">
+                {{ include('reservation/_delete_form.html.twig') }}
+            </div>
+        </section>
+    </main>
+
+    {{ include('partials/delete_modal.html.twig') }}
+    <script src="{{ asset('js/admin.js') }}"></script>
+</body>
+</html>

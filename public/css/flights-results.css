@@ -61,9 +61,7 @@ select {
   display: flex;
   align-items: center;
   padding: 120px 36px 48px;
-  background:
-    linear-gradient(135deg, rgba(5, 8, 20, 0.76), rgba(8, 18, 45, 0.52)),
-    url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1800&q=85') center center / cover no-repeat;
+  background: linear-gradient(135deg, rgba(5, 8, 20, 0.58), rgba(8, 18, 45, 0.34));
 }
 
 .flights-overlay {
@@ -238,9 +236,7 @@ select {
   min-height: 100vh;
   position: relative;
   z-index: 2;
-  background:
-    linear-gradient(135deg, rgba(5, 8, 20, 0.82), rgba(10, 20, 50, 0.62)),
-    url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1800&q=85') center center / cover no-repeat;
+  background: linear-gradient(135deg, rgba(5, 8, 20, 0.66), rgba(10, 20, 50, 0.42));
 }
 
 .flights-results-wrapper {
@@ -480,9 +476,7 @@ select {
   min-height: 100vh;
   position: relative;
   z-index: 2;
-  background:
-    linear-gradient(135deg, rgba(5, 8, 20, 0.82), rgba(10, 20, 50, 0.62)),
-    url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1800&q=85') center / cover no-repeat;
+  background: linear-gradient(135deg, rgba(5, 8, 20, 0.66), rgba(10, 20, 50, 0.42));
 }
 
 .reservations-wrapper {

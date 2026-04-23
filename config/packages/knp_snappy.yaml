@@ -1,7 +1,10 @@
 knp_snappy:
+    # This bundle converts Twig-rendered HTML into a PDF by calling the
+    # external wkhtmltopdf executable installed on Windows.
     pdf:
-        enabled:    true
-        binary:     '"%kernel.project_dir%/vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe"'
+        enabled: true
+        # Replace this placeholder path if wkhtmltopdf is installed elsewhere.
+        binary: '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"'
         options:
             encoding: 'UTF-8'
             page-size: 'A4'
@@ -9,5 +12,3 @@ knp_snappy:
             margin-right: '10mm'
             margin-bottom: '12mm'
             margin-left: '10mm'
-    image:
-        enabled:    false

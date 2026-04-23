@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('deleteConfirmModal');
   const confirmBtn = document.getElementById('confirmDeleteBtn');
   const cancelBtns = document.querySelectorAll('[data-close-delete-modal]');

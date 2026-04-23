@@ -1,24 +1,222 @@
-{% extends 'admin_base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail réservation</title>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
-{% block title %}Détail réservation{% endblock %}
+    <style>
+        .content-card {
+            width: 100%;
+            background: var(--panel);
+            border: 1px solid var(--gbord);
+            border-radius: 28px;
+            padding: 2.2rem;
+            backdrop-filter: blur(20px);
+            margin-top: 1rem;
+        }
 
-{% block body %}
-    <div class="page-switch" style="display:flex; gap:1rem; margin-bottom:2rem;">
-        <a href="/billet/" class="switch-btn">Tables billets</a>
-        <a href="/reservation/" class="switch-btn active">Tables réservations</a>
-    </div>
-    <section style="background:var(--panel); border:1px solid var(--gbord); border-radius:28px; padding:2.2rem; backdrop-filter:blur(20px);">
-        <h2 style="font-family:var(--serif); font-size:2.4rem; font-weight:400; margin-bottom:1.5rem;">Réservation <em style="color:var(--gold); font-style:italic;">#{{ reservation.id }}</em></h2>
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:1.5rem;">
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Date</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.dateReservation ? reservation.dateReservation|date('d/m/Y') : '–' }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Statut</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.statut }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Paiement</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.modalitesPaiement }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Client ID</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.clientId }}</div></div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:1rem 1.2rem; grid-column:1/-1;"><div style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.4rem; font-weight:700;">Destination</div><div style="font-size:0.95rem; color:#fff; font-weight:600;">{{ reservation.paysDestination }}</div></div>
+        .section-header {
+            margin-bottom: 1.8rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--serif);
+            font-size: 2.4rem;
+            font-weight: 400;
+            color: #fff;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+
+        .detail-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            padding: 1.2rem 1.3rem;
+        }
+
+        .detail-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 0.55rem;
+            font-weight: 700;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .action-left {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--gold2);
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .delete-wrap {
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="app-sidebar">
+        <div class="logo-area">
+            Travel<em>ia</em>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <a href="{{ path('app_reservation_index') }}" class="crud-action-btn">← Retour</a>
-            <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="crud-action-btn">✏ Modifier</a>
+
+        <nav class="nav-menu">
+            <a href="{{ path('admin_dashboard') }}" class="nav-item">
+                <span class="nav-icon">⬚</span>
+                Tableau de bord
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🏨</span>
+                Hébergements
+            </a>
+
+            <a href="{{ path('app_reservation_index') }}" class="nav-item active">
+                <span class="nav-icon">📘</span>
+                Réservations
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🛶</span>
+                Activités
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👥</span>
+                Clients
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Paramètres
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <span>Admin</span>
+                <small>Accès complet</small>
+            </div>
         </div>
-    </section>
-{% endblock %}
+    </aside>
+
+    <main class="app-main">
+        <div class="glow-bg"></div>
+
+        <header class="header">
+            <div class="header-top">
+                <div class="header-greeting">
+                    <h1>Détail de la <em>réservation</em></h1>
+                    <p style="font-size: 0.9rem; opacity: 0.5; margin-top: 0.5rem;">
+                        Visualisation complète des informations de la réservation.
+                    </p>
+                </div>
+                <div class="date-pill">Consultation</div>
+            </div>
+        </header>
+
+        <section class="content-card">
+            <div class="section-header">
+                <h2>Réservation #{{ reservation.id }}</h2>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">ID</div>
+                    <div class="detail-value">{{ reservation.id }}</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-label">Date réservation</div>
+                    <div class="detail-value">{{ reservation.dateReservation ? reservation.dateReservation|date('Y-m-d') : '' }}</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-label">Statut</div>
+                    <div class="detail-value">{{ reservation.statut }}</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-label">Paiement</div>
+                    <div class="detail-value">{{ reservation.modalitesPaiement }}</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-label">Client ID</div>
+                    <div class="detail-value">{{ reservation.clientId }}</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-label">Destination</div>
+                    <div class="detail-value">{{ reservation.paysDestination }}</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <div class="action-left">
+                    <a href="{{ path('app_reservation_index') }}" class="action-btn">← Retour</a>
+                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="action-btn">Modifier</a>
+                </div>
+
+                <div class="delete-wrap">
+                    {{ include('reservation/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {{ include('partials/delete_modal.html.twig') }}
+    <script src="{{ asset('js/admin.js') }}"></script>
+</body>
+</html>
