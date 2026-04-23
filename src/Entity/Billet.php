@@ -33,6 +33,30 @@ class Billet
     #[ORM\Column(name: 'statut', type: 'string', length: 50, nullable: true)]
     private ?string $statut = null;
 
+    #[ORM\Column(name: 'booked_trip_type', type: 'string', length: 20, nullable: true)]
+    private ?string $bookedTripType = null;
+
+    #[ORM\Column(name: 'booked_travel_class', type: 'string', length: 30, nullable: true)]
+    private ?string $bookedTravelClass = null;
+
+    #[ORM\Column(name: 'booked_fare_label', type: 'string', length: 50, nullable: true)]
+    private ?string $bookedFareLabel = null;
+
+    #[ORM\Column(name: 'booked_stops_count', type: 'integer', nullable: true)]
+    private ?int $bookedStopsCount = null;
+
+    #[ORM\Column(name: 'booked_duration_minutes', type: 'integer', nullable: true)]
+    private ?int $bookedDurationMinutes = null;
+
+    #[ORM\Column(name: 'booked_origin_code', type: 'string', length: 10, nullable: true)]
+    private ?string $bookedOriginCode = null;
+
+    #[ORM\Column(name: 'booked_destination_code', type: 'string', length: 10, nullable: true)]
+    private ?string $bookedDestinationCode = null;
+
+    #[ORM\Column(name: 'booked_return_date', type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $bookedReturnDate = null;
+
     #[ORM\ManyToOne(inversedBy: 'billets')]
     #[ORM\JoinColumn(name: 'id_reservation', referencedColumnName: 'id_reservation', nullable: true)]
     private ?Reservation $reservation = null;
@@ -200,6 +224,102 @@ class Billet
     public function setStatut(?string $statut): static
     {
         $this->statut = $statut;
+        return $this;
+    }
+
+    public function getBookedTripType(): ?string
+    {
+        return $this->bookedTripType;
+    }
+
+    public function setBookedTripType(?string $bookedTripType): static
+    {
+        $this->bookedTripType = $bookedTripType;
+
+        return $this;
+    }
+
+    public function getBookedTravelClass(): ?string
+    {
+        return $this->bookedTravelClass;
+    }
+
+    public function setBookedTravelClass(?string $bookedTravelClass): static
+    {
+        $this->bookedTravelClass = $bookedTravelClass;
+
+        return $this;
+    }
+
+    public function getBookedFareLabel(): ?string
+    {
+        return $this->bookedFareLabel;
+    }
+
+    public function setBookedFareLabel(?string $bookedFareLabel): static
+    {
+        $this->bookedFareLabel = $bookedFareLabel;
+
+        return $this;
+    }
+
+    public function getBookedStopsCount(): ?int
+    {
+        return $this->bookedStopsCount;
+    }
+
+    public function setBookedStopsCount(?int $bookedStopsCount): static
+    {
+        $this->bookedStopsCount = $bookedStopsCount;
+
+        return $this;
+    }
+
+    public function getBookedDurationMinutes(): ?int
+    {
+        return $this->bookedDurationMinutes;
+    }
+
+    public function setBookedDurationMinutes(?int $bookedDurationMinutes): static
+    {
+        $this->bookedDurationMinutes = $bookedDurationMinutes;
+
+        return $this;
+    }
+
+    public function getBookedOriginCode(): ?string
+    {
+        return $this->bookedOriginCode;
+    }
+
+    public function setBookedOriginCode(?string $bookedOriginCode): static
+    {
+        $this->bookedOriginCode = $bookedOriginCode;
+
+        return $this;
+    }
+
+    public function getBookedDestinationCode(): ?string
+    {
+        return $this->bookedDestinationCode;
+    }
+
+    public function setBookedDestinationCode(?string $bookedDestinationCode): static
+    {
+        $this->bookedDestinationCode = $bookedDestinationCode;
+
+        return $this;
+    }
+
+    public function getBookedReturnDate(): ?\DateTimeImmutable
+    {
+        return $this->bookedReturnDate;
+    }
+
+    public function setBookedReturnDate(?\DateTimeImmutable $bookedReturnDate): static
+    {
+        $this->bookedReturnDate = $bookedReturnDate;
+
         return $this;
     }
 

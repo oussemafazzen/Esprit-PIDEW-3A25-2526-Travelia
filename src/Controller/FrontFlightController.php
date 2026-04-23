@@ -10,6 +10,7 @@ use App\Repository\BilletRepository;
 use App\Repository\ReservationRepository;
 use App\Service\AmadeusFlightService;
 use App\Service\DestinationCodeResolver;
+use App\Service\PromoCodeEvaluator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -424,10 +425,9 @@ class FrontFlightController extends AbstractController
         BilletRepository $billetRepository,
         ReservationRepository $reservationRepository,
         EntityManagerInterface $em,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        PromoCodeEvaluator $promoCodeEvaluator
     ): Response {
-        $billetId = (int) $request->request->get('billet_id', 0);
-        $reservationId = (int) $request->request->get('reservation_id', 0);
         $paymentMethod = trim((string) $request->request->get('payment_method', ''));
         $selectedPrice = (float) $request->request->get('selected_price', 0);
         $selectedDateDepart = trim((string) $request->request->get('selected_date_depart', ''));
@@ -447,26 +447,31 @@ class FrontFlightController extends AbstractController
         $accountHolderName = preg_replace('/\s+/', ' ', $accountHolderName) ?? $accountHolderName;
         $cardNumber = preg_replace('/[\s-]+/', '', $cardNumber) ?? $cardNumber;
         $ibanOrRib = preg_replace('/\s+/', '', $ibanOrRib) ?? $ibanOrRib;
-        $paymentPayload = [
-            'billet_id' => $billetId,
-            'reservation_id' => $reservationId,
-            'selected_price' => $selectedPrice > 0 ? number_format($selectedPrice, 2, '.', '') : '',
-            'selected_date_depart' => $selectedDateDepart,
-            'selected_date_arrivee' => $selectedDateArrivee,
-            'destination' => $selectedDestination,
-            'payment_method' => $paymentMethod,
-            'cardholder_name' => $cardholderName,
-            'card_number' => $cardNumber,
-            'expiry_date' => $expiryDate,
-            'cvv' => $cvv,
-            'bank_name' => $bankName,
-            'iban_or_rib' => $ibanOrRib,
-            'account_holder_name' => $accountHolderName,
-            'reference' => (string) $request->request->get('reference', ''),
-            'origin_code' => (string) $request->request->get('origin_code', ''),
-            'destination_code' => (string) $request->request->get('destination_code', ''),
-            'offer_label' => (string) $request->request->get('offer_label', ''),
-        ];
+
+        $travelClass = $this->normalizeSearchTravelClass((string) $request->request->get('travel_class', 'economy'));
+        $promoCode = trim((string) $request->request->get('promo_code', ''));
+        $promoEvaluation = $promoCodeEvaluator->evaluate($promoCode, $selectedPrice, $travelClass);
+        $promoErrors = [];
+        if (in_array($promoEvaluation['status'], ['invalid', 'condition_failed'], true) && $promoEvaluation['message'] !== null && $promoEvaluation['message'] !== '') {
+            $promoErrors[] = $promoEvaluation['message'];
+        }
+
+        $paymentPayload = $this->buildFlightPaymentPayloadForTemplate(
+            $request,
+            $cardholderName,
+            $cardNumber,
+            $expiryDate,
+            $cvv,
+            $bankName,
+            $ibanOrRib,
+            $accountHolderName,
+            $paymentMethod
+        );
+
+        $promoRulesJson = json_encode(
+            $promoCodeEvaluator->getClientRulesConfig(),
+            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR
+        );
 
         $validationBillet = new Billet();
         $validationBillet->setModePaiement($paymentMethod);
@@ -495,10 +500,13 @@ class FrontFlightController extends AbstractController
             $validatorErrors[] = $violation->getMessage();
         }
 
-        if (count($validatorErrors) > 0) {
+        $validationErrors = array_merge($promoErrors, $validatorErrors);
+
+        if (count($validationErrors) > 0) {
             return $this->render('front/flights/payment.html.twig', [
                 'payment' => $paymentPayload,
-                'payment_errors' => $validatorErrors,
+                'payment_errors' => $validationErrors,
+                'promo_rules_json' => $promoRulesJson,
             ]);
         }
 
@@ -538,29 +546,14 @@ class FrontFlightController extends AbstractController
 
         if (count($paymentErrors) > 0) {
             return $this->render('front/flights/payment.html.twig', [
-                'payment' => [
-                    'billet_id' => $billetId,
-                    'reservation_id' => $reservationId,
-                    'selected_price' => $selectedPrice > 0 ? number_format($selectedPrice, 2, '.', '') : '',
-                    'selected_date_depart' => $selectedDateDepart,
-                    'selected_date_arrivee' => $selectedDateArrivee,
-                    'destination' => $selectedDestination,
-                    'payment_method' => $paymentMethod,
-                    'cardholder_name' => $cardholderName,
-                    'card_number' => $cardNumber,
-                    'expiry_date' => $expiryDate,
-                    'cvv' => $cvv,
-                    'bank_name' => $bankName,
-                    'iban_or_rib' => $ibanOrRib,
-                    'account_holder_name' => $accountHolderName,
-                    'reference' => (string) $request->request->get('reference', ''),
-                    'origin_code' => (string) $request->request->get('origin_code', ''),
-                    'destination_code' => (string) $request->request->get('destination_code', ''),
-                    'offer_label' => (string) $request->request->get('offer_label', ''),
-                ],
+                'payment' => $paymentPayload,
                 'payment_errors' => $paymentErrors,
+                'promo_rules_json' => $promoRulesJson,
             ]);
         }
+
+        $billetId = (int) $request->request->get('billet_id', 0);
+        $reservationId = (int) $request->request->get('reservation_id', 0);
 
         $reservation = null;
 
@@ -641,8 +634,11 @@ class FrontFlightController extends AbstractController
             }
         }
 
-        if ($selectedPrice > 0 && method_exists($billet, 'setPrix')) {
-            $billet->setPrix($selectedPrice);
+        $this->applyBilletBookingSnapshot($billet, $request);
+
+        $finalPrice = $promoEvaluation['final_price'];
+        if ($finalPrice > 0 && method_exists($billet, 'setPrix')) {
+            $billet->setPrix($finalPrice);
         }
 
         if (method_exists($billet, 'setReservation')) {
@@ -661,8 +657,10 @@ class FrontFlightController extends AbstractController
     }
 
     #[Route('/vols/paiement/page', name: 'app_flights_payment_page', methods: ['POST'])]
-    public function paymentPage(Request $request): Response
+    public function paymentPage(Request $request, PromoCodeEvaluator $promoCodeEvaluator): Response
     {
+        $travelClass = $this->normalizeSearchTravelClass((string) $request->request->get('travel_class', 'economy'));
+        $tripType = $this->normalizeTripType((string) $request->request->get('trip_type', 'return'));
         $paymentData = [
             'billet_id' => (int) $request->request->get('billet_id', 0),
             'reservation_id' => (int) $request->request->get('reservation_id', 0),
@@ -674,11 +672,110 @@ class FrontFlightController extends AbstractController
             'destination_code' => (string) $request->request->get('destination_code', ''),
             'destination' => (string) $request->request->get('destination', ''),
             'offer_label' => (string) $request->request->get('offer_label', ''),
+            'travel_class' => $travelClass,
+            'travel_class_label' => $this->getTravelClassLabel($travelClass),
+            'trip_type' => $tripType,
+            'booked_stops_count' => (string) $request->request->get('booked_stops_count', ''),
+            'booked_duration_minutes' => (string) $request->request->get('booked_duration_minutes', ''),
+            'booked_return_date' => (string) $request->request->get('booked_return_date', ''),
+            'promo_code' => '',
+            'payment_method' => 'carte',
         ];
+
+        $promoRulesJson = json_encode(
+            $promoCodeEvaluator->getClientRulesConfig(),
+            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR
+        );
 
         return $this->render('front/flights/payment.html.twig', [
             'payment' => $paymentData,
+            'promo_rules_json' => $promoRulesJson,
         ]);
+    }
+
+    private function buildFlightPaymentPayloadForTemplate(
+        Request $request,
+        string $cardholderName,
+        string $cardNumber,
+        string $expiryDate,
+        string $cvv,
+        string $bankName,
+        string $ibanOrRib,
+        string $accountHolderName,
+        string $paymentMethod
+    ): array {
+        $selectedPrice = (float) $request->request->get('selected_price', 0);
+        $travelClass = $this->normalizeSearchTravelClass((string) $request->request->get('travel_class', 'economy'));
+        $tripType = $this->normalizeTripType((string) $request->request->get('trip_type', 'return'));
+
+        return [
+            'billet_id' => (int) $request->request->get('billet_id', 0),
+            'reservation_id' => (int) $request->request->get('reservation_id', 0),
+            'selected_price' => $selectedPrice > 0 ? number_format($selectedPrice, 2, '.', '') : trim((string) $request->request->get('selected_price', '')),
+            'selected_date_depart' => trim((string) $request->request->get('selected_date_depart', '')),
+            'selected_date_arrivee' => trim((string) $request->request->get('selected_date_arrivee', '')),
+            'destination' => trim((string) $request->request->get('destination', '')),
+            'payment_method' => $paymentMethod,
+            'cardholder_name' => $cardholderName,
+            'card_number' => $cardNumber,
+            'expiry_date' => $expiryDate,
+            'cvv' => $cvv,
+            'bank_name' => $bankName,
+            'iban_or_rib' => $ibanOrRib,
+            'account_holder_name' => $accountHolderName,
+            'reference' => (string) $request->request->get('reference', ''),
+            'origin_code' => (string) $request->request->get('origin_code', ''),
+            'destination_code' => (string) $request->request->get('destination_code', ''),
+            'offer_label' => (string) $request->request->get('offer_label', ''),
+            'travel_class' => $travelClass,
+            'travel_class_label' => $this->getTravelClassLabel($travelClass),
+            'trip_type' => $tripType,
+            'booked_stops_count' => trim((string) $request->request->get('booked_stops_count', '')),
+            'booked_duration_minutes' => trim((string) $request->request->get('booked_duration_minutes', '')),
+            'booked_return_date' => trim((string) $request->request->get('booked_return_date', '')),
+            'promo_code' => trim((string) $request->request->get('promo_code', '')),
+        ];
+    }
+
+    private function applyBilletBookingSnapshot(Billet $billet, Request $request): void
+    {
+        $tripType = $this->normalizeTripType((string) $request->request->get('trip_type', 'return'));
+        $travelClass = $this->normalizeSearchTravelClass((string) $request->request->get('travel_class', 'economy'));
+        $fareLabel = trim((string) $request->request->get('offer_label', ''));
+
+        $stopsRaw = $request->request->get('booked_stops_count');
+        $stops = is_numeric($stopsRaw) ? (int) $stopsRaw : null;
+
+        $durationRaw = $request->request->get('booked_duration_minutes');
+        $durationMinutes = is_numeric($durationRaw) ? (int) $durationRaw : null;
+
+        $origin = strtoupper(trim((string) $request->request->get('origin_code', '')));
+        $destination = strtoupper(trim((string) $request->request->get('destination_code', '')));
+        if ($origin === '---') {
+            $origin = '';
+        }
+        if ($destination === '---') {
+            $destination = '';
+        }
+
+        $billet->setBookedTripType($tripType);
+        $billet->setBookedTravelClass($travelClass);
+        $billet->setBookedFareLabel($fareLabel !== '' ? $fareLabel : null);
+        $billet->setBookedStopsCount($stops);
+        $billet->setBookedDurationMinutes($durationMinutes);
+        $billet->setBookedOriginCode($origin !== '' ? $origin : null);
+        $billet->setBookedDestinationCode($destination !== '' ? $destination : null);
+
+        $returnDateStr = trim((string) $request->request->get('booked_return_date', ''));
+        if ($tripType === 'return' && $returnDateStr !== '') {
+            try {
+                $billet->setBookedReturnDate(new \DateTimeImmutable($returnDateStr));
+            } catch (\Throwable) {
+                $billet->setBookedReturnDate(null);
+            }
+        } else {
+            $billet->setBookedReturnDate(null);
+        }
     }
 
     /**

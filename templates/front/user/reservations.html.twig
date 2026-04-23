@@ -628,6 +628,45 @@
             color: #fecaca;
         }
 
+        .reservation-flight-meta {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .reservation-meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .reservation-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 16px;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .reservation-meta-k {
+            display: block;
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(232, 201, 122, 0.85);
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .reservation-meta-foot {
+            margin: 10px 0 0;
+            font-size: 0.72rem;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.48);
+        }
+
         @media (max-width: 640px) {
             .form-modal-overlay,
             .delete-modal-overlay {
@@ -859,8 +898,8 @@
                         <div class="reservation-center">
                             {% if reservation.billets is not empty %}
                                 {% for billet in reservation.billets %}
-                                    {% set departCode = 'TUN' %}
-                                    {% set arriveeCode = reservation.paysDestination ?? reservation.pays ?? 'Destination' %}
+                                    {% set departCode = billet.bookedOriginCode is not empty ? billet.bookedOriginCode : 'TUN' %}
+                                    {% set arriveeCode = billet.bookedDestinationCode is not empty ? billet.bookedDestinationCode : (reservation.paysDestination ?? reservation.pays ?? 'Destination') %}
                                     {% set transportType = billet.typeTransport ?? 'avion' %}
                                     {% set billetStatusRaw = billet.statut ?? '' %}
                                     {% set billetStatusKey = billetStatusRaw|lower|replace({' ': '_', 'é':'e', 'è':'e', 'ê':'e', 'Ã©':'e', 'Ã¨':'e', 'Ãª':'e'}) %}
@@ -904,6 +943,83 @@
                                                 <span class="reservation-badge reservation-badge--status reservation-badge--{{ billetStatusKey }}">
                                                     {{ billetStatusLabels[billetStatusKey]|default(billetStatusRaw) }}
                                                 </span>
+                                            {% endif %}
+                                        </div>
+
+                                        {% set depDt = billet.dateDepart %}
+                                        {% set arrDt = billet.dateArrivee %}
+                                        {% set hasSnapshot = billet.bookedTripType is not empty %}
+                                        {% set tc = billet.bookedTravelClass|default('') %}
+                                        {% set classLabels = {
+                                            'business': 'Business',
+                                            'first': 'Première',
+                                            'premium_economy': 'Premium Economy',
+                                            'economy': 'Économique'
+                                        } %}
+                                        {% set classDisplay = tc ? (classLabels[tc]|default(tc|capitalize)) : '—' %}
+                                        {% set fareRaw = billet.bookedFareLabel|default('') %}
+                                        {% set fareDisplay = fareRaw ? (fareRaw == 'Eco' ? 'Éco' : fareRaw) : '—' %}
+                                        {% set stops = billet.bookedStopsCount %}
+                                        {% if stops is null %}
+                                            {% set stopsLabel = '—' %}
+                                        {% elseif stops == 0 %}
+                                            {% set stopsLabel = 'Direct' %}
+                                        {% elseif stops == 1 %}
+                                            {% set stopsLabel = '1 escale' %}
+                                        {% else %}
+                                            {% set stopsLabel = stops ~ ' escales' %}
+                                        {% endif %}
+                                        {% set bdur = billet.bookedDurationMinutes %}
+                                        {% if bdur is not null and bdur > 0 %}
+                                            {% set durLabel = (bdur // 60) ~ ' h ' ~ (bdur % 60) ~ ' min' %}
+                                        {% else %}
+                                            {% set durLabel = '—' %}
+                                        {% endif %}
+                                        {% set tripKindLabel = billet.bookedTripType == 'return' ? 'Aller-retour' : (billet.bookedTripType == 'one_way' ? 'Aller simple' : '—') %}
+
+                                        <div class="reservation-flight-meta">
+                                            <div class="reservation-meta-badges">
+                                                <span class="reservation-badge">{{ tripKindLabel }}</span>
+                                                <span class="reservation-badge">{{ stopsLabel }}</span>
+                                                <span class="reservation-badge">Classe : {{ classDisplay }}</span>
+                                                <span class="reservation-badge">Tarif : {{ fareDisplay }}</span>
+                                            </div>
+                                            <div class="reservation-meta-grid">
+                                                <div>
+                                                    <span class="reservation-meta-k">Départ</span>
+                                                    {% if depDt %}
+                                                        {{ depDt|date('d M Y, H:i') }}
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <span class="reservation-meta-k">Arrivée (segment)</span>
+                                                    {% if arrDt %}
+                                                        {{ arrDt|date('d M Y, H:i') }}
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <span class="reservation-meta-k">Retour (date choisie)</span>
+                                                    {% if billet.bookedReturnDate %}
+                                                        {{ billet.bookedReturnDate|date('d M Y') }}
+                                                    {% elseif billet.bookedTripType == 'return' %}
+                                                        —
+                                                    {% else %}
+                                                        N/A
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <span class="reservation-meta-k">Durée du vol (réservation)</span>
+                                                    {{ durLabel }}
+                                                </div>
+                                            </div>
+                                            {% if not hasSnapshot %}
+                                                <p class="reservation-meta-foot">
+                                                    Ancien billet : détail de réservation non enregistré. Les prochains paiements incluront l’historique complet.
+                                                </p>
                                             {% endif %}
                                         </div>
 

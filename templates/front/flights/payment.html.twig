@@ -61,6 +61,30 @@
         font-weight: 700;
     }
 
+    .payment-pricing-recap {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .promo-field-row {
+        margin-bottom: 8px;
+    }
+
+    .promo-live-message {
+        margin-top: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #f0c86a;
+        min-height: 1.25em;
+    }
+
+    .promo-live-message.is-muted {
+        color: rgba(255, 255, 255, 0.55);
+        font-weight: 500;
+    }
+
     .payment-form {
         display: grid;
         gap: 16px;
@@ -262,27 +286,68 @@
                 <div class="payment-summary-label">Destination</div>
                 <div class="payment-summary-value">{{ payment.destination }}</div>
             </div>
-            <div class="payment-summary-item">
-                <div class="payment-summary-label">Prix</div>
-                <div class="payment-summary-value">{{ payment.selected_price }} TND</div>
-            </div>
+            {% if payment.travel_class_label is defined %}
+                <div class="payment-summary-item">
+                    <div class="payment-summary-label">Classe</div>
+                    <div class="payment-summary-value">{{ payment.travel_class_label }}</div>
+                </div>
+            {% endif %}
             <div class="payment-summary-item">
                 <div class="payment-summary-label">Départ</div>
                 <div class="payment-summary-value">{{ payment.selected_date_depart ?: 'Non définie' }}</div>
             </div>
             <div class="payment-summary-item">
-                <div class="payment-summary-label">Offre</div>
-                <div class="payment-summary-value">{{ payment.offer_label ?: 'Standard' }}</div>
+                <div class="payment-summary-label">Tarif</div>
+                <div class="payment-summary-value">{{ (payment.offer_label ?: 'Standard') == 'Eco' ? 'Éco' : (payment.offer_label ?: 'Standard') }}</div>
             </div>
         </div>
 
-        <form method="POST" action="{{ path('app_flights_payment_submit') }}" class="payment-form">
+        <div class="payment-pricing-recap" id="payment-pricing-recap">
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Prix de référence</div>
+                <div class="payment-summary-value" id="payment-recap-base">{{ payment.selected_price }} TND</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Remise (code promo)</div>
+                <div class="payment-summary-value" id="payment-recap-discount">—</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Total à payer</div>
+                <div class="payment-summary-value" id="payment-recap-final">{{ payment.selected_price }} TND</div>
+            </div>
+            <div class="payment-summary-item">
+                <div class="payment-summary-label">Points fidélité (simulation)</div>
+                <div class="payment-summary-value" id="payment-recap-points">0 pts</div>
+                <div style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.55);font-weight:500;">1 pt / 10 TND payés après remise</div>
+            </div>
+        </div>
+
+        <script type="application/json" id="flight-promo-rules">{{ promo_rules_json|default('[]')|raw }}</script>
+
+        <form method="POST" action="{{ path('app_flights_payment_submit') }}" class="payment-form" id="flight-payment-form"
+              data-base-price="{{ payment.selected_price }}"
+              data-travel-class="{{ payment.travel_class|default('economy') }}">
             <input type="hidden" name="billet_id" value="{{ payment.billet_id }}">
             <input type="hidden" name="reservation_id" value="{{ payment.reservation_id }}">
             <input type="hidden" name="selected_price" value="{{ payment.selected_price }}">
             <input type="hidden" name="selected_date_depart" value="{{ payment.selected_date_depart }}">
             <input type="hidden" name="selected_date_arrivee" value="{{ payment.selected_date_arrivee }}">
             <input type="hidden" name="destination" value="{{ payment.destination }}">
+            <input type="hidden" name="reference" value="{{ payment.reference|default('') }}">
+            <input type="hidden" name="origin_code" value="{{ payment.origin_code|default('') }}">
+            <input type="hidden" name="destination_code" value="{{ payment.destination_code|default('') }}">
+            <input type="hidden" name="offer_label" value="{{ payment.offer_label|default('') }}">
+            <input type="hidden" name="travel_class" value="{{ payment.travel_class|default('economy') }}">
+            <input type="hidden" name="trip_type" value="{{ payment.trip_type|default('return') }}">
+            <input type="hidden" name="booked_stops_count" value="{{ payment.booked_stops_count|default('') }}">
+            <input type="hidden" name="booked_duration_minutes" value="{{ payment.booked_duration_minutes|default('') }}">
+            <input type="hidden" name="booked_return_date" value="{{ payment.booked_return_date|default('') }}">
+
+            <div class="payment-field promo-field-row">
+                <label for="promo_code">Code promotionnel</label>
+                <input type="text" id="promo_code" name="promo_code" value="{{ payment.promo_code|default('') }}" placeholder="Ex. SPRING10" autocomplete="off">
+                <div class="promo-live-message is-muted" id="promo-live-message" aria-live="polite"></div>
+            </div>
 
             <div class="payment-field">
                 <label for="payment_method">Mode de paiement</label>
@@ -359,6 +424,111 @@
             paymentMethodSelect.addEventListener('change', updatePaymentMethodFields);
             updatePaymentMethodFields();
         }
+
+        const form = document.getElementById('flight-payment-form');
+        const rulesEl = document.getElementById('flight-promo-rules');
+        const promoInput = document.getElementById('promo_code');
+        const liveMsg = document.getElementById('promo-live-message');
+        const elBase = document.getElementById('payment-recap-base');
+        const elDiscount = document.getElementById('payment-recap-discount');
+        const elFinal = document.getElementById('payment-recap-final');
+        const elPoints = document.getElementById('payment-recap-points');
+
+        function round2(value) {
+            return Math.round(value * 100) / 100;
+        }
+
+        function formatTnd(value) {
+            return round2(Math.max(0, value)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' TND';
+        }
+
+        function applyPromoPreview(code, base, travelClass, rules) {
+            const normalized = (code || '').trim().toUpperCase();
+            if (!normalized) {
+                return { status: 'none', discount: 0, final: round2(base), message: null };
+            }
+
+            const rule = rules.find((item) => item.code === normalized);
+            if (!rule) {
+                return {
+                    status: 'invalid',
+                    discount: 0,
+                    final: round2(base),
+                    message: 'Code promotionnel invalide.',
+                };
+            }
+
+            if (rule.requiresTravelClass && travelClass !== rule.requiresTravelClass) {
+                return {
+                    status: 'condition_failed',
+                    discount: 0,
+                    final: round2(base),
+                    message: 'Ce code promotionnel s\'applique uniquement aux réservations en classe Business.',
+                };
+            }
+
+            let discount = 0;
+            if (rule.type === 'percent') {
+                discount = round2(base * (Number(rule.percent) / 100));
+            } else if (rule.type === 'fixed_tnd') {
+                discount = round2(Math.min(Number(rule.amountTnd), base));
+            }
+
+            const final = round2(Math.max(0, base - discount));
+
+            return { status: 'applied', discount, final, message: null };
+        }
+
+        function updatePricingRecap() {
+            if (!form || !rulesEl || !promoInput || !elBase || !elDiscount || !elFinal || !elPoints) {
+                return;
+            }
+
+            let rules = [];
+            try {
+                rules = JSON.parse(rulesEl.textContent || '[]');
+            } catch (e) {
+                rules = [];
+            }
+
+            const base = parseFloat(String(form.dataset.basePrice || '').replace(',', '.')) || 0;
+            const travelClass = String(form.dataset.travelClass || 'economy');
+            const preview = applyPromoPreview(promoInput.value, base, travelClass, rules);
+
+            elBase.textContent = formatTnd(base);
+
+            if (preview.status === 'none') {
+                elDiscount.textContent = '—';
+                elFinal.textContent = formatTnd(base);
+                if (liveMsg) {
+                    liveMsg.textContent = '';
+                    liveMsg.classList.add('is-muted');
+                }
+            } else if (preview.status === 'invalid' || preview.status === 'condition_failed') {
+                elDiscount.textContent = '—';
+                elFinal.textContent = formatTnd(base);
+                if (liveMsg) {
+                    liveMsg.textContent = preview.message || '';
+                    liveMsg.classList.remove('is-muted');
+                }
+            } else {
+                elDiscount.textContent = preview.discount > 0 ? ('− ' + formatTnd(preview.discount)) : '—';
+                elFinal.textContent = formatTnd(preview.final);
+                if (liveMsg) {
+                    liveMsg.textContent = '';
+                    liveMsg.classList.add('is-muted');
+                }
+            }
+
+            const points = Math.floor((preview.final || 0) / 10);
+            elPoints.textContent = points + ' pts';
+        }
+
+        if (promoInput) {
+            promoInput.addEventListener('input', updatePricingRecap);
+        }
+
+        updatePricingRecap();
     })();
 </script>
 {% endblock %}
