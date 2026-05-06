@@ -1,0 +1,23 @@
+parameters:
+    level: 5
+    paths:
+        - src/Entity/Hebergement.php
+        - src/Entity/Reservationhebergement.php
+        - src/Controller/HebergementController.php
+        - src/Controller/ReservationhebergementController.php
+        - src/Repository/HebergementRepository.php
+        - src/Repository/ReservationhebergementRepository.php
+    ignoreErrors:
+        #
+        # CORRECTION 1 — Faux positif Doctrine ORM :
+        # PHPStan ne voit pas l'affectation de l'ID car Doctrine
+        # l'assigne via la réflexion PHP (non visible statiquement).
+        # L'annotation ORM\GeneratedValue garantit que la DB génère l'entier.
+        #
+        - '#Property App\\Entity\\Hebergement::\$idHebergement \(int\|null\) is never assigned int#'
+        #
+        # CORRECTION 2 — Même cas pour Reservationhebergement.
+        # L'ID est auto-généré par la base de données (AUTO_INCREMENT).
+        #
+        - '#Property App\\Entity\\Reservationhebergement::\$idReservationHebergement \(int\|null\) is never assigned int#'
+    treatPhpDocTypesAsCertain: false
