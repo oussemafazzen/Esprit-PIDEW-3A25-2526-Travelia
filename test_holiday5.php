@@ -1,0 +1,1 @@
+<?php require "vendor/autoload.php"; use Symfony\Component\Dotenv\Dotenv; (new Dotenv())->bootEnv(__DIR__."/.env"); $url = "https://holidays.abstractapi.com/v1/?api_key=".$_ENV["ABSTRACT_HOLIDAYS_API_KEY"]."&country=TR&year=2026&month=4&day=23"; $res = file_get_contents($url); var_dump($res); ?>

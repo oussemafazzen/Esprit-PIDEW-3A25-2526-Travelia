@@ -360,24 +360,6 @@
     </div>
 
     <script>
-<<<<<<< HEAD
-        document.getElementById('payment-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Stay on page to show the luxury modal
-            
-            const form = this;
-            const formData = new FormData(form);
-
-            // Send via AJAX so we can stay on this page to show the modal!
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if(response.ok) {
-                    // Show the crystal success modal!
-                    document.getElementById('success-modal-overlay').style.display = 'flex';
-                }
-            });
-=======
         function initPaymentDynamics() {
             const methodSelect = document.getElementById('paiement_methodePaiement');
             const cardFields = document.getElementById('dynamic-card-fields');
@@ -472,7 +454,6 @@
                     console.error('Error submitting form:', err);
                 });
             }
->>>>>>> 1b76abe (feat: add dynamic payment method fields+ currency converter API for the payment of the reservation of hotels)
         });
     </script>
 </body>

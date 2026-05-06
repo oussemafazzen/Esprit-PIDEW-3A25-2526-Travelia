@@ -1,0 +1,1 @@
+<?php $apiKey = "c9613f28855f96b336b0e13b"; $url = "https://v6.exchangerate-api.com/v6/{$apiKey}/latest/EUR"; try { $response = file_get_contents($url); var_dump(substr($response, 0, 100)); } catch (\Throwable $e) { echo "Error: " . $e->getMessage() . "\n"; } $error = error_get_last(); if ($error) var_dump($error); ?>

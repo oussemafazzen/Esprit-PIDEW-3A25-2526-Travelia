@@ -217,8 +217,11 @@ final class ReservationController extends AbstractController
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($reservation);
-            $entityManager->flush();
+            // Completely bypass Doctrine UnitOfWork to avoid complex topological commit order bugs
+            // Execute raw SQL to delete billets first, then the reservation.
+            $conn = $entityManager->getConnection();
+            $conn->executeStatement('DELETE FROM billet WHERE id_reservation = ?', [$reservation->getId()]);
+            $conn->executeStatement('DELETE FROM reservation WHERE id_reservation = ?', [$reservation->getId()]);
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);

@@ -570,6 +570,11 @@ class FrontFlightController extends AbstractController
             ]);
         }
 
+        // Try to reuse an existing reservation when coming from the edit flow
+        if ($reservationId > 0) {
+            $reservation = $reservationRepository->find($reservationId);
+        }
+
         if (!$reservation) {
             $reservation = new Reservation();
 
@@ -577,30 +582,60 @@ class FrontFlightController extends AbstractController
                 $reservation->setDateReservation(new \DateTime('today'));
             }
 
-            if (method_exists($reservation, 'setStatut')) {
-                $reservation->setStatut('confirmé');
-            }
-
-            if (method_exists($reservation, 'setModalitesPaiement')) {
-                $reservation->setModalitesPaiement($paymentMethod);
-            }
-
             if (method_exists($reservation, 'setClientId')) {
                 $reservation->setClientId($currentClient->getId());
             }
 
-            if (method_exists($reservation, 'setPaysDestination')) {
-                $reservation->setPaysDestination($selectedDestination !== '' ? $selectedDestination : 'Non défini');
-            }
-
             $em->persist($reservation);
-            $em->flush();
         }
+
+        // Always update mutable fields on the reservation
+        if (method_exists($reservation, 'setStatut')) {
+            $reservation->setStatut('confirmé');
+        }
+
+        if (method_exists($reservation, 'setModalitesPaiement')) {
+            $reservation->setModalitesPaiement($paymentMethod);
+        }
+
+        if ($selectedDestination !== '' && method_exists($reservation, 'setPaysDestination')) {
+            $reservation->setPaysDestination($selectedDestination);
+        } elseif (!$reservation->getPaysDestination() && method_exists($reservation, 'setPaysDestination')) {
+            $reservation->setPaysDestination('Non défini');
+        }
+
+        $em->flush();
+
 
         $billet = null;
 
         if ($billetId > 0) {
             $billet = $billetRepository->find($billetId);
+        }
+
+        // Fix duplicate billets bug: If no explicit billet ID was provided but we are
+        // updating an existing reservation, reuse its first billet instead of creating a new one.
+        if (!$billet && $reservation && method_exists($reservation, 'getBillets')) {
+            $existingBillets = $reservation->getBillets();
+            if (count($existingBillets) > 0) {
+                $billet = $existingBillets->first();
+                
+                // Properly remove any extra duplicated billets from both the collection and UnitOfWork
+                foreach ($existingBillets as $existingBillet) {
+                    if ($existingBillet !== $billet) {
+                        $existingBillets->removeElement($existingBillet);
+                        $em->remove($existingBillet);
+                    }
+                }
+                
+                // Aggressively wipe duplicates from DB to bypass any UnitOfWork caching bugs
+                if ($billet->getId()) {
+                    $em->getConnection()->executeStatement(
+                        'DELETE FROM billet WHERE id_reservation = ? AND id_billet != ?',
+                        [$reservation->getId(), $billet->getId()]
+                    );
+                }
+            }
         }
 
         if (!$billet) {
@@ -612,17 +647,6 @@ class FrontFlightController extends AbstractController
             $em->persist($billet);
         }
 
-        if (method_exists($reservation, 'setModalitesPaiement')) {
-            $reservation->setModalitesPaiement($paymentMethod);
-        }
-
-        if (method_exists($reservation, 'setStatut')) {
-            $reservation->setStatut('confirmé');
-        }
-
-        if ($selectedDestination !== '' && method_exists($reservation, 'setPaysDestination')) {
-            $reservation->setPaysDestination($selectedDestination);
-        }
 
         if ($selectedDateDepart !== '' && method_exists($billet, 'setDateDepart')) {
             try {
@@ -875,7 +899,7 @@ class FrontFlightController extends AbstractController
                 $profile,
             ]);
             $process->setInput(json_encode($featureRows, JSON_THROW_ON_ERROR));
-            $process->setTimeout(8);
+            $process->setTimeout(25);
             $process->run();
 
             if (!$process->isSuccessful()) {

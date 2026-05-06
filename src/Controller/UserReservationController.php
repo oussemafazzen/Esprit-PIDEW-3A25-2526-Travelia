@@ -138,11 +138,13 @@ final class UserReservationController extends AbstractController
             }
 
             if ($form->isValid()) {
+                $em->flush();
+
                 return $this->redirectToRoute('app_flights_search', [
                     'reservation_id' => $reservation->getId(),
-                    'destination' => $reservation->getPaysDestination() ?? '',
-                    'date_depart' => $reservation->getDateReservation()?->format('Y-m-d'),
-                    'passagers' => 1,
+                    'destination'    => $reservation->getPaysDestination() ?? '',
+                    'date_depart'    => $reservation->getDateReservation()?->format('Y-m-d'),
+                    'passagers'      => 1,
                 ]);
             }
         }
@@ -158,8 +160,11 @@ final class UserReservationController extends AbstractController
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete_reservation_' . $reservation->getId(), (string) $request->request->get('_token'))) {
-            $em->remove($reservation);
-            $em->flush();
+            // Completely bypass Doctrine UnitOfWork to avoid complex topological commit order bugs
+            // Execute raw SQL to delete billets first, then the reservation.
+            $conn = $em->getConnection();
+            $conn->executeStatement('DELETE FROM billet WHERE id_reservation = ?', [$reservation->getId()]);
+            $conn->executeStatement('DELETE FROM reservation WHERE id_reservation = ?', [$reservation->getId()]);
         }
 
         return $this->redirectToRoute('app_user_reservations');

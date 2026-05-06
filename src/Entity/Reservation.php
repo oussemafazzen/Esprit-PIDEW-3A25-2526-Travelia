@@ -57,7 +57,7 @@ class Reservation
     )]
     private ?string $paysDestination = null;
 
-    #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Billet::class)]
+    #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Billet::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $billets;
 
     public function __construct()

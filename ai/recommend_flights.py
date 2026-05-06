@@ -56,7 +56,21 @@ def main() -> None:
             print(json.dumps({"recommendations": [], "error": "model_not_found"}))
             return
 
-        raw_payload = sys.stdin.read() if args.batch_json == "-" else args.batch_json
+        if args.batch_json == "-":
+            # Use buffer for binary-safe reading on Windows (avoids codepage issues)
+            # Try utf-8-sig first to strip any BOM that Windows/PHP may prepend
+            raw_bytes = sys.stdin.buffer.read()
+            try:
+                raw_payload = raw_bytes.decode("utf-8-sig").strip()
+            except UnicodeDecodeError:
+                raw_payload = raw_bytes.decode("utf-8", errors="replace").strip()
+        else:
+            raw_payload = args.batch_json.strip()
+
+        if not raw_payload:
+            print(json.dumps({"recommendations": [], "error": "empty_batch_payload"}))
+            return
+
         rows = json.loads(raw_payload)
 
         if not isinstance(rows, list):

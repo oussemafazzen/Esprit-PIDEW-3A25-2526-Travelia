@@ -1,0 +1,1 @@
+<?php require "vendor/autoload.php"; use Symfony\Component\Dotenv\Dotenv; (new Dotenv())->bootEnv(__DIR__."/.env"); $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=voyage", "root", ""); $pdo->exec("SET FOREIGN_KEY_CHECKS=0"); $pdo->exec("DELETE FROM billet WHERE id_reservation = 0"); $pdo->exec("SET FOREIGN_KEY_CHECKS=1"); echo "Orphans deleted.\n"; ?>
