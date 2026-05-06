@@ -1,1 +1,0 @@
-<?php require "vendor/autoload.php"; use Symfony\Component\Dotenv\Dotenv; (new Dotenv())->bootEnv(__DIR__."/.env"); $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=voyage", "root", ""); $stmt = $pdo->query("SHOW CREATE TABLE billet"); var_dump($stmt->fetchAll(PDO::FETCH_ASSOC)); ?>

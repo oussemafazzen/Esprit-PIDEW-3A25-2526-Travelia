@@ -1,1 +1,0 @@
-<?php require "vendor/autoload.php"; use Symfony\Component\Dotenv\Dotenv; (new Dotenv())->bootEnv(__DIR__."/.env"); $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=voyage", "root", ""); try { $pdo->exec("DELETE FROM reservation WHERE id_reservation = 63"); echo "Deleted 63.\n"; } catch (\Exception $e) { echo "Failed: " . $e->getMessage() . "\n"; } ?>

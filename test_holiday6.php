@@ -1,1 +1,0 @@
-<?php require "vendor/autoload.php"; use Symfony\Component\Dotenv\Dotenv; (new Dotenv())->bootEnv(__DIR__."/.env"); $client = Symfony\Component\HttpClient\HttpClient::create(); $service = new App\Service\HolidayService($client, $_ENV["ABSTRACT_HOLIDAYS_API_KEY"], __DIR__."/var/cache"); var_dump($service->resolveIsoCode("Turkey")); var_dump($service->resolveIsoCode("Turquie")); ?>

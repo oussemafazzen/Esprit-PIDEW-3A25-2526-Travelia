@@ -1,1 +1,0 @@
-<?php require "vendor/autoload.php"; use Symfony\Component\Dotenv\Dotenv; (new Dotenv())->bootEnv(__DIR__."/.env"); $kernel = new App\Kernel($_SERVER["APP_ENV"], (bool) $_SERVER["APP_DEBUG"]); $kernel->boot(); $service = $kernel->getContainer()->get("App\Service\HolidayService"); var_dump($service->getHoliday("france", new \DateTime("2026-05-01"))); ?>
