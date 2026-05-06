@@ -95,7 +95,7 @@ final class UserReservationController extends AbstractController
     }
 
     #[Route('/mes-reservations/{id}/edit', name: 'app_user_reservation_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $em, ClientRepository $clientRepository): Response
+    public function edit(Request $request, Reservation $reservation, ClientRepository $clientRepository): Response
     {
         $currentClient = $this->resolveAuthenticatedClient($clientRepository);
 
@@ -177,8 +177,6 @@ final class UserReservationController extends AbstractController
 
         if ($user instanceof UserInterface) {
             $identifier = $user->getUserIdentifier();
-        } elseif (is_object($user) && method_exists($user, 'getEmail')) {
-            $identifier = (string) $user->getEmail();
         }
 
         $identifier = trim((string) $identifier);

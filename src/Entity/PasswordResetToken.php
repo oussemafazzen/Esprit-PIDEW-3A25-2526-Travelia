@@ -26,7 +26,7 @@ class PasswordResetToken
     private ?\DateTimeInterface $expiry_date = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => 0])]
-    private ?bool $used = false;
+    private bool $used = false;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $created_at = null;

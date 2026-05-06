@@ -82,6 +82,8 @@ class UnsplashService
 
     /**
      * Fetch multiple photos for a gallery view (up to $count photos).
+     *
+     * @return list<array{url: mixed, thumb: mixed, photographer: string, photographer_url: string, unsplash_url: string}>
      */
     public function getGalleryPhotos(
         string $nom,
@@ -114,7 +116,11 @@ class UnsplashService
                 $data = $response->toArray();
 
                 return array_map(
-                    fn($photo) => [
+                    /**
+                     * @param array<string, mixed> $photo
+                     * @return array{url: mixed, thumb: mixed, photographer: string, photographer_url: string, unsplash_url: string}
+                     */
+                    fn(array $photo): array => [
                         'url'         => $photo['urls']['regular'],
                         'thumb'       => $photo['urls']['thumb'],
                         'photographer' => $photo['user']['name'] ?? '',

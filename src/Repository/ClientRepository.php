@@ -34,6 +34,8 @@ class ClientRepository extends ServiceEntityRepository
 
     /**
      * Search and sort clients (excludes admins)
+     *
+     * @return list<Client>
      */
     public function findBySearchAndSort(?string $search = null, ?string $sortBy = 'nom', ?string $direction = 'ASC'): array
     {
@@ -47,7 +49,7 @@ class ClientRepository extends ServiceEntityRepository
         }
 
         $validSortFields = ['nom', 'prenom', 'email', 'date_creation', 'role'];
-        if (in_array($sortBy, $validSortFields)) {
+        if (in_array($sortBy, $validSortFields, true)) {
             $qb->orderBy('c.' . $sortBy, $direction);
         } else {
             $qb->orderBy('c.nom', 'ASC');
@@ -58,6 +60,8 @@ class ClientRepository extends ServiceEntityRepository
 
     /**
      * Get top 5 nationality statistics
+     *
+     * @return list<array{nationalite: string|null, count: string}>
      */
     public function getNationalityStats(): array
     {
@@ -72,6 +76,8 @@ class ClientRepository extends ServiceEntityRepository
 
     /**
      * Get age group statistics
+     *
+     * @return array{'18-25': int, '26-40': int, '41-60': int, '60+': int}
      */
     public function getAgeGroupStats(): array
     {

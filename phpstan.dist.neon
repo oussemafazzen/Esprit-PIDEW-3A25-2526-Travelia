@@ -1,0 +1,17 @@
+parameters:
+    level: 6
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+    ignoreErrors:
+        - '#Property App\\Entity\\Billet::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\Client::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\FaceData::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\Hebergement::\$idHebergement \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\Paiement::\$idPaiement \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\PasswordResetToken::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\Reservation::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property App\\Entity\\Reservationhebergement::\$idReservationHebergement \(int\|null\) is never assigned int so it can be removed from the property type\.#'

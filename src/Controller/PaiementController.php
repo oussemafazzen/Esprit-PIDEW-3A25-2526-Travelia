@@ -59,6 +59,8 @@ class PaiementController extends AbstractController
      * Calls ExchangeRate-API server-side using PHP's file_get_contents.
      * Returns an associative array of currency code => rate (base: EUR).
      * The API key stays on the server and is never sent to the client.
+     *
+     * @return array<string, float|int>
      */
     private function fetchExchangeRates(): array
     {

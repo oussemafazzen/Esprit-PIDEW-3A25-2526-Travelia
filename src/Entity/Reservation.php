@@ -57,6 +57,9 @@ class Reservation
     )]
     private ?string $paysDestination = null;
 
+    /**
+     * @var Collection<int, Billet>
+     */
     #[ORM\OneToMany(mappedBy: 'reservation', targetEntity: Billet::class)]
     private Collection $billets;
 

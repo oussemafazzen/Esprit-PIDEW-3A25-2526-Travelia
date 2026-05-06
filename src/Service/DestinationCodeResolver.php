@@ -6,12 +6,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DestinationCodeResolver
 {
+    /** @var array<string, array{capital: string, capitalLat: float|null, capitalLng: float|null, iso2: string|null, iso3: string|null, countryNames: list<string>}|null> */
     private array $countryDataCache = [];
 
     /**
      * Deterministic major airport candidates by country ISO2 code.
      * Ordered by practical hub priority for better hit rate.
      */
+    /** @var array<string, list<string>> */
     private array $countryAirportCandidatesByIso2 = [
         'AT' => ['VIE', 'SZG', 'INN'],
         'AU' => ['SYD', 'MEL', 'BNE', 'PER'],
@@ -99,12 +101,12 @@ class DestinationCodeResolver
         'BO' => ['VVI', 'LPB', 'CBB'],
         'AR' => ['EZE', 'AEP'],
         'AE' => ['DXB', 'AUH'],
-        'BH' => ['BAH'],
         'CI' => ['ABJ'],
         'ET' => ['ADD'],
         'CM' => ['NSI', 'DLA'],
     ];
 
+    /** @var array<string, string> */
     private array $majorAirportFallbacks = [
         'france' => 'CDG',
         'belgique' => 'BRU',
@@ -169,6 +171,9 @@ class DestinationCodeResolver
         return $candidates[0] ?? null;
     }
 
+    /**
+     * @return list<string>
+     */
     public function resolveCandidates(string $destination): array
     {
         $original = trim($destination);
@@ -201,17 +206,15 @@ class DestinationCodeResolver
                 );
             }
 
-            if ($countryData['capital'] !== null) {
-                $candidates = array_merge(
-                    $candidates,
-                    $this->resolveNearestAirportCodes($countryData['capital'])
-                );
+            $candidates = array_merge(
+                $candidates,
+                $this->resolveNearestAirportCodes($countryData['capital'])
+            );
 
-                $candidates = array_merge(
-                    $candidates,
-                    $this->resolveNearestAirportCodes($countryData['capital'] . ', ' . $original)
-                );
-            }
+            $candidates = array_merge(
+                $candidates,
+                $this->resolveNearestAirportCodes($countryData['capital'] . ', ' . $original)
+            );
         }
 
         $candidates = array_merge($candidates, $this->resolveNearestAirportCodes($original));
@@ -222,13 +225,16 @@ class DestinationCodeResolver
         }
 
         $candidates = array_values(array_unique(array_filter(array_map(
-            static fn($code) => is_string($code) ? strtoupper(trim($code)) : '',
+            static fn(string $code): string => strtoupper(trim($code)),
             $candidates
-        ), static fn(string $code) => preg_match('/^[A-Z]{3}$/', $code) === 1)));
+        ), static fn(string $code): bool => preg_match('/^[A-Z]{3}$/', $code) === 1)));
 
         return $candidates;
     }
 
+    /**
+     * @return array{capital: string, capitalLat: float|null, capitalLng: float|null, iso2: string|null, iso3: string|null, countryNames: list<string>}|null
+     */
     private function resolveCountryData(string $original, string $normalized): ?array
     {
         $cacheKey = $normalized . '|' . mb_strtolower(trim($original));
@@ -301,7 +307,7 @@ class DestinationCodeResolver
                             'iso3' => isset($country['cca3']) && is_string($country['cca3']) ? strtoupper($country['cca3']) : null,
                             'countryNames' => array_values(array_unique(array_filter(array_map(
                                 fn(string $name) => $this->normalizeInput($name),
-                                array_filter($countryNameCandidates, static fn($n) => is_string($n) && trim($n) !== '')
+                                array_filter($countryNameCandidates, static fn(string $n): bool => trim($n) !== '')
                             )))),
                         ];
                     }
@@ -315,12 +321,9 @@ class DestinationCodeResolver
         return $this->countryDataCache[$cacheKey] = null;
     }
 
-    private function resolveNearestAirportCode(string $placeQuery): ?string
-    {
-        $codes = $this->resolveNearestAirportCodes($placeQuery);
-        return $codes[0] ?? null;
-    }
-
+    /**
+     * @return list<string>
+     */
     private function resolveNearestAirportCodes(string $placeQuery): array
     {
         $coordinatesCandidates = $this->resolveCoordinatesCandidates($placeQuery, 3);
@@ -341,12 +344,9 @@ class DestinationCodeResolver
         return array_values(array_unique($codes));
     }
 
-    private function resolveNearestAirportCodeFromCoordinates(float $lat, float $lng): ?string
-    {
-        $codes = $this->resolveNearestAirportCodesFromCoordinates($lat, $lng);
-        return $codes[0] ?? null;
-    }
-
+    /**
+     * @return list<string>
+     */
     private function resolveNearestAirportCodesFromCoordinates(float $lat, float $lng): array
     {
         try {
@@ -376,7 +376,7 @@ class DestinationCodeResolver
                 }
             }
 
-            $iataCodes = array_values(array_unique(array_filter($iataCodes, static fn(string $code) => preg_match('/^[A-Z]{3}$/', $code) === 1)));
+            $iataCodes = array_values(array_unique(array_filter($iataCodes, static fn(string $code): bool => preg_match('/^[A-Z]{3}$/', $code) === 1)));
             if (count($iataCodes) > 0) {
                 return $iataCodes;
             }
@@ -386,12 +386,9 @@ class DestinationCodeResolver
         return [];
     }
 
-    private function resolveCoordinates(string $placeQuery): ?array
-    {
-        $coordinates = $this->resolveCoordinatesCandidates($placeQuery, 1);
-        return $coordinates[0] ?? null;
-    }
-
+    /**
+     * @return list<array{lat: float, lng: float}>
+     */
     private function resolveCoordinatesCandidates(string $placeQuery, int $limit = 1): array
     {
         $query = trim($placeQuery);
@@ -475,6 +472,10 @@ class DestinationCodeResolver
         return null;
     }
 
+    /**
+     * @param array{capital: string, capitalLat: float|null, capitalLng: float|null, iso2: string|null, iso3: string|null, countryNames: list<string>}|null $countryData
+     * @return list<string>
+     */
     private function resolveMappedCountryAirportCandidates(string $normalized, ?array $countryData): array
     {
         $codes = [];
@@ -485,13 +486,10 @@ class DestinationCodeResolver
                 $codes = array_merge($codes, $this->countryAirportCandidatesByIso2[$iso2]);
             }
 
-            $countryNames = $countryData['countryNames'] ?? [];
-            if (is_array($countryNames)) {
-                foreach ($countryNames as $name) {
-                    $fallbackCode = $this->resolveFallbackAirportCode((string) $name);
-                    if ($fallbackCode !== null) {
-                        $codes[] = $fallbackCode;
-                    }
+            foreach ($countryData['countryNames'] as $name) {
+                $fallbackCode = $this->resolveFallbackAirportCode($name);
+                if ($fallbackCode !== null) {
+                    $codes[] = $fallbackCode;
                 }
             }
         }
@@ -502,8 +500,8 @@ class DestinationCodeResolver
         }
 
         return array_values(array_unique(array_filter(array_map(
-            static fn($code) => is_string($code) ? strtoupper(trim($code)) : '',
+            static fn(string $code): string => strtoupper(trim($code)),
             $codes
-        ), static fn(string $code) => preg_match('/^[A-Z]{3}$/', $code) === 1)));
+        ), static fn(string $code): bool => preg_match('/^[A-Z]{3}$/', $code) === 1)));
     }
 }

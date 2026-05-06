@@ -76,7 +76,7 @@ final class BilletController extends AbstractController
         $billets = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            5
+            4
         );
 
         return $this->render('billet/index.html.twig', [

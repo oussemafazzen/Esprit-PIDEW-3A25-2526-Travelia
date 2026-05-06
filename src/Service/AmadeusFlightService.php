@@ -20,6 +20,9 @@ class AmadeusFlightService
         $this->defaultOrigin = $defaultOrigin;
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
     public function searchFlights(
         string $destinationCode,
         string $departureDate,
@@ -38,6 +41,9 @@ class AmadeusFlightService
         return $normalizedFlights;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function fetchFlightsResponse(
         string $destinationCode,
         string $departureDate,
@@ -116,6 +122,10 @@ class AmadeusFlightService
         };
     }
 
+    /**
+     * @param list<array<string, mixed>> $offers
+     * @return list<array<string, mixed>>
+     */
     private function normalizeSerpApiFlights(array $offers, string $tripDestinationAirportCode = ''): array
     {
         $normalizedFlights = [];

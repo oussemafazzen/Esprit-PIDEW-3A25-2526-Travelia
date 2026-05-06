@@ -124,25 +124,8 @@ final class AdminController extends AbstractController
         });
 
         usort($filteredReservations, function ($a, $b) use ($reservationSort, $reservationDirection) {
-            $valueA = match ($reservationSort) {
-                'id' => $a->getId(),
-                'date' => $a->getDateReservation()?->getTimestamp() ?? 0,
-                'statut' => mb_strtolower((string) $a->getStatut()),
-                'paiement' => mb_strtolower((string) $a->getModalitesPaiement()),
-                'client' => $a->getClientId(),
-                'destination' => mb_strtolower((string) $a->getPaysDestination()),
-                default => $a->getDateReservation()?->getTimestamp() ?? 0,
-            };
-
-            $valueB = match ($reservationSort) {
-                'id' => $b->getId(),
-                'date' => $b->getDateReservation()?->getTimestamp() ?? 0,
-                'statut' => mb_strtolower((string) $b->getStatut()),
-                'paiement' => mb_strtolower((string) $b->getModalitesPaiement()),
-                'client' => $b->getClientId(),
-                'destination' => mb_strtolower((string) $b->getPaysDestination()),
-                default => $b->getDateReservation()?->getTimestamp() ?? 0,
-            };
+            $valueA = $this->resolveReservationSortValue($a, $reservationSort);
+            $valueB = $this->resolveReservationSortValue($b, $reservationSort);
 
             $result = $valueA <=> $valueB;
 
@@ -191,27 +174,8 @@ final class AdminController extends AbstractController
         });
 
         usort($filteredBillets, function ($a, $b) use ($billetSort, $billetDirection) {
-            $valueA = match ($billetSort) {
-                'id' => $a->getId(),
-                'transport' => mb_strtolower((string) $a->getTypeTransport()),
-                'numero' => mb_strtolower((string) $a->getNumeroBillet()),
-                'depart' => $a->getDateDepart()?->getTimestamp() ?? 0,
-                'arrivee' => $a->getDateArrivee()?->getTimestamp() ?? 0,
-                'prix' => (float) ($a->getPrix() ?? 0),
-                'statut' => mb_strtolower((string) $a->getStatut()),
-                default => $a->getDateDepart()?->getTimestamp() ?? 0,
-            };
-
-            $valueB = match ($billetSort) {
-                'id' => $b->getId(),
-                'transport' => mb_strtolower((string) $b->getTypeTransport()),
-                'numero' => mb_strtolower((string) $b->getNumeroBillet()),
-                'depart' => $b->getDateDepart()?->getTimestamp() ?? 0,
-                'arrivee' => $b->getDateArrivee()?->getTimestamp() ?? 0,
-                'prix' => (float) ($b->getPrix() ?? 0),
-                'statut' => mb_strtolower((string) $b->getStatut()),
-                default => $b->getDateDepart()?->getTimestamp() ?? 0,
-            };
+            $valueA = $this->resolveBilletSortValue($a, $billetSort);
+            $valueB = $this->resolveBilletSortValue($b, $billetSort);
 
             $result = $valueA <=> $valueB;
 
@@ -290,5 +254,30 @@ final class AdminController extends AbstractController
         $this->addFlash('success', 'Client supprime.');
 
         return $this->redirectToRoute('app_admin_travelers');
+    }
+
+    private function resolveReservationSortValue(\App\Entity\Reservation $reservation, string $reservationSort): int|string|null
+    {
+        return match ($reservationSort) {
+            'id' => $reservation->getId(),
+            'statut' => mb_strtolower((string) $reservation->getStatut()),
+            'paiement' => mb_strtolower((string) $reservation->getModalitesPaiement()),
+            'client' => $reservation->getClientId(),
+            'destination' => mb_strtolower((string) $reservation->getPaysDestination()),
+            default => $reservation->getDateReservation()?->getTimestamp() ?? 0,
+        };
+    }
+
+    private function resolveBilletSortValue(\App\Entity\Billet $billet, string $billetSort): int|float|string|null
+    {
+        return match ($billetSort) {
+            'id' => $billet->getId(),
+            'transport' => mb_strtolower((string) $billet->getTypeTransport()),
+            'numero' => mb_strtolower((string) $billet->getNumeroBillet()),
+            'arrivee' => $billet->getDateArrivee()?->getTimestamp() ?? 0,
+            'prix' => (float) ($billet->getPrix() ?? 0),
+            'statut' => mb_strtolower((string) $billet->getStatut()),
+            default => $billet->getDateDepart()?->getTimestamp() ?? 0,
+        };
     }
 }

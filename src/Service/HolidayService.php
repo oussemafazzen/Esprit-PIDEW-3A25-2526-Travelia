@@ -103,6 +103,7 @@ class HolidayService
      * or null if there is no holiday today or the country cannot be resolved.
      *
      * @param string $paysName  e.g. "Tunisie", "Indonesia", "UAE", "St. Lucia"
+     * @return array<string, mixed>|null
      */
     public function getHoliday(string $paysName, ?\DateTimeInterface $date = null): ?array
     {
@@ -127,7 +128,7 @@ class HolidayService
     /**
      * Returns ALL holidays for the given country on the given date.
      *
-     * @return array<int, array>
+     * @return list<array<string, mixed>>
      */
     public function getHolidays(string $paysName, ?\DateTimeInterface $date = null): array
     {
@@ -189,6 +190,9 @@ class HolidayService
 
     /**
      * Builds a human-friendly holiday message for the UI.
+     */
+    /**
+     * @param array<string, mixed> $holiday
      */
     public function buildMessage(array $holiday): string
     {
@@ -254,7 +258,7 @@ class HolidayService
     }
 
     /**
-     * @return array<int, array>
+     * @return list<array<string, mixed>>
      */
     private function fetchFromApi(string $isoCode, \DateTimeInterface $date): array
     {
@@ -270,8 +274,7 @@ class HolidayService
                 'timeout' => 5,
             ]);
 
-            $data = $response->toArray(false);
-            return is_array($data) ? $data : [];
+            return $response->toArray(false);
         } catch (\Throwable) {
             // Never break the page if the API is unreachable
             return [];
@@ -289,6 +292,9 @@ class HolidayService
         return $dir . DIRECTORY_SEPARATOR . md5($key) . '.json';
     }
 
+    /**
+     * @return list<array<string, mixed>>|null
+     */
     private function readCache(string $key): ?array
     {
         $file = $this->cacheFilePath($key);
@@ -307,6 +313,9 @@ class HolidayService
         return is_array($data) ? $data : null;
     }
 
+    /**
+     * @param list<array<string, mixed>> $data
+     */
     private function writeCache(string $key, array $data): void
     {
         @file_put_contents($this->cacheFilePath($key), json_encode($data));

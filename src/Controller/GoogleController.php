@@ -32,9 +32,10 @@ class GoogleController extends AbstractController
      * in config/packages/knpu_oauth2_client.yaml
      */
     #[Route('/connect/google/check', name: 'connect_google_check')]
-    public function connectCheckAction(Request $request)
+    public function connectCheckAction(Request $request): void
     {
         // **Note**: this method will remain empty!
         // The logic is handled by the Authenticator (src/Security/GoogleAuthenticator.php)
+        unset($request);
     }
 }

@@ -54,16 +54,16 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $date_naissance = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $role = 'USER';
+    private string $role = 'USER';
 
     #[ORM\Column(length: 50)]
-    private ?string $statut = 'ACTIF';
+    private string $statut = 'ACTIF';
 
     #[ORM\Column]
-    private ?int $points_fidelite = 0;
+    private int $points_fidelite = 0;
 
     #[ORM\Column(length: 50)]
-    private ?string $niveau_fidelite = 'BRONZE';
+    private string $niveau_fidelite = 'BRONZE';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_creation = null;
@@ -72,13 +72,13 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $derniere_connexion = null;
 
     #[ORM\Column]
-    private ?int $failed_attempts = 0;
+    private int $failed_attempts = 0;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $google_id = null;
 
     #[ORM\Column]
-    private ?bool $email_confirmed = false;
+    private bool $email_confirmed = false;
 
     public function __construct()
     {
@@ -128,6 +128,9 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+    /**
+     * @return list<string>
+     */
     public function getRoles(): array
     {
         $roles = [];

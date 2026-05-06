@@ -38,20 +38,18 @@ class FrontFlightController extends AbstractController
         $travelClass = $this->normalizeSearchTravelClass((string) $request->query->get('travel_class', 'business'));
         $passagers = max(1, (int) $request->query->get('passagers', 1));
 
-        if ($destination !== '' && method_exists($searchData, 'setDestination')) {
+        if ($destination !== '') {
             $searchData->setDestination($destination);
         }
 
-        if ($dateDepart !== '' && method_exists($searchData, 'setDateDepart')) {
+        if ($dateDepart !== '') {
             try {
                 $searchData->setDateDepart(new \DateTimeImmutable($dateDepart));
             } catch (\Exception $e) {
             }
         }
 
-        if (method_exists($searchData, 'setPassagers')) {
-            $searchData->setPassagers($passagers);
-        }
+        $searchData->setPassagers($passagers);
 
         $form = $this->createForm(FlightSearchType::class, $searchData, [
             'method' => 'GET',
@@ -180,9 +178,7 @@ class FrontFlightController extends AbstractController
         if (count($flightsWithOptions) === 0 && (!$apiReturnedFlights || $apiError !== null)) {
             $billets = [];
 
-            if (method_exists($billetRepository, 'findAvailableFlights')) {
-                $billets = $billetRepository->findAvailableFlights($destination, $dateDepart, $typeTransport);
-            }
+            $billets = $billetRepository->findAvailableFlights($destination, $dateDepart, $typeTransport);
 
             if (count($billets) === 0) {
                 $allBillets = $billetRepository->findAll();
@@ -214,9 +210,7 @@ class FrontFlightController extends AbstractController
 
             $baseFlights = [];
 
-            if (method_exists($billetRepository, 'normalizeBilletsForDisplay')) {
-                $baseFlights = $billetRepository->normalizeBilletsForDisplay($billets);
-            }
+            $baseFlights = $billetRepository->normalizeBilletsForDisplay($billets);
 
             if (count($baseFlights) === 0 && count($billets) > 0) {
                 $baseFlights = $this->normalizeBilletsFallback($billets);
@@ -258,7 +252,7 @@ class FrontFlightController extends AbstractController
                 $filteredFlights = $baseFlights;
             }
             $filteredFlights = $this->decorateFlightsWithSearchCriteria($filteredFlights, $tripType, $travelClass, $dateArrivee);
-            $flightsWithOptions = $this->buildFlightVariants(array_values($filteredFlights));
+            $flightsWithOptions = $this->buildFlightVariants($filteredFlights);
         }
 
         $flights = $flightsWithOptions;
@@ -378,6 +372,21 @@ class FrontFlightController extends AbstractController
      * Converts browser-submitted flight card data into the same feature shape
      * used by the existing Python/scikit-learn prediction script.
      */
+    /**
+     * @param array<string, mixed> $flightPayload
+     * @return array{
+     *     destinationCountry: string,
+     *     destinationLabel: string,
+     *     prix: float,
+     *     dateDepart: string,
+     *     cabinClass: string,
+     *     offerLabel: string,
+     *     offerType: string,
+     *     stopsCount: int,
+     *     durationMinutes: int,
+     *     airline: string
+     * }
+     */
     private function normalizeAiPredictionPayload(array $flightPayload): array
     {
         return [
@@ -400,10 +409,14 @@ class FrontFlightController extends AbstractController
         ];
     }
 
+    /**
+     * @param array<string, mixed> $flightPayload
+     * @return array<string, int|float|string>|null
+     */
     private function buildAiRecommendationRow(array $flightPayload): ?array
     {
         $flight = $this->normalizeAiPredictionPayload($flightPayload);
-        $price = isset($flight['prix']) && is_numeric($flight['prix']) ? (float) $flight['prix'] : 0.0;
+        $price = (float) $flight['prix'];
 
         if ($price <= 0) {
             return null;
@@ -411,14 +424,14 @@ class FrontFlightController extends AbstractController
 
         return [
             'index' => isset($flightPayload['index']) ? (int) $flightPayload['index'] : 0,
-            'destination' => (string) ($flight['destinationCountry'] ?? $flight['destinationLabel'] ?? 'unknown'),
+            'destination' => $flight['destinationCountry'],
             'current_price' => $price,
-            'travel_class' => $this->normalizeTravelClass((string) ($flight['cabinClass'] ?? $flight['offerLabel'] ?? 'economy')),
-            'offer_type' => (string) ($flight['offerType'] ?: ($flight['offerLabel'] ?? $flight['cabinClass'] ?? 'standard')),
-            'airline' => (string) ($flight['airline'] ?? 'unknown'),
-            'stops_count' => max(0, (int) ($flight['stopsCount'] ?? 0)),
-            'duration_minutes' => max(1, (int) ($flight['durationMinutes'] ?? 120)),
-            'departure_hour' => $this->resolveFlightDepartureHour((string) ($flight['dateDepart'] ?? $flightPayload['dateDepart'] ?? '')),
+            'travel_class' => $this->normalizeTravelClass($flight['cabinClass']),
+            'offer_type' => $flight['offerType'] !== '' ? $flight['offerType'] : $flight['offerLabel'],
+            'airline' => $flight['airline'],
+            'stops_count' => max(0, $flight['stopsCount']),
+            'duration_minutes' => max(1, $flight['durationMinutes']),
+            'departure_hour' => $this->resolveFlightDepartureHour($flight['dateDepart']),
         ];
     }
 
@@ -559,7 +572,6 @@ class FrontFlightController extends AbstractController
         $billetId = (int) $request->request->get('billet_id', 0);
         $reservationId = (int) $request->request->get('reservation_id', 0);
 
-        $reservation = null;
         $currentClient = $this->resolveAuthenticatedClient($clientRepository);
 
         if (!$currentClient instanceof Client || $currentClient->getId() === null) {
@@ -570,32 +582,14 @@ class FrontFlightController extends AbstractController
             ]);
         }
 
-        if (!$reservation) {
-            $reservation = new Reservation();
-
-            if (method_exists($reservation, 'setDateReservation')) {
-                $reservation->setDateReservation(new \DateTime('today'));
-            }
-
-            if (method_exists($reservation, 'setStatut')) {
-                $reservation->setStatut('confirmé');
-            }
-
-            if (method_exists($reservation, 'setModalitesPaiement')) {
-                $reservation->setModalitesPaiement($paymentMethod);
-            }
-
-            if (method_exists($reservation, 'setClientId')) {
-                $reservation->setClientId($currentClient->getId());
-            }
-
-            if (method_exists($reservation, 'setPaysDestination')) {
-                $reservation->setPaysDestination($selectedDestination !== '' ? $selectedDestination : 'Non défini');
-            }
-
-            $em->persist($reservation);
-            $em->flush();
-        }
+        $reservation = new Reservation();
+        $reservation->setDateReservation(new \DateTime('today'));
+        $reservation->setStatut('confirmé');
+        $reservation->setModalitesPaiement($paymentMethod);
+        $reservation->setClientId($currentClient->getId());
+        $reservation->setPaysDestination($selectedDestination !== '' ? $selectedDestination : 'Non défini');
+        $em->persist($reservation);
+        $em->flush();
 
         $billet = null;
 
@@ -612,19 +606,14 @@ class FrontFlightController extends AbstractController
             $em->persist($billet);
         }
 
-        if (method_exists($reservation, 'setModalitesPaiement')) {
-            $reservation->setModalitesPaiement($paymentMethod);
-        }
+        $reservation->setModalitesPaiement($paymentMethod);
+        $reservation->setStatut('confirmé');
 
-        if (method_exists($reservation, 'setStatut')) {
-            $reservation->setStatut('confirmé');
-        }
-
-        if ($selectedDestination !== '' && method_exists($reservation, 'setPaysDestination')) {
+        if ($selectedDestination !== '') {
             $reservation->setPaysDestination($selectedDestination);
         }
 
-        if ($selectedDateDepart !== '' && method_exists($billet, 'setDateDepart')) {
+        if ($selectedDateDepart !== '') {
             try {
                 $billet->setDateDepart(new \DateTime($selectedDateDepart));
             } catch (\Exception $e) {
@@ -632,13 +621,12 @@ class FrontFlightController extends AbstractController
                 return $this->redirectToRoute('app_user_reservations');
             }
         }
-
-        if ($selectedDateArrivee !== '' && method_exists($billet, 'setDateArrivee')) {
+        if ($selectedDateArrivee !== '') {
             try {
                 $billet->setDateArrivee(new \DateTime($selectedDateArrivee));
             } catch (\Exception $e) {
             }
-        } elseif (method_exists($billet, 'getDateDepart') && method_exists($billet, 'setDateArrivee')) {
+        } else {
             $dateDepartObj = $billet->getDateDepart();
             if ($dateDepartObj instanceof \DateTimeInterface) {
                 $dateArriveeAuto = \DateTime::createFromInterface($dateDepartObj);
@@ -650,17 +638,12 @@ class FrontFlightController extends AbstractController
         $this->applyBilletBookingSnapshot($billet, $request);
 
         $finalPrice = $promoEvaluation['final_price'];
-        if ($finalPrice > 0 && method_exists($billet, 'setPrix')) {
+        if ($finalPrice > 0) {
             $billet->setPrix($finalPrice);
         }
 
-        if (method_exists($billet, 'setReservation')) {
-            $billet->setReservation($reservation);
-        }
-
-        if (method_exists($billet, 'setStatut')) {
-            $billet->setStatut('confirme');
-        }
+        $billet->setReservation($reservation);
+        $billet->setStatut('confirme');
 
         $em->flush();
 
@@ -718,8 +701,6 @@ class FrontFlightController extends AbstractController
 
         if ($user instanceof UserInterface) {
             $identifier = $user->getUserIdentifier();
-        } elseif (is_object($user) && method_exists($user, 'getEmail')) {
-            $identifier = (string) $user->getEmail();
         }
 
         $identifier = trim((string) $identifier);
@@ -731,6 +712,9 @@ class FrontFlightController extends AbstractController
         return $clientRepository->findOneBy(['email' => $identifier]);
     }
 
+    /**
+     * @return array<string, int|string>
+     */
     private function buildFlightPaymentPayloadForTemplate(
         Request $request,
         string $cardholderName,
@@ -854,6 +838,9 @@ class FrontFlightController extends AbstractController
 
     /**
      * Runs the Python recommendation engine once for all submitted flight cards.
+     *
+     * @param list<array<string, int|float|string>> $featureRows
+     * @return list<array<string, mixed>>|null
      */
     private function recommendFlightsBatch(string $pythonBinary, array $featureRows, string $profile, ?string &$debugReason = null): ?array
     {
@@ -924,25 +911,6 @@ class FrontFlightController extends AbstractController
         }
     }
 
-    private function resolveFlightDepartureDate(array $flight, string $searchDateDepart): ?\DateTimeInterface
-    {
-        if (($flight['dateDepart'] ?? null) instanceof \DateTimeInterface) {
-            return $flight['dateDepart'];
-        }
-
-        $dateValue = (string) ($flight['dateDepart'] ?? $searchDateDepart);
-
-        if ($dateValue === '') {
-            return null;
-        }
-
-        try {
-            return new \DateTimeImmutable($dateValue);
-        } catch (\Throwable $e) {
-            return null;
-        }
-    }
-
     private function resolveFlightDepartureHour(string $dateValue): int
     {
         if (trim($dateValue) === '') {
@@ -979,6 +947,10 @@ class FrontFlightController extends AbstractController
         return 'economy';
     }
 
+    /**
+     * @param list<array<string, mixed>> $flights
+     * @return list<array<string, mixed>>
+     */
     private function filterFlightsByRequestedClass(array $flights, string $requestedClass): array
     {
         $requestedClass = $this->normalizeSearchTravelClass($requestedClass);
@@ -1020,6 +992,10 @@ class FrontFlightController extends AbstractController
         };
     }
 
+    /**
+     * @param list<array<string, mixed>> $flights
+     * @return list<array<string, mixed>>
+     */
     private function decorateFlightsWithSearchCriteria(array $flights, string $tripType, string $travelClass, string $dateArrivee): array
     {
         $travelClass = $this->normalizeSearchTravelClass($travelClass);
@@ -1050,11 +1026,7 @@ class FrontFlightController extends AbstractController
             return true;
         }
 
-        $billetTransport = '';
-
-        if (method_exists($billet, 'getTypeTransport')) {
-            $billetTransport = (string) $billet->getTypeTransport();
-        }
+        $billetTransport = (string) $billet->getTypeTransport();
 
         return mb_strtolower(trim($billetTransport)) === mb_strtolower(trim($typeTransport));
     }
@@ -1062,10 +1034,6 @@ class FrontFlightController extends AbstractController
     private function matchesDateDepart(Billet $billet, string $dateDepart): bool
     {
         if ($dateDepart === '') {
-            return true;
-        }
-
-        if (!method_exists($billet, 'getDateDepart')) {
             return true;
         }
 
@@ -1087,26 +1055,13 @@ class FrontFlightController extends AbstractController
         $needle = mb_strtolower(trim($destination));
         $haystacks = [];
 
-        if (method_exists($billet, 'getNumeroBillet')) {
-            $haystacks[] = (string) $billet->getNumeroBillet();
-        }
+        $haystacks[] = (string) $billet->getNumeroBillet();
+        $haystacks[] = (string) $billet->getStatut();
+        $haystacks[] = (string) $billet->getTypeTransport();
 
-        if (method_exists($billet, 'getStatut')) {
-            $haystacks[] = (string) $billet->getStatut();
-        }
-
-        if (method_exists($billet, 'getTypeTransport')) {
-            $haystacks[] = (string) $billet->getTypeTransport();
-        }
-
-        if (method_exists($billet, 'getReservation')) {
-            $reservation = $billet->getReservation();
-
-            if ($reservation) {
-                if (method_exists($reservation, 'getPaysDestination')) {
-                    $haystacks[] = (string) $reservation->getPaysDestination();
-                }
-            }
+        $reservation = $billet->getReservation();
+        if ($reservation) {
+            $haystacks[] = (string) $reservation->getPaysDestination();
         }
 
         foreach ($haystacks as $value) {
@@ -1118,42 +1073,40 @@ class FrontFlightController extends AbstractController
         return false;
     }
 
+    /**
+     * @param list<Billet> $billets
+     * @return list<array<string, mixed>>
+     */
     private function normalizeBilletsFallback(array $billets): array
     {
         $flights = [];
 
         foreach ($billets as $billet) {
-            if (!$billet instanceof Billet) {
-                continue;
-            }
-
-            $reservation = method_exists($billet, 'getReservation') ? $billet->getReservation() : null;
+            $reservation = $billet->getReservation();
 
             $destination = '';
-            if ($reservation && method_exists($reservation, 'getPaysDestination') && $reservation->getPaysDestination()) {
+            if ($reservation && $reservation->getPaysDestination()) {
                 $destination = (string) $reservation->getPaysDestination();
             }
 
-            $dateDepartObj = method_exists($billet, 'getDateDepart') ? $billet->getDateDepart() : null;
-            $dateArriveeObj = method_exists($billet, 'getDateArrivee') ? $billet->getDateArrivee() : null;
-            $prix = method_exists($billet, 'getPrix') ? $billet->getPrix() : 500;
-            $reference = method_exists($billet, 'getNumeroBillet')
-                ? $billet->getNumeroBillet()
-                : 'Billet-' . (method_exists($billet, 'getId') ? $billet->getId() : uniqid());
+            $dateDepartObj = $billet->getDateDepart();
+            $dateArriveeObj = $billet->getDateArrivee();
+            $prix = $billet->getPrix() ?? 500;
+            $reference = $billet->getNumeroBillet() ?: 'Billet-' . ($billet->getId() ?? uniqid());
 
-            $transport = method_exists($billet, 'getTypeTransport') ? $billet->getTypeTransport() : 'avion';
-            $statut = method_exists($billet, 'getStatut') ? $billet->getStatut() : 'disponible';
-            $id = method_exists($billet, 'getId') ? $billet->getId() : null;
+            $transport = $billet->getTypeTransport() ?: 'avion';
+            $statut = $billet->getStatut() ?: 'disponible';
+            $id = $billet->getId();
 
             $flights[] = [
                 'id' => $id,
-                'reference' => $reference ?: 'Billet',
+                'reference' => $reference,
                 'destination' => $destination,
                 'dateDepart' => $dateDepartObj instanceof \DateTimeInterface ? $dateDepartObj : null,
                 'dateArrivee' => $dateArriveeObj instanceof \DateTimeInterface ? $dateArriveeObj : null,
-                'prix' => is_numeric($prix) ? (float) $prix : 500,
-                'transport' => $transport ?: 'avion',
-                'statut' => $statut ?: 'disponible',
+                'prix' => (float) $prix,
+                'transport' => $transport,
+                'statut' => $statut,
                 'source' => 'local',
             ];
         }
@@ -1161,6 +1114,10 @@ class FrontFlightController extends AbstractController
         return $flights;
     }
 
+    /**
+     * @param list<array<string, mixed>> $apiFlights
+     * @return list<array<string, mixed>>
+     */
     private function normalizeApiFlightsForDisplay(
         array $apiFlights,
         string $destination,
@@ -1363,6 +1320,10 @@ class FrontFlightController extends AbstractController
         return $flights;
     }
 
+    /**
+     * @param list<array<string, mixed>> $flights
+     * @return list<array<string, mixed>>
+     */
     private function buildFlightVariants(array $flights): array
     {
         $variants = [];
@@ -1391,13 +1352,17 @@ class FrontFlightController extends AbstractController
             }
         }
 
-        usort($variants, function ($a, $b) {
-            return ((float) ($a['prix'] ?? 0)) <=> ((float) ($b['prix'] ?? 0));
+        usort($variants, function (array $a, array $b): int {
+            return ((float) $a['prix']) <=> ((float) $b['prix']);
         });
 
         return $variants;
     }
 
+    /**
+     * @param list<array<string, mixed>> $flights
+     * @return list<array<string, mixed>>
+     */
     private function filterFlightsByDepartureDate(array $flights, string $selectedDate): array
     {
         if ($selectedDate === '') {
@@ -1425,3 +1390,4 @@ class FrontFlightController extends AbstractController
         return array_values($filtered);
     }
 }
+

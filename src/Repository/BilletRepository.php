@@ -6,6 +6,9 @@ use App\Entity\Billet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Billet>
+ */
 class BilletRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -18,6 +21,9 @@ class BilletRepository extends ServiceEntityRepository
      * - essaie destination + date + transport
      * - si aucun résultat, retourne les billets disponibles
      *   mais en respectant le transport choisi
+     */
+    /**
+     * @return list<Billet>
      */
     public function findAvailableFlights(string $destination, string $date, string $typeTransport = ''): array
     {
@@ -63,7 +69,7 @@ class BilletRepository extends ServiceEntityRepository
             return $this->findFallbackFlights($typeTransport);
         }
 
-        usort($results, function ($a, $b) {
+        usort($results, function (Billet $a, Billet $b): int {
             $dateA = $this->extractDepartureDate($a);
             $dateB = $this->extractDepartureDate($b);
 
@@ -90,12 +96,15 @@ class BilletRepository extends ServiceEntityRepository
      * - si transport choisi => retourne seulement ce transport
      * - sinon => retourne tous les billets
      */
+    /**
+     * @return list<Billet>
+     */
     private function findFallbackFlights(string $typeTransport = ''): array
     {
         $billets = $this->findAll();
 
         if ($typeTransport !== '') {
-            $billets = array_filter($billets, function ($billet) use ($typeTransport) {
+            $billets = array_filter($billets, function (Billet $billet) use ($typeTransport): bool {
                 $transport = mb_strtolower(trim((string) $this->extractTransportType($billet)));
                 return $transport === $typeTransport;
             });
@@ -103,7 +112,7 @@ class BilletRepository extends ServiceEntityRepository
 
         $billets = array_values($billets);
 
-        usort($billets, function ($a, $b) {
+        usort($billets, function (Billet $a, Billet $b): int {
             $dateA = $this->extractDepartureDate($a);
             $dateB = $this->extractDepartureDate($b);
 
@@ -128,6 +137,9 @@ class BilletRepository extends ServiceEntityRepository
     /**
      * Retourne tous les billets disponibles triés par date
      */
+    /**
+     * @return list<Billet>
+     */
     public function findAllAvailableFlights(): array
     {
         return $this->findFallbackFlights();
@@ -135,6 +147,19 @@ class BilletRepository extends ServiceEntityRepository
 
     /**
      * Normalisation pour Twig
+     */
+    /**
+     * @param list<Billet> $billets
+     * @return list<array{
+     *     id: int|null,
+     *     reference: string,
+     *     depart: string|null,
+     *     arrivee: string|null,
+     *     dateDepart: \DateTimeInterface|null,
+     *     dateArrivee: \DateTimeInterface|null,
+     *     prix: float|int|string|null,
+     *     typeTransport: string|null
+     * }>
      */
     public function normalizeBilletsForDisplay(array $billets): array
     {
@@ -158,7 +183,7 @@ class BilletRepository extends ServiceEntityRepository
 
     private function extractId(Billet $billet): ?int
     {
-        return method_exists($billet, 'getId') ? $billet->getId() : null;
+        return $billet->getId();
     }
 
     private function extractReference(Billet $billet): string
@@ -185,7 +210,7 @@ class BilletRepository extends ServiceEntityRepository
         return $id ? 'Billet #' . $id : 'Billet';
     }
 
-    private function extractDepartureValue(Billet $billet): ?string
+    private function extractDepartureValue(Billet $billet): string
     {
         $possibleGetters = [
             'getVilleDepart',
@@ -208,7 +233,7 @@ class BilletRepository extends ServiceEntityRepository
         return 'TUN';
     }
 
-    private function extractArrivalValue(Billet $billet): ?string
+    private function extractArrivalValue(Billet $billet): string
     {
         $possibleGetters = [
             'getDestination',
@@ -298,7 +323,7 @@ class BilletRepository extends ServiceEntityRepository
         return null;
     }
 
-    private function extractTransportType(Billet $billet): ?string
+    private function extractTransportType(Billet $billet): string
     {
         $possibleGetters = [
             'getTypeTransport',

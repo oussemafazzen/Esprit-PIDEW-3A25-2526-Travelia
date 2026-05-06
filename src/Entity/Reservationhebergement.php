@@ -114,8 +114,10 @@ class Reservationhebergement
     }
  
     #[Assert\Callback]
-    public function validateCapacity(ExecutionContextInterface $context, $payload): void
+    public function validateCapacity(ExecutionContextInterface $context, mixed $payload): void
     {
+        unset($payload);
+
         if ($this->idHebergement !== null && $this->nombrePersonnes !== null) {
             if ($this->nombrePersonnes > $this->idHebergement->getCapacite()) {
                 $context->buildViolation("Le nombre de personnes dépasse la capacité de l'hébergement ({$this->idHebergement->getCapacite()})")

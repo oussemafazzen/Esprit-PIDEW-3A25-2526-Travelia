@@ -66,7 +66,11 @@ class FaceAuthController extends AbstractController
         return new JsonResponse(['error' => 'Visage non reconnu. Veuillez réessayer ou utiliser votre mot de passe.'], 404);
     }
 
-    private function euclideanDistance($a, $b): float
+    /**
+     * @param list<float|int> $a
+     * @param list<float|int> $b
+     */
+    private function euclideanDistance(array $a, array $b): float
     {
         $sum = 0;
         $count = min(count($a), count($b));
