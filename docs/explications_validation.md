@@ -183,14 +183,13 @@ On a défini **8 cas de test** dans le fichier `docs/scenario_test.md` :
 
 ## 🚀 Commandes à montrer au prof
 
-```bash
-# 1. PHPStan — Analyse statique (0 erreurs)
-vendor/bin/phpstan analyse --memory-limit=256M
+```cmd
+:: 1. PHPStan — Analyse statique (0 erreurs)
+php vendor/bin/phpstan analyse --memory-limit=256M
 
-# 2. PHPUnit — 24 tests unitaires
+:: 2. PHPUnit — 24 tests unitaires
 php bin/phpunit --testdox
 
-# 3. Doctrine Doctor — Validation du schéma
+:: 3. Doctrine Doctor — Validation du schéma
 php bin/console doctrine:schema:validate
-php bin/console doctrine:mapping:info
 ```
