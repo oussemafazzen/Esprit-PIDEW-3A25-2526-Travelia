@@ -599,11 +599,24 @@
     } %}
     {% set adminCalendarItems = [] %}
     {% for reservation in calendarReservations|default([]) %}
-        {% if reservation.dateReservation %}
+        {% set calendarDate = reservation.dateReservation %}
+        {% if not calendarDate and reservation.billets is not empty %}
+            {% for billet in reservation.billets %}
+                {% if not calendarDate and billet.dateDepart %}
+                    {% set calendarDate = billet.dateDepart %}
+                {% endif %}
+                {% if not calendarDate and billet.dateArrivee %}
+                    {% set calendarDate = billet.dateArrivee %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if calendarDate %}
             {% set adminCalendarItems = adminCalendarItems|merge([{
                 id: reservation.id,
-                date: reservation.dateReservation|date('Y-m-d'),
-                displayDate: reservation.dateReservation|date('Y-m-d'),
+                date: calendarDate|date('Y-m-d'),
+                displayDate: calendarDate|date('Y-m-d'),
+                dateSource: reservation.dateReservation ? 'Réservation' : 'Départ billet',
                 client: reservation.clientId ?? '',
                 destination: reservation.paysDestination ?? 'Non défini',
                 status: reservation.statut ?? '',
@@ -614,7 +627,6 @@
             }]) %}
         {% endif %}
     {% endfor %}
-
     <aside class="app-sidebar">
         <div class="logo-area">
             Travel<em>ia</em>
