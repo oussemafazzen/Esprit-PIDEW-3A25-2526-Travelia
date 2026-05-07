@@ -19,15 +19,15 @@ class Paiement
     private ?\DateTimeInterface $datePaiement = null;
 
     #[ORM\Column]
-    private ?float $montant = null;
+    private float $montant = 0.0;
 
     #[ORM\Column(name: 'methode_paiement', length: 255)]
     #[Assert\NotBlank(message: "La méthode de paiement est obligatoire.")]
     #[Assert\Choice(choices: ["Visa", "MasterCard", "American express", "PayPal"], message: "Méthode invalide. Veuillez choisir parmi : Visa, MasterCard, American express, PayPal.")]
-    private ?string $methodePaiement = null;
+    private string $methodePaiement = '';
 
     #[ORM\Column(name: 'id_reservation')]
-    private ?int $idReservation = null;
+    private int $idReservation = 0;
 
     public function getIdPaiement(): ?int
     {

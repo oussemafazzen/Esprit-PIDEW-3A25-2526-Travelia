@@ -70,6 +70,7 @@ final class BilletController extends AbstractController
         $qb->orderBy($allowedSorts[$sort], $direction);
 
         $calendarBillets = (clone $qb)
+            ->setMaxResults(300)
             ->getQuery()
             ->getResult();
 

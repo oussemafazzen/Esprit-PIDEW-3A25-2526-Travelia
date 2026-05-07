@@ -20,13 +20,13 @@ class FaceData
     private ?Client $user = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $face_token = null;
+    private string $face_token = '';
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $face_encoding = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $created_at = null;
+    private \DateTimeInterface $created_at;
 
     public function __construct()
     {

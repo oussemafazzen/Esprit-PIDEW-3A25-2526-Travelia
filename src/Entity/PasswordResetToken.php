@@ -20,7 +20,7 @@ class PasswordResetToken
     private ?Client $user = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $token = null;
+    private string $token = '';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $expiry_date = null;
@@ -29,7 +29,7 @@ class PasswordResetToken
     private bool $used = false;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     public function __construct()
     {

@@ -21,16 +21,16 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank(message: "Le nom ne doit pas être vide")]
-    private ?string $nom = null;
+    private string $nom = '';
 
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank(message: "Le prénom ne doit pas être vide")]
-    private ?string $prenom = null;
+    private string $prenom = '';
 
     #[ORM\Column(length: 150, unique: true)]
     #[Assert\NotBlank(message: "L'email ne doit pas être vide")]
     #[Assert\Email(message: "L'email '{{ value }}' n'est pas un email valide.")]
-    private ?string $email = null;
+    private string $email = '';
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le mot de passe ne doit pas être vide")]
@@ -39,15 +39,15 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/",
         message: "Le mot de passe doit comporter au moins une lettre majuscule, une lettre minuscule et un chiffre"
     )]
-    private ?string $password = null;
+    private string $password = '';
 
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank(message: "Le téléphone ne doit pas être vide")]
-    private ?string $telephone = null;
+    private string $telephone = '';
 
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank(message: "Veuillez sélectionner votre nationalité")]
-    private ?string $nationalite = null;
+    private string $nationalite = '';
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank(message: "Veuillez choisir votre date de naissance")]
@@ -66,7 +66,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private string $niveau_fidelite = 'BRONZE';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date_creation = null;
+    private \DateTimeInterface $date_creation;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $derniere_connexion = null;
