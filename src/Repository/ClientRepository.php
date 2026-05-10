@@ -36,6 +36,7 @@ class ClientRepository extends ServiceEntityRepository
     
     /**
      * Search and sort clients
+     * @return Client[]
      */
     public function findBySearchAndSort(?string $search = null, ?string $sortBy = 'nom', ?string $direction = 'ASC'): array
     {
@@ -60,6 +61,7 @@ class ClientRepository extends ServiceEntityRepository
 
     /**
      * Get nationality statistics
+     * @return array<int, array{nationalite: string|null, count: int}>
      */
     public function getNationalityStats(): array
     {
@@ -74,6 +76,7 @@ class ClientRepository extends ServiceEntityRepository
 
     /**
      * Get age group statistics
+     * @return array<string, int>
      */
     public function getAgeGroupStats(): array
     {

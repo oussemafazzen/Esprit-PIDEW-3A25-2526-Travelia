@@ -48,7 +48,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/",
         message: "Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre."
     )]
-    private ?string $password = null;
+    private string $password = '';
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
@@ -169,7 +169,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }

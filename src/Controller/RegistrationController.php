@@ -33,10 +33,12 @@ class RegistrationController extends AbstractController
             $user->setTelephone($phonePrefix . ' ' . $phoneNumber);
 
             // Encode the password
+            /** @var string $plainPassword */
+            $plainPassword = $form->get('password')->getData();
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
-                    $form->get('password')->getData()
+                    $plainPassword
                 )
             );
 
@@ -63,7 +65,7 @@ class RegistrationController extends AbstractController
             // Send Email
             $emailMessage = (new Email())
                 ->from('admintravelia@gmail.com')
-                ->to($user->getEmail())
+                ->to((string)$user->getEmail())
                 ->subject('Vérifiez votre compte Travelia')
                 ->html($this->renderView('emails/registration_verify.html.twig', [
                     'code' => $code,
@@ -76,6 +78,7 @@ class RegistrationController extends AbstractController
             $request->getSession()->set('registration_email', $user->getEmail());
 
             // Save face encoding if provided
+            /** @var string|null $faceEncoding */
             $faceEncoding = $request->request->get('face_encoding');
             if ($faceEncoding) {
                 $faceData = new \App\Entity\FaceData();

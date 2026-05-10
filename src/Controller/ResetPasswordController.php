@@ -39,7 +39,7 @@ class ResetPasswordController extends AbstractController
                 // Send Email
                 $emailMessage = (new Email())
                     ->from('admintravelia@gmail.com')
-                    ->to($user->getEmail())
+                    ->to((string)$user->getEmail())
                     ->subject('Votre code de réinitialisation Travelia')
                     ->html($this->renderView('emails/reset_password.html.twig', [
                         'code' => $code,
@@ -103,8 +103,14 @@ class ResetPasswordController extends AbstractController
         $email = $request->getSession()->get('reset_password_email');
         $user = $clientRepository->findOneBy(['email' => $email]);
 
+        if (!$user) {
+            return $this->redirectToRoute('app_forgot_password_request');
+        }
+
         if ($request->isMethod('POST')) {
+            /** @var string $password */
             $password = $request->request->get('password');
+            /** @var string $confirmPassword */
             $confirmPassword = $request->request->get('confirm_password');
 
             if ($password !== $confirmPassword) {
