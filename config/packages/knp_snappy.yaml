@@ -1,10 +1,9 @@
 knp_snappy:
-    # This bundle converts Twig-rendered HTML into a PDF by calling the
-    # external wkhtmltopdf executable installed on Windows.
     pdf:
         enabled: true
-        # Replace this placeholder path if wkhtmltopdf is installed elsewhere.
-        binary: '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"'
+        # On Windows (XAMPP): set WKHTMLTOPDF_PATH in .env.local to your local binary
+        # On Railway (Linux): the wrapper script is installed at /usr/local/bin/wkhtmltopdf-wrapper
+        binary: '%env(string:WKHTMLTOPDF_PATH)%'
         options:
             encoding: 'UTF-8'
             page-size: 'A4'

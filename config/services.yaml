@@ -3,6 +3,7 @@ parameters:
     flight.default_origin: '%env(FLIGHT_DEFAULT_ORIGIN)%'
     abstract_holidays.api_key: '%env(ABSTRACT_HOLIDAYS_API_KEY)%'
     unsplash.access_key: '%env(UNSPLASH_ACCESS_KEY)%'
+    groq.api_key: '%env(GROQ_API_KEY)%'
 
 services:
     _defaults:
@@ -28,3 +29,7 @@ services:
     App\Service\UnsplashService:
         arguments:
             $accessKey: '%unsplash.access_key%'
+
+    App\Service\GroqChatService:
+        arguments:
+            $apiKey: '%groq.api_key%'
