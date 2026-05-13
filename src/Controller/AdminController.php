@@ -233,9 +233,32 @@ final class AdminController extends AbstractController
         $totalInscriptions = count($inscriptionRepository->findAll());
         $totalParticipants = $inscriptionRepository->totalParticipants();
 
-        // Hebergement stats
-        $totalHebergements      = count($hebergementRepository->findAll());
-        $totalReservationsHeberg = count($reservationhebergementRepository->findAll());
+        // Hebergement stats + search/sort
+        $allHebergements = $hebergementRepository->findAll();
+        $totalHebergements = count($allHebergements);
+
+        $hebergSearch    = trim((string) $request->query->get('heberg_search', ''));
+        $hebergSort      = (string) $request->query->get('heberg_sort', 'nom');
+        $hebergDirection = strtoupper((string) $request->query->get('heberg_direction', 'ASC'));
+        if (!in_array($hebergDirection, ['ASC', 'DESC'], true)) {
+            $hebergDirection = 'ASC';
+        }
+        $filteredHebergements = $hebergSearch !== ''
+            ? $hebergementRepository->searchAndSort($hebergSearch, $hebergSort)
+            : $hebergementRepository->searchAndSort(null, $hebergSort);
+        $recentHebergements = array_slice($filteredHebergements, 0, 10);
+
+        // Réservations hôtels stats + search/sort
+        $allResHeberg = $reservationhebergementRepository->findAll();
+        $totalReservationsHeberg = count($allResHeberg);
+
+        $resHebergSearch    = trim((string) $request->query->get('res_heberg_search', ''));
+        $resHebergSort      = (string) $request->query->get('res_heberg_sort', 'id');
+        $filteredResHeberg  = $reservationhebergementRepository->searchAndSort(
+            $resHebergSearch !== '' ? $resHebergSearch : null,
+            $resHebergSort
+        );
+        $recentResHeberg = array_slice($filteredResHeberg, 0, 10);
 
         return $this->render('admin/dashboard.html.twig', [
             'totalRevenue' => $totalRevenue,
@@ -261,15 +284,24 @@ final class AdminController extends AbstractController
             'chartData' => $chartData,
 
             'recentReservations' => $recentReservations,
-            'recentBillets' => $recentBillets,
+            'recentBillets'      => $recentBillets,
+            'recentHebergements' => $recentHebergements,
+            'recentResHeberg'    => $recentResHeberg,
 
-            'reservationSearch' => $reservationSearch,
-            'reservationSort' => $reservationSort,
+            'reservationSearch'    => $reservationSearch,
+            'reservationSort'      => $reservationSort,
             'reservationDirection' => $reservationDirection,
 
-            'billetSearch' => $billetSearch,
-            'billetSort' => $billetSort,
+            'billetSearch'    => $billetSearch,
+            'billetSort'      => $billetSort,
             'billetDirection' => $billetDirection,
+
+            'hebergSearch'    => $hebergSearch,
+            'hebergSort'      => $hebergSort,
+            'hebergDirection' => $hebergDirection,
+
+            'resHebergSearch' => $resHebergSearch,
+            'resHebergSort'   => $resHebergSort,
         ]);
     }
 

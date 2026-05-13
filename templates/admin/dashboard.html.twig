@@ -388,6 +388,13 @@
 
     {% set totalHebergements = totalHebergements|default(0) %}
     {% set totalReservationsHeberg = totalReservationsHeberg|default(0) %}
+    {% set recentHebergements = recentHebergements|default([]) %}
+    {% set recentResHeberg = recentResHeberg|default([]) %}
+    {% set hebergSearch = hebergSearch|default('') %}
+    {% set hebergSort = hebergSort|default('nom') %}
+    {% set hebergDirection = hebergDirection|default('ASC') %}
+    {% set resHebergSearch = resHebergSearch|default('') %}
+    {% set resHebergSort = resHebergSort|default('id') %}
 
     <aside class="app-sidebar">
         <div class="logo-area">
@@ -790,6 +797,126 @@
                     </div>
                 {% endfor %}
             </div>
+
+            {# ══ Hébergements list ══ #}
+            <div class="bookings-list">
+                <div class="list-head">
+                    <h4>Hébergements</h4>
+
+                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
+                        <input
+                            type="text"
+                            name="heberg_search"
+                            value="{{ hebergSearch|default('') }}"
+                            placeholder="Rechercher hébergement..."
+                            class="dashboard-filter-input"
+                        >
+
+                        <select name="heberg_sort" class="dashboard-filter-select">
+                            <option value="nom"   {{ (hebergSort|default('nom')) == 'nom'   ? 'selected' : '' }}>Trier par nom</option>
+                            <option value="ville" {{ (hebergSort|default('nom')) == 'ville' ? 'selected' : '' }}>Ville</option>
+                            <option value="pays"  {{ (hebergSort|default('nom')) == 'pays'  ? 'selected' : '' }}>Pays</option>
+                        </select>
+
+                        <select name="heberg_direction" class="dashboard-filter-select">
+                            <option value="ASC"  {{ (hebergDirection|default('ASC')) == 'ASC'  ? 'selected' : '' }}>Ascendant</option>
+                            <option value="DESC" {{ (hebergDirection|default('ASC')) == 'DESC' ? 'selected' : '' }}>Descendant</option>
+                        </select>
+
+                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
+
+                        {# Keep other search states #}
+                        <input type="hidden" name="reservation_search" value="{{ reservationSearch }}">
+                        <input type="hidden" name="reservation_sort" value="{{ reservationSort }}">
+                        <input type="hidden" name="reservation_direction" value="{{ reservationDirection }}">
+                        <input type="hidden" name="billet_search" value="{{ billetSearch }}">
+                        <input type="hidden" name="billet_sort" value="{{ billetSort }}">
+                        <input type="hidden" name="billet_direction" value="{{ billetDirection }}">
+                        <input type="hidden" name="res_heberg_search" value="{{ resHebergSearch|default('') }}">
+                        <input type="hidden" name="res_heberg_sort" value="{{ resHebergSort|default('id') }}">
+                    </form>
+                </div>
+
+                {% for heberg in recentHebergements|default([]) %}
+                    <div class="booking-item">
+                        <div class="b-cust">🏨 {{ heberg.nom }}</div>
+                        <div class="b-dest">{{ heberg.ville }} — {{ heberg.pays }}</div>
+                        <div class="b-date" style="color:var(--gold);">{{ heberg.tarifParNuit }} DT / nuit</div>
+                        <div class="b-status">Cap. {{ heberg.capacite }}</div>
+                    </div>
+                {% else %}
+                    <div class="booking-item">
+                        <div class="b-cust">Aucun hébergement</div>
+                        <div class="b-dest">-</div>
+                        <div class="b-date">-</div>
+                        <div class="b-status">Vide</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# ══ Réservations Hôtels list ══ #}
+            <div class="bookings-list">
+                <div class="list-head">
+                    <h4>Réservations Hôtels</h4>
+
+                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
+                        <input
+                            type="text"
+                            name="res_heberg_search"
+                            value="{{ resHebergSearch|default('') }}"
+                            placeholder="Rechercher par hôtel..."
+                            class="dashboard-filter-input"
+                        >
+
+                        <select name="res_heberg_sort" class="dashboard-filter-select">
+                            <option value="id"              {{ (resHebergSort|default('id')) == 'id'              ? 'selected' : '' }}>Trier par ID</option>
+                            <option value="nom_hebergement" {{ (resHebergSort|default('id')) == 'nom_hebergement' ? 'selected' : '' }}>Hôtel</option>
+                            <option value="statut"          {{ (resHebergSort|default('id')) == 'statut'          ? 'selected' : '' }}>Statut</option>
+                        </select>
+
+                        <select name="heberg_direction" class="dashboard-filter-select" style="display:none;">
+                            <option value="ASC">ASC</option>
+                        </select>
+
+                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
+
+                        {# Keep other search states #}
+                        <input type="hidden" name="reservation_search" value="{{ reservationSearch }}">
+                        <input type="hidden" name="reservation_sort" value="{{ reservationSort }}">
+                        <input type="hidden" name="reservation_direction" value="{{ reservationDirection }}">
+                        <input type="hidden" name="billet_search" value="{{ billetSearch }}">
+                        <input type="hidden" name="billet_sort" value="{{ billetSort }}">
+                        <input type="hidden" name="billet_direction" value="{{ billetDirection }}">
+                        <input type="hidden" name="heberg_search" value="{{ hebergSearch|default('') }}">
+                        <input type="hidden" name="heberg_sort" value="{{ hebergSort|default('nom') }}">
+                        <input type="hidden" name="heberg_direction" value="{{ hebergDirection|default('ASC') }}">
+                    </form>
+                </div>
+
+                {% for resHeberg in recentResHeberg|default([]) %}
+                    {% set statutRH = resHeberg.statut|default('—') %}
+                    {% set statutRHLower = statutRH|lower %}
+                    <div class="booking-item">
+                        <div class="b-cust">Réservation #{{ resHeberg.idReservationHebergement }}</div>
+                        <div class="b-dest">{{ resHeberg.idHebergement ? resHeberg.idHebergement.nom : '—' }}</div>
+                        <div class="b-date" style="color:var(--gold);">
+                            {{ resHeberg.dateDebut ? resHeberg.dateDebut|date('d/m/Y') : '' }}
+                            {% if resHeberg.dateFin %} → {{ resHeberg.dateFin|date('d/m/Y') }}{% endif %}
+                        </div>
+                        <div class="b-status {% if 'attente' in statutRHLower %}pending{% endif %}">
+                            {{ statutRH }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="booking-item">
+                        <div class="b-cust">Aucune réservation hôtel</div>
+                        <div class="b-dest">-</div>
+                        <div class="b-date">-</div>
+                        <div class="b-status">Vide</div>
+                    </div>
+                {% endfor %}
+            </div>
+
         </div>
     </main>
 
