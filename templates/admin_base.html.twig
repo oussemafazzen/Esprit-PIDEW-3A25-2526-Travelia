@@ -386,38 +386,41 @@
     
     <nav class="nav-menu">
       {% set route = app.request.attributes.get('_route') %}
+
       <a href="{{ path('app_admin_dashboard') }}" class="nav-item {% if route == 'app_admin_dashboard' %}active{% endif %}">
         <span class="nav-icon">⬚</span>
-        Dashboard
-      </a>
-      
-      {% set is_heberg_res = (route starts with 'app_reservationhebergement') %}
-      <a href="{{ path('app_hebergement_index') }}" class="nav-item {% if (route starts with 'app_hebergement') or is_heberg_res %}active{% endif %}">
-        <span class="nav-icon">{% if is_heberg_res %}📑{% else %}🏨{% endif %}</span>
-        {{ is_heberg_res ? 'Resrv. Hotels' : 'Hotels' }}
+        Tableau de bord
       </a>
 
-      {% set is_billet = (route starts with 'app_billet') %}
-      {% set is_reservation_friend = (route starts with 'app_reservation') and not is_heberg_res %}
-      <a href="{{ path('app_reservation_index') }}" class="nav-item {% if is_reservation_friend or is_billet %}active{% endif %}">
-        <span class="nav-icon">{% if is_billet %}🎫{% else %}✈{% endif %}</span>
-        {{ is_billet ? 'billets' : 'réservations' }}
+      {% set is_heberg_active = (route starts with 'app_hebergement') or (route starts with 'app_reservationhebergement') %}
+      <a href="{{ path('app_hebergement_index') }}" class="nav-item {% if is_heberg_active %}active{% endif %}">
+        <span class="nav-icon">🏨</span>
+        Hébergements
       </a>
 
-      {% set is_activite = (route starts with 'app_activite') or (route starts with 'app_inscription') %}
-      <a href="{{ path('app_activite_index') }}" class="nav-item {% if is_activite %}active{% endif %}">
+      {% set is_billet_active = (route starts with 'app_billet') %}
+      <a href="{{ path('app_billet_index') }}" class="nav-item {% if is_billet_active %}active{% endif %}">
+        <span class="nav-icon">🎫</span>
+        Billets
+      </a>
+
+      {% set is_activite_active = (route starts with 'app_activite') or (route starts with 'app_inscription') %}
+      <a href="{{ path('app_activite_index') }}" class="nav-item {% if is_activite_active %}active{% endif %}">
         <span class="nav-icon">🛶</span>
         Activités
       </a>
-      <a href="{{ path('app_admin_travelers') }}" class="nav-item {% if route == 'app_admin_travelers' %}active{% endif %}">
-        <span class="nav-icon">👥</span>
-        Travelers
+
+      {% set is_reservation_active = (route starts with 'app_reservation') and not (route starts with 'app_reservationhebergement') %}
+      <a href="{{ path('app_reservation_index') }}" class="nav-item {% if is_reservation_active %}active{% endif %}">
+        <span class="nav-icon">✈</span>
+        Réservations
       </a>
+
       <a href="#" class="nav-item">
-        <span class="nav-icon">🔧</span>
-        Settings
+        <span class="nav-icon">⚙</span>
+        Paramètres
       </a>
-      
+
       <a href="{{ path('app_home') }}" class="nav-item" style="color:red; margin-top:1rem;">
         <span class="nav-icon" style="color:red;">✕</span>
         Quitter
@@ -458,7 +461,7 @@
 
     <!-- Top Switch Buttons -->
     {% set route = app.request.attributes.get('_route') %}
-    {% if not (route starts with 'app_reservation_') and not (route starts with 'app_billet_') %}
+    {% if not (route starts with 'app_reservation_') and not (route starts with 'app_billet_') and not (route starts with 'app_activite') and not (route starts with 'app_inscription') %}
     <div class="dashboard-controls" style="margin-bottom: 2rem; display: flex; gap: 1rem; z-index: 2; position: relative;">
         <a href="{{ path('app_hebergement_index') }}" class="switch-btn {% if 'hebergement' in route and 'reservation' not in route %}active{% endif %}">Hebergements Tables</a>
         <a href="{{ path('app_reservationhebergement_index') }}" class="switch-btn {% if 'reservation' in route %}active{% endif %}">Reservations Tables</a>

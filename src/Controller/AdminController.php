@@ -6,8 +6,10 @@ use App\Entity\Client;
 use App\Repository\ActiviteRepository;
 use App\Repository\BilletRepository;
 use App\Repository\ClientRepository;
+use App\Repository\HebergementRepository;
 use App\Repository\InscriptionActiviteRepository;
 use App\Repository\ReservationRepository;
+use App\Repository\ReservationhebergementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +25,9 @@ final class AdminController extends AbstractController
         ReservationRepository $reservationRepository,
         BilletRepository $billetRepository,
         ActiviteRepository $activiteRepository,
-        InscriptionActiviteRepository $inscriptionRepository
+        InscriptionActiviteRepository $inscriptionRepository,
+        HebergementRepository $hebergementRepository,
+        ReservationhebergementRepository $reservationhebergementRepository
     ): Response {
         $reservations = $reservationRepository->findAll();
         $billets = $billetRepository->findAll();
@@ -229,6 +233,10 @@ final class AdminController extends AbstractController
         $totalInscriptions = count($inscriptionRepository->findAll());
         $totalParticipants = $inscriptionRepository->totalParticipants();
 
+        // Hebergement stats
+        $totalHebergements      = count($hebergementRepository->findAll());
+        $totalReservationsHeberg = count($reservationhebergementRepository->findAll());
+
         return $this->render('admin/dashboard.html.twig', [
             'totalRevenue' => $totalRevenue,
 
@@ -245,6 +253,9 @@ final class AdminController extends AbstractController
             'totalActivites'    => $totalActivites,
             'totalInscriptions' => $totalInscriptions,
             'totalParticipants' => $totalParticipants,
+
+            'totalHebergements'       => $totalHebergements,
+            'totalReservationsHeberg' => $totalReservationsHeberg,
 
             'labels' => $labels,
             'chartData' => $chartData,

@@ -384,8 +384,10 @@
     {% set labels = labels|default(['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUI', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC']) %}
     {% set chartData = chartData|default([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) %}
     {% set recentReservations = recentReservations|default([]) %}
-    {% set recentBillets = recentBillets|default([])
-    %}
+    {% set recentBillets = recentBillets|default([]) %}
+
+    {% set totalHebergements = totalHebergements|default(0) %}
+    {% set totalReservationsHeberg = totalReservationsHeberg|default(0) %}
 
     <aside class="app-sidebar">
         <div class="logo-area">
@@ -402,7 +404,7 @@
                 Hébergements
             </a>
             <a href="{{ path('app_billet_index') }}" class="nav-item">
-                <span class="nav-icon">✈</span>
+                <span class="nav-icon">🎟</span>
                 Billets
             </a>
             <a href="{{ path('app_activite_index') }}" class="nav-item">
@@ -410,12 +412,16 @@
                 Activités
             </a>
             <a href="{{ path('app_reservation_index') }}" class="nav-item">
-                <span class="nav-icon">👥</span>
+                <span class="nav-icon">✈</span>
                 Réservations
             </a>
             <a href="#" class="nav-item">
                 <span class="nav-icon">⚙</span>
                 Paramètres
+            </a>
+            <a href="{{ path('app_home') }}" class="nav-item" style="color:red; margin-top:1rem;">
+                <span class="nav-icon" style="color:red;">✕</span>
+                Quitter
             </a>
         </nav>
 
@@ -478,6 +484,19 @@
                 <div class="stat-label">Billets confirmés</div>
                 <div class="stat-value">{{ confirmedBillets }}</div>
                 <div class="stat-trend">{{ billetConfirmationRate }}% de confirmation</div>
+            </div>
+
+            {# ── Hébergements stats ── #}
+            <div class="stat-card" style="border-color:rgba(232,201,126,0.12);">
+                <div class="stat-label">🏨 Hébergements</div>
+                <div class="stat-value">{{ totalHebergements }}</div>
+                <div class="stat-trend"><a href="{{ path('app_hebergement_index') }}" style="color:var(--gold); text-decoration:none;">Gérer les hôtels →</a></div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(232,201,126,0.12);">
+                <div class="stat-label">📑 Réservations Hôtels</div>
+                <div class="stat-value">{{ totalReservationsHeberg }}</div>
+                <div class="stat-trend"><a href="{{ path('app_reservationhebergement_index') }}" style="color:var(--gold); text-decoration:none;">Voir les réservations →</a></div>
             </div>
 
             {# ── Activités stats ── #}
