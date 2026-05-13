@@ -32,7 +32,7 @@ final class AdminController extends AbstractController
         $reservations = $reservationRepository->findAll();
         $billets = $billetRepository->findAll();
 
-       
+
 
         $totalRevenue = 0.0;
         foreach ($billets as $billet) {
@@ -80,7 +80,7 @@ final class AdminController extends AbstractController
             ? round(($confirmedBillets / $totalBillets) * 100, 1)
             : 0;
 
-        
+
 
         $labels = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUI', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
         $chartData = array_fill(0, 12, 0);
@@ -94,7 +94,7 @@ final class AdminController extends AbstractController
             }
         }
 
-        
+
         $reservationSearch = trim((string) $request->query->get('reservation_search', ''));
         $reservationSort = (string) $request->query->get('reservation_sort', 'date');
         $reservationDirection = strtoupper((string) $request->query->get('reservation_direction', 'DESC'));
@@ -159,7 +159,7 @@ final class AdminController extends AbstractController
 
         $recentReservations = array_slice($filteredReservations, 0, 10);
 
-       
+
         $billetSearch = trim((string) $request->query->get('billet_search', ''));
         $billetSort = (string) $request->query->get('billet_sort', 'depart');
         $billetDirection = strtoupper((string) $request->query->get('billet_direction', 'DESC'));
@@ -229,49 +229,31 @@ final class AdminController extends AbstractController
         $recentBillets = array_slice($filteredBillets, 0, 10);
 
         // Activity stats for dashboard
-        $totalActivites    = count($activiteRepository->findAll());
+        $totalActivites = count($activiteRepository->findAll());
         $totalInscriptions = count($inscriptionRepository->findAll());
         $totalParticipants = $inscriptionRepository->totalParticipants();
 
-        // Hebergement stats + search/sort
-        $allHebergements = $hebergementRepository->findAll();
-        $totalHebergements = count($allHebergements);
+        // Hebergement stats
+        $totalHebergements       = count($hebergementRepository->findAll());
+        $totalReservationsHeberg = count($reservationhebergementRepository->findAll());
 
-        $hebergSearch    = trim((string) $request->query->get('heberg_search', ''));
-        $hebergSort      = (string) $request->query->get('heberg_sort', 'nom');
-        $hebergDirection = strtoupper((string) $request->query->get('heberg_direction', 'ASC'));
-        if (!in_array($hebergDirection, ['ASC', 'DESC'], true)) {
-            $hebergDirection = 'ASC';
-        }
-        $filteredHebergements = $hebergSearch !== ''
-            ? $hebergementRepository->searchAndSort($hebergSearch, $hebergSort)
-            : $hebergementRepository->searchAndSort(null, $hebergSort);
-        $recentHebergements = array_slice($filteredHebergements, 0, 10);
-
-        // Réservations hôtels stats + search/sort
-        $allResHeberg = $reservationhebergementRepository->findAll();
-        $totalReservationsHeberg = count($allResHeberg);
-
-        $resHebergSearch    = trim((string) $request->query->get('res_heberg_search', ''));
-        $resHebergSort      = (string) $request->query->get('res_heberg_sort', 'id');
-        $filteredResHeberg  = $reservationhebergementRepository->searchAndSort(
-            $resHebergSearch !== '' ? $resHebergSearch : null,
-            $resHebergSort
-        );
-        $recentResHeberg = array_slice($filteredResHeberg, 0, 10);
+        // ── The two hebergement statistics the user built ──────────────────
+        $seasonStats  = $reservationhebergementRepository->countBySeason();
+        $countryStats = $reservationhebergementRepository->countByCountry();
+        // ──────────────────────────────────────────────────────────────────
 
         return $this->render('admin/dashboard.html.twig', [
             'totalRevenue' => $totalRevenue,
 
-            'totalReservations' => $totalReservations,
-            'pendingReservations' => $pendingReservations,
-            'confirmedReservations' => $confirmedReservations,
-            'confirmationRate' => $confirmationRate,
+            'totalReservations'    => $totalReservations,
+            'pendingReservations'  => $pendingReservations,
+            'confirmedReservations'=> $confirmedReservations,
+            'confirmationRate'     => $confirmationRate,
 
-            'totalBillets' => $totalBillets,
-            'pendingBillets' => $pendingBillets,
-            'confirmedBillets' => $confirmedBillets,
-            'billetConfirmationRate' => $billetConfirmationRate,
+            'totalBillets'          => $totalBillets,
+            'pendingBillets'        => $pendingBillets,
+            'confirmedBillets'      => $confirmedBillets,
+            'billetConfirmationRate'=> $billetConfirmationRate,
 
             'totalActivites'    => $totalActivites,
             'totalInscriptions' => $totalInscriptions,
@@ -279,14 +261,14 @@ final class AdminController extends AbstractController
 
             'totalHebergements'       => $totalHebergements,
             'totalReservationsHeberg' => $totalReservationsHeberg,
+            'seasonStats'             => $seasonStats,
+            'countryStats'            => $countryStats,
 
-            'labels' => $labels,
+            'labels'    => $labels,
             'chartData' => $chartData,
 
             'recentReservations' => $recentReservations,
             'recentBillets'      => $recentBillets,
-            'recentHebergements' => $recentHebergements,
-            'recentResHeberg'    => $recentResHeberg,
 
             'reservationSearch'    => $reservationSearch,
             'reservationSort'      => $reservationSort,
@@ -295,13 +277,6 @@ final class AdminController extends AbstractController
             'billetSearch'    => $billetSearch,
             'billetSort'      => $billetSort,
             'billetDirection' => $billetDirection,
-
-            'hebergSearch'    => $hebergSearch,
-            'hebergSort'      => $hebergSort,
-            'hebergDirection' => $hebergDirection,
-
-            'resHebergSearch' => $resHebergSearch,
-            'resHebergSort'   => $resHebergSort,
         ]);
     }
 

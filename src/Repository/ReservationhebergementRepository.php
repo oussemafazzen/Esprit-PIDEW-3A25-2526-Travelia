@@ -39,4 +39,51 @@ class ReservationhebergementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * Reservations grouped by season (based on date_debut month).
+     * Returns ['Hiver'=>n, 'Printemps'=>n, 'Été'=>n, 'Automne'=>n].
+     */
+    public function countBySeason(): array
+    {
+        $rows = $this->createQueryBuilder('r')
+            ->select('MONTH(r.dateDebut) AS mois, COUNT(r.idReservationHebergement) AS total')
+            ->groupBy('mois')
+            ->getQuery()
+            ->getResult();
+
+        $seasons = ['Hiver' => 0, 'Printemps' => 0, 'Été' => 0, 'Automne' => 0];
+
+        foreach ($rows as $row) {
+            $month = (int) $row['mois'];
+            $season = match (true) {
+                in_array($month, [12, 1, 2])  => 'Hiver',
+                in_array($month, [3, 4, 5])   => 'Printemps',
+                in_array($month, [6, 7, 8])   => 'Été',
+                in_array($month, [9, 10, 11]) => 'Automne',
+                default                        => 'Autre',
+            };
+            $seasons[$season] = ($seasons[$season] ?? 0) + (int) $row['total'];
+        }
+
+        return $seasons;
+    }
+
+    /**
+     * Reservations grouped by hotel country.
+     * Returns array of ['pays'=>'France', 'total'=>12].
+     *
+     * @return array<int, array{pays: string, total: int}>
+     */
+    public function countByCountry(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('h.pays AS pays, COUNT(r.idReservationHebergement) AS total')
+            ->leftJoin('r.idHebergement', 'h')
+            ->groupBy('h.pays')
+            ->orderBy('total', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }

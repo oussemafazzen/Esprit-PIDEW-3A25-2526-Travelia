@@ -388,13 +388,6 @@
 
     {% set totalHebergements = totalHebergements|default(0) %}
     {% set totalReservationsHeberg = totalReservationsHeberg|default(0) %}
-    {% set recentHebergements = recentHebergements|default([]) %}
-    {% set recentResHeberg = recentResHeberg|default([]) %}
-    {% set hebergSearch = hebergSearch|default('') %}
-    {% set hebergSort = hebergSort|default('nom') %}
-    {% set hebergDirection = hebergDirection|default('ASC') %}
-    {% set resHebergSearch = resHebergSearch|default('') %}
-    {% set resHebergSort = resHebergSort|default('id') %}
 
     <aside class="app-sidebar">
         <div class="logo-area">
@@ -679,123 +672,80 @@
                 </div>
             </div>
 
-            {# ══ Hébergements list ══ #}
-            <div class="bookings-list">
-                <div class="list-head">
-                    <h4>Hébergements</h4>
-
-                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
-                        <input
-                            type="text"
-                            name="heberg_search"
-                            value="{{ hebergSearch|default('') }}"
-                            placeholder="Rechercher hébergement..."
-                            class="dashboard-filter-input"
-                        >
-
-                        <select name="heberg_sort" class="dashboard-filter-select">
-                            <option value="nom"   {{ (hebergSort|default('nom')) == 'nom'   ? 'selected' : '' }}>Trier par nom</option>
-                            <option value="ville" {{ (hebergSort|default('nom')) == 'ville' ? 'selected' : '' }}>Ville</option>
-                            <option value="pays"  {{ (hebergSort|default('nom')) == 'pays'  ? 'selected' : '' }}>Pays</option>
-                        </select>
-
-                        <select name="heberg_direction" class="dashboard-filter-select">
-                            <option value="ASC"  {{ (hebergDirection|default('ASC')) == 'ASC'  ? 'selected' : '' }}>Ascendant</option>
-                            <option value="DESC" {{ (hebergDirection|default('ASC')) == 'DESC' ? 'selected' : '' }}>Descendant</option>
-                        </select>
-
-                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
-
-                        {# Keep other search states #}
-                        <input type="hidden" name="reservation_search" value="{{ reservationSearch }}">
-                        <input type="hidden" name="reservation_sort" value="{{ reservationSort }}">
-                        <input type="hidden" name="reservation_direction" value="{{ reservationDirection }}">
-                        <input type="hidden" name="billet_search" value="{{ billetSearch }}">
-                        <input type="hidden" name="billet_sort" value="{{ billetSort }}">
-                        <input type="hidden" name="billet_direction" value="{{ billetDirection }}">
-                        <input type="hidden" name="res_heberg_search" value="{{ resHebergSearch|default('') }}">
-                        <input type="hidden" name="res_heberg_sort" value="{{ resHebergSort|default('id') }}">
-                    </form>
+            {# ══ Stat 1 : Réservations hôtels par saison ══ #}
+            <div class="bookings-list" style="grid-column: span 3;">
+                <div class="list-head" style="padding: 1.5rem 2rem 1rem;">
+                    <h4 style="font-family:var(--serif); font-size:1.3rem; font-weight:400; color:var(--gold);">
+                        🌤 Réservations hôtels par saison
+                    </h4>
                 </div>
 
-                {% for heberg in recentHebergements|default([]) %}
-                    <div class="booking-item">
-                        <div class="b-cust">🏨 {{ heberg.nom }}</div>
-                        <div class="b-dest">{{ heberg.ville }} — {{ heberg.pays }}</div>
-                        <div class="b-date" style="color:var(--gold);">{{ heberg.tarifParNuit }} DT / nuit</div>
-                        <div class="b-status">Cap. {{ heberg.capacite }}</div>
-                    </div>
-                {% else %}
-                    <div class="booking-item">
-                        <div class="b-cust">Aucun hébergement</div>
-                        <div class="b-dest">-</div>
-                        <div class="b-date">-</div>
-                        <div class="b-status">Vide</div>
-                    </div>
-                {% endfor %}
+                {% set seasonColors = {
+                    'Hiver':     '#6ea8d8',
+                    'Printemps': '#6dc98b',
+                    'Été':       '#e8c97e',
+                    'Automne':   '#e09a5c'
+                } %}
+                {% set seasonIcons = {
+                    'Hiver':     '❄️',
+                    'Printemps': '🌸',
+                    'Été':       '☀️',
+                    'Automne':   '🍂'
+                } %}
+                {% set totalSeason = 0 %}
+                {% for count in seasonStats|default({}) %}{% set totalSeason = totalSeason + count %}{% endfor %}
+
+                <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:1.5rem; padding: 1rem 2rem 2rem;">
+                    {% for season, count in seasonStats|default({}) %}
+                        {% set pct = totalSeason > 0 ? (count / totalSeason * 100)|round(1) : 0 %}
+                        {% set color = seasonColors[season]|default('#c9a84c') %}
+                        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:1.5rem; text-align:center;">
+                            <div style="font-size:2rem; margin-bottom:0.5rem;">{{ seasonIcons[season]|default('🗓') }}</div>
+                            <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-bottom:0.8rem;">{{ season }}</div>
+                            <div style="font-family:var(--serif); font-size:2.2rem; color:{{ color }}; line-height:1;">{{ count }}</div>
+                            <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin:0.5rem 0 1rem;">réservations</div>
+                            {# bar #}
+                            <div style="width:100%; height:4px; background:rgba(255,255,255,0.06); border-radius:10px; overflow:hidden;">
+                                <div style="height:100%; width:{{ pct }}%; background:{{ color }}; border-radius:10px; transition:width 0.8s ease;"></div>
+                            </div>
+                            <div style="font-size:0.7rem; color:{{ color }}; margin-top:0.4rem;">{{ pct }}%</div>
+                        </div>
+                    {% else %}
+                        <div style="grid-column:span 4; text-align:center; opacity:0.4; padding:2rem;">
+                            Aucune réservation hôtel enregistrée
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
 
-            {# ══ Réservations Hôtels list ══ #}
-            <div class="bookings-list">
-                <div class="list-head">
-                    <h4>Réservations Hôtels</h4>
-
-                    <form method="get" action="{{ path('admin_dashboard') }}" class="dashboard-filter-form">
-                        <input
-                            type="text"
-                            name="res_heberg_search"
-                            value="{{ resHebergSearch|default('') }}"
-                            placeholder="Rechercher par hôtel..."
-                            class="dashboard-filter-input"
-                        >
-
-                        <select name="res_heberg_sort" class="dashboard-filter-select">
-                            <option value="id"              {{ (resHebergSort|default('id')) == 'id'              ? 'selected' : '' }}>Trier par ID</option>
-                            <option value="nom_hebergement" {{ (resHebergSort|default('id')) == 'nom_hebergement' ? 'selected' : '' }}>Hôtel</option>
-                            <option value="statut"          {{ (resHebergSort|default('id')) == 'statut'          ? 'selected' : '' }}>Statut</option>
-                        </select>
-
-                        <select name="heberg_direction" class="dashboard-filter-select" style="display:none;">
-                            <option value="ASC">ASC</option>
-                        </select>
-
-                        <button type="submit" class="dashboard-filter-btn">Appliquer</button>
-
-                        {# Keep other search states #}
-                        <input type="hidden" name="reservation_search" value="{{ reservationSearch }}">
-                        <input type="hidden" name="reservation_sort" value="{{ reservationSort }}">
-                        <input type="hidden" name="reservation_direction" value="{{ reservationDirection }}">
-                        <input type="hidden" name="billet_search" value="{{ billetSearch }}">
-                        <input type="hidden" name="billet_sort" value="{{ billetSort }}">
-                        <input type="hidden" name="billet_direction" value="{{ billetDirection }}">
-                        <input type="hidden" name="heberg_search" value="{{ hebergSearch|default('') }}">
-                        <input type="hidden" name="heberg_sort" value="{{ hebergSort|default('nom') }}">
-                        <input type="hidden" name="heberg_direction" value="{{ hebergDirection|default('ASC') }}">
-                    </form>
+            {# ══ Stat 2 : Réservations hôtels par pays ══ #}
+            <div class="bookings-list" style="grid-column: span 3;">
+                <div class="list-head" style="padding: 1.5rem 2rem 1rem;">
+                    <h4 style="font-family:var(--serif); font-size:1.3rem; font-weight:400; color:var(--gold);">
+                        🌍 Réservations hôtels par pays
+                    </h4>
                 </div>
 
-                {% for resHeberg in recentResHeberg|default([]) %}
-                    {% set statutRH = resHeberg.statut|default('—') %}
-                    {% set statutRHLower = statutRH|lower %}
-                    <div class="booking-item">
-                        <div class="b-cust">Réservation #{{ resHeberg.idReservationHebergement }}</div>
-                        <div class="b-dest">{{ resHeberg.idHebergement ? resHeberg.idHebergement.nom : '—' }}</div>
-                        <div class="b-date" style="color:var(--gold);">
-                            {{ resHeberg.dateDebut ? resHeberg.dateDebut|date('d/m/Y') : '' }}
-                            {% if resHeberg.dateFin %} → {{ resHeberg.dateFin|date('d/m/Y') }}{% endif %}
+                {% set totalCountry = 0 %}
+                {% for row in countryStats|default([]) %}{% set totalCountry = totalCountry + row.total %}{% endfor %}
+
+                <div style="padding: 0.5rem 2rem 2rem; display:flex; flex-direction:column; gap:0.8rem;">
+                    {% for row in countryStats|default([]) %}
+                        {% set pct = totalCountry > 0 ? (row.total / totalCountry * 100)|round(1) : 0 %}
+                        <div style="display:flex; align-items:center; gap:1rem;">
+                            <div style="min-width:130px; font-size:0.85rem;">{{ row.pays|default('—') }}</div>
+                            <div style="flex:1; height:8px; background:rgba(255,255,255,0.06); border-radius:10px; overflow:hidden;">
+                                <div style="height:100%; width:{{ pct }}%; background:linear-gradient(90deg, var(--gold2), var(--gold)); border-radius:10px; transition:width 0.8s ease;"></div>
+                            </div>
+                            <div style="min-width:60px; text-align:right; font-family:var(--serif); color:var(--gold); font-size:1.1rem;">{{ row.total }}</div>
+                            <div style="min-width:45px; font-size:0.72rem; color:rgba(255,255,255,0.35);">{{ pct }}%</div>
                         </div>
-                        <div class="b-status {% if 'attente' in statutRHLower %}pending{% endif %}">
-                            {{ statutRH }}
+                    {% else %}
+                        <div style="text-align:center; opacity:0.4; padding:2rem;">
+                            Aucune réservation hôtel enregistrée
                         </div>
-                    </div>
-                {% else %}
-                    <div class="booking-item">
-                        <div class="b-cust">Aucune réservation hôtel</div>
-                        <div class="b-dest">-</div>
-                        <div class="b-date">-</div>
-                        <div class="b-status">Vide</div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
 
         </div>
