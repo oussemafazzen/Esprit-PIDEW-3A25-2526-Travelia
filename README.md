@@ -8,7 +8,6 @@
 
 [![PHP](https://img.shields.io/badge/PHP-≥8.1-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
 [![Symfony](https://img.shields.io/badge/Symfony-6.4-000000?style=for-the-badge&logo=symfony&logoColor=white)](https://symfony.com/)
-[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)](LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%208-blueviolet?style=for-the-badge)](https://phpstan.org/)
@@ -97,7 +96,7 @@ This project was developed as part of the **Projet Intégré de Développement W
 | **Database** | MySQL 8 (via XAMPP & WAMP) |
 | **Admin Panel** | EasyAdmin Bundle 5 |
 | **Authentication** | Symfony Security, KnpU OAuth2 (Google), face-api.js |
-| **AI / ML** | Groq API (LLaMA), [Python 3](https://www.python.org/) + scikit-learn |
+| **AI / ML** | Groq API (LLaMA), Python 3 + scikit-learn |
 | **External APIs** | Amadeus / SerpAPI (flights), Unsplash (photos), Abstract API (holidays), Google OAuth2 |
 | **PDF Export** | KnpSnappy + wkhtmltopdf |
 | **Excel Export** | PhpSpreadsheet |
@@ -105,7 +104,7 @@ This project was developed as part of the **Projet Intégré de Développement W
 | **Email** | Symfony Mailer + Gmail SMTP |
 | **Testing** | PHPUnit 13, PHPStan 2 |
 | **Dev Tools** | Symfony CLI, Symfony Web Profiler, Symfony Maker |
-| **Dev Environment** | XAMPP (Apache + MySQL) / WAMP (Apache + MySQL) |
+| **Dev Environment** | XAMPP (Apache + MySQL) | WAMP (Apache + MySQL) |
 
 ---
 
@@ -168,20 +167,13 @@ php bin/console doctrine:migrations:migrate
 2. Start **Apache** and **MySQL** in the XAMPP Control Panel
 3. Open `http://localhost/hebergementwebfinal/public/`
 
-**Option B — via WAMP:**
-1. Place the project folder inside `C:\wamp64\www\`
-2. Start **WampServer** and ensure both Apache and MySQL services are green
-3. Open `http://localhost/hebergementwebfinal/public/`
-
-**Option C — via Symfony CLI:**
+**Option B — via Symfony CLI:**
 ```bash
 symfony server:start
 ```
 Then open `http://127.0.0.1:8000`
 
 ### 7. (Optional) Install Python dependencies for AI recommendations
-
-The AI flight recommendation engine uses a Python + scikit-learn model. Make sure [Python 3.9+](https://www.python.org/downloads/) is installed, then run:
 
 ```bash
 cd ai/
@@ -295,9 +287,9 @@ This project was built collaboratively by the **3A25** student team at **Esprit 
 |---|---|
 | **Oussema Fazzen** | Hébergement & Réservation Hébergement · Project Lead |
 | **Syrine BenRjeb** | Vols & Billets |
-| *(teammate)* | Réservations & Paiement |
+| **Syrine BenRjeb** | Réservations & Paiement |
 | **Syrine Boukhit** | Authentification & Profil |
-| **Tous** | Activités & Avis |
+| **Tout le groupe** | Activités & Avis |
 
 
 
