@@ -8,6 +8,7 @@
 
 [![PHP](https://img.shields.io/badge/PHP-≥8.1-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
 [![Symfony](https://img.shields.io/badge/Symfony-6.4-000000?style=for-the-badge&logo=symfony&logoColor=white)](https://symfony.com/)
+[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)](LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%208-blueviolet?style=for-the-badge)](https://phpstan.org/)
@@ -93,10 +94,10 @@ This project was developed as part of the **Projet Intégré de Développement W
 | **Framework** | Symfony 6.4 (LTS) |
 | **ORM** | Doctrine ORM 3 + Doctrine Migrations |
 | **Templating** | Twig 3, Symfony UX Turbo, Stimulus |
-| **Database** | MySQL 8 (via XAMPP) |
+| **Database** | MySQL 8 (via XAMPP & WAMP) |
 | **Admin Panel** | EasyAdmin Bundle 5 |
 | **Authentication** | Symfony Security, KnpU OAuth2 (Google), face-api.js |
-| **AI / ML** | Groq API (LLaMA), Python 3 + scikit-learn |
+| **AI / ML** | Groq API (LLaMA), [Python 3](https://www.python.org/) + scikit-learn |
 | **External APIs** | Amadeus / SerpAPI (flights), Unsplash (photos), Abstract API (holidays), Google OAuth2 |
 | **PDF Export** | KnpSnappy + wkhtmltopdf |
 | **Excel Export** | PhpSpreadsheet |
@@ -104,7 +105,7 @@ This project was developed as part of the **Projet Intégré de Développement W
 | **Email** | Symfony Mailer + Gmail SMTP |
 | **Testing** | PHPUnit 13, PHPStan 2 |
 | **Dev Tools** | Symfony CLI, Symfony Web Profiler, Symfony Maker |
-| **Dev Environment** | XAMPP (Apache + MySQL) |
+| **Dev Environment** | XAMPP (Apache + MySQL) / WAMP (Apache + MySQL) |
 
 ---
 
@@ -286,12 +287,10 @@ This project was built collaboratively by the **3A25** student team at **Esprit 
 | Name | Role / Module |
 |---|---|
 | **Oussema Fazzen** | Hébergement & Réservation Hébergement |
-| *(teammate)* | Vols & Billets |
-| *(teammate)* | Réservations & Paiement |
-| *(teammate)* | Authentification & Profil |
-| *(teammate)* | Activités & Avis |
-
-> Feel free to update this table with the actual names and role assignments of your teammates.
+| **Syrine BenRjeb** | Vols & Billets |
+| **Syrine BenRjeb** | Réservations & Paiement |
+| **Syrine Boukhit** | Authentification & Profil |
+| **Tout le groupe** | Activités & Avis |
 
 ---
 
