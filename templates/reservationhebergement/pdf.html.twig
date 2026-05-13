@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Export PDF - Réservations Hébergement</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #1f2937;
+            margin: 0;
+            padding: 24px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .meta {
+            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .badge-confirmed  { color: #065f46; font-weight: 700; }
+        .badge-pending    { color: #92400e; font-weight: 700; }
+        .badge-cancelled  { color: #991b1b; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <h1>Réservations Hébergement</h1>
+    <div class="meta">Export généré le {{ generatedAt|date('d/m/Y H:i') }} — {{ reservations|length }} réservation(s)</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Hébergement</th>
+                <th>Client ID</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Nb personnes</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in reservations %}
+            {% set statut = r.statut|lower %}
+            <tr>
+                <td>{{ r.idReservationHebergement }}</td>
+                <td><strong>{{ r.idHebergement ? r.idHebergement.nom : '—' }}</strong></td>
+                <td>{{ r.idClient }}</td>
+                <td>{{ r.dateDebut ? r.dateDebut|date('d/m/Y') : '—' }}</td>
+                <td>{{ r.dateFin   ? r.dateFin|date('d/m/Y')   : '—' }}</td>
+                <td>{{ r.nombrePersonnes }}</td>
+                <td class="badge-{{ statut == 'confirmée' or statut == 'confirmee' or statut == 'confirmed' ? 'confirmed' : (statut == 'annulée' or statut == 'annulee' or statut == 'cancelled' ? 'cancelled' : 'pending') }}">
+                    {{ r.statut }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">Aucune réservation disponible.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

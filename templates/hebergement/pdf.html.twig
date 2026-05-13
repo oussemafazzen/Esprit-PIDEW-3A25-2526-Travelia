@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Export PDF - Hébergements</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #1f2937;
+            margin: 0;
+            padding: 24px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .meta {
+            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .price {
+            font-weight: 700;
+            color: #b45309;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liste des Hébergements</h1>
+    <div class="meta">Export généré le {{ generatedAt|date('d/m/Y H:i') }} — {{ hebergements|length }} hébergement(s)</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Adresse</th>
+                <th>Ville</th>
+                <th>Pays</th>
+                <th>Capacité</th>
+                <th>Équipements</th>
+                <th>Tarif/Nuit</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for h in hebergements %}
+            <tr>
+                <td>{{ h.idHebergement }}</td>
+                <td><strong>{{ h.nom }}</strong></td>
+                <td>{{ h.type }}</td>
+                <td>{{ h.adresse }}</td>
+                <td>{{ h.ville }}</td>
+                <td>{{ h.pays }}</td>
+                <td>{{ h.capacite }}</td>
+                <td>{{ h.equipements }}</td>
+                <td class="price">€{{ h.tarifParNuit }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">Aucun hébergement disponible.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
