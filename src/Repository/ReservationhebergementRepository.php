@@ -46,24 +46,28 @@ class ReservationhebergementRepository extends ServiceEntityRepository
      */
     public function countBySeason(): array
     {
-        $rows = $this->createQueryBuilder('r')
-            ->select('MONTH(r.dateDebut) AS mois, COUNT(r.idReservationHebergement) AS total')
-            ->groupBy('mois')
+        $reservations = $this->createQueryBuilder('r')
+            ->select('r.dateDebut')
             ->getQuery()
             ->getResult();
 
         $seasons = ['Hiver' => 0, 'Printemps' => 0, 'Été' => 0, 'Automne' => 0];
 
-        foreach ($rows as $row) {
-            $month = (int) $row['mois'];
+        foreach ($reservations as $row) {
+            /** @var \DateTimeInterface|null $date */
+            $date = $row['dateDebut'] ?? null;
+            if ($date === null) {
+                continue;
+            }
+            $month = (int) $date->format('n');
             $season = match (true) {
                 in_array($month, [12, 1, 2])  => 'Hiver',
                 in_array($month, [3, 4, 5])   => 'Printemps',
                 in_array($month, [6, 7, 8])   => 'Été',
                 in_array($month, [9, 10, 11]) => 'Automne',
-                default                        => 'Autre',
+                default                        => 'Hiver',
             };
-            $seasons[$season] = ($seasons[$season] ?? 0) + (int) $row['total'];
+            $seasons[$season]++;
         }
 
         return $seasons;
