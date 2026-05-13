@@ -160,7 +160,7 @@ class HolidayService
                         $cached = $this->fetchFromApi($isoCode, $checkDate);
                         $this->writeCache($key, $cached);
                     }
-                    if (!empty($cached)) {
+                    if (!empty($cached) && isset($cached[0]) && is_array($cached[0])) {
                         $monthHolidays[(int) $checkDate->format('j')] = $cached[0];
                     }
                 }
