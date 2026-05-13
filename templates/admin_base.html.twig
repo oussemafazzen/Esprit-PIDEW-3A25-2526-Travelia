@@ -446,12 +446,16 @@
         <div class="header-greeting">
           <h1 id="page_title">Welcome back, <em>Executive.</em></h1>
           <p class="header-lead" style="font-size: 0.9rem; opacity: 0.5; font-weight: 300; margin-top: 0.5rem;">
-            {% if is_billet %}
-              Managing Billets
-            {% elseif is_heberg_res %}
-              Managing Accommodation Reservations
+            {% if is_billet_active %}
+              Gestion des Billets
+            {% elseif is_heberg_active %}
+              Gestion des Hébergements
+            {% elseif is_reservation_active %}
+              Gestion des Réservations
+            {% elseif is_activite_active %}
+              Gestion des Activités
             {% else %}
-              Managing Hebergement & Reservations
+              Tableau de bord Admin
             {% endif %}
           </p>
         </div>
