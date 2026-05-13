@@ -125,12 +125,11 @@ class HolidayService
     }
 
     /**
-     * Returns the NEXT upcoming holiday (today or future) for the given country,
-     * scanning ahead by full months (1 API call per month) up to $maxDays.
-     * The returned array includes '_days_away' (int) and '_date' (d/m/Y string).
-     * Returns null only if the API is not configured or no holiday is found.
+     * Returns the next upcoming holiday in the CURRENT MONTH only (starting from $from).
+     * This limits API calls to at most 31 per country — safe for a page load.
+     * Returns null if no holiday is found before month end.
      */
-    public function getNextHoliday(string $paysName, ?\DateTimeInterface $from = null, int $maxDays = 365): ?array
+    public function getNextHoliday(string $paysName, ?\DateTimeInterface $from = null): ?array
     {
         $from    ??= new \DateTimeImmutable();
         $isoCode   = $this->resolveIsoCode($paysName);
@@ -139,43 +138,28 @@ class HolidayService
             return null;
         }
 
-        $checkedMonths = []; // 'YYYY-MM' => [dayOfMonth => holiday]
-        $cursor        = \DateTimeImmutable::createFromFormat('Y-m-d', $from->format('Y-m-d')) ?: new \DateTimeImmutable();
+        // Scan only from today to the end of the current month
+        $endOfMonth = new \DateTimeImmutable($from->format('Y-m-t')); // last day of month
+        $cursor     = \DateTimeImmutable::createFromFormat('Y-m-d', $from->format('Y-m-d')) ?: new \DateTimeImmutable();
+        $offset     = 0;
 
-        for ($offset = 0; $offset < $maxDays; $offset++) {
-            $monthKey = $cursor->format('Y-m');
-
-            if (!isset($checkedMonths[$monthKey])) {
-                $daysInMonth = (int) $cursor->format('t');
-                $monthHolidays = [];
-
-                for ($d = 1; $d <= $daysInMonth; $d++) {
-                    $checkDate = \DateTimeImmutable::createFromFormat('Y-m-d', sprintf('%s-%02d', $monthKey, $d));
-                    if ($checkDate === false) {
-                        continue;
-                    }
-                    $key    = $this->cacheKey($isoCode, $checkDate);
-                    $cached = $this->readCache($key);
-                    if ($cached === null) {
-                        $cached = $this->fetchFromApi($isoCode, $checkDate);
-                        $this->writeCache($key, $cached);
-                    }
-                    if (!empty($cached) && isset($cached[0]) && is_array($cached[0])) {
-                        $monthHolidays[(int) $checkDate->format('j')] = $cached[0];
-                    }
-                }
-                $checkedMonths[$monthKey] = $monthHolidays;
+        while ($cursor <= $endOfMonth) {
+            $key    = $this->cacheKey($isoCode, $cursor);
+            $cached = $this->readCache($key);
+            if ($cached === null) {
+                $cached = $this->fetchFromApi($isoCode, $cursor);
+                $this->writeCache($key, $cached);
             }
 
-            $dom = (int) $cursor->format('j');
-            if (isset($checkedMonths[$monthKey][$dom])) {
-                $h = $checkedMonths[$monthKey][$dom];
-                $h['_days_away'] = $offset;
-                $h['_date']      = $cursor->format('d/m/Y');
+            if (!empty($cached) && isset($cached[0]) && is_array($cached[0])) {
+                $h                = $cached[0];
+                $h['_days_away']  = $offset;
+                $h['_date']       = $cursor->format('d/m/Y');
                 return $h;
             }
 
             $cursor = $cursor->modify('+1 day');
+            $offset++;
         }
 
         return null;
