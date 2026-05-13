@@ -125,6 +125,63 @@ class HolidayService
     }
 
     /**
+     * Returns the NEXT upcoming holiday (today or future) for the given country,
+     * scanning ahead by full months (1 API call per month) up to $maxDays.
+     * The returned array includes '_days_away' (int) and '_date' (d/m/Y string).
+     * Returns null only if the API is not configured or no holiday is found.
+     */
+    public function getNextHoliday(string $paysName, ?\DateTimeInterface $from = null, int $maxDays = 365): ?array
+    {
+        $from    ??= new \DateTimeImmutable();
+        $isoCode   = $this->resolveIsoCode($paysName);
+
+        if ($isoCode === null || !$this->isApiConfigured()) {
+            return null;
+        }
+
+        $checkedMonths = []; // 'YYYY-MM' => [dayOfMonth => holiday]
+        $cursor        = \DateTimeImmutable::createFromFormat('Y-m-d', $from->format('Y-m-d')) ?: new \DateTimeImmutable();
+
+        for ($offset = 0; $offset < $maxDays; $offset++) {
+            $monthKey = $cursor->format('Y-m');
+
+            if (!isset($checkedMonths[$monthKey])) {
+                $daysInMonth = (int) $cursor->format('t');
+                $monthHolidays = [];
+
+                for ($d = 1; $d <= $daysInMonth; $d++) {
+                    $checkDate = \DateTimeImmutable::createFromFormat('Y-m-d', sprintf('%s-%02d', $monthKey, $d));
+                    if ($checkDate === false) {
+                        continue;
+                    }
+                    $key    = $this->cacheKey($isoCode, $checkDate);
+                    $cached = $this->readCache($key);
+                    if ($cached === null) {
+                        $cached = $this->fetchFromApi($isoCode, $checkDate);
+                        $this->writeCache($key, $cached);
+                    }
+                    if (!empty($cached)) {
+                        $monthHolidays[(int) $checkDate->format('j')] = $cached[0];
+                    }
+                }
+                $checkedMonths[$monthKey] = $monthHolidays;
+            }
+
+            $dom = (int) $cursor->format('j');
+            if (isset($checkedMonths[$monthKey][$dom])) {
+                $h = $checkedMonths[$monthKey][$dom];
+                $h['_days_away'] = $offset;
+                $h['_date']      = $cursor->format('d/m/Y');
+                return $h;
+            }
+
+            $cursor = $cursor->modify('+1 day');
+        }
+
+        return null;
+    }
+
+    /**
      * Returns ALL holidays for the given country on the given date.
      *
      * @return array<int, array>
@@ -192,9 +249,23 @@ class HolidayService
      */
     public function buildMessage(array $holiday): string
     {
-        $name = $holiday['name'] ?? 'Jour Férié';
-        $type = strtolower($holiday['type'] ?? '');
+        $name     = $holiday['name'] ?? 'Jour Férié';
+        $type     = strtolower($holiday['type'] ?? '');
+        $daysAway = $holiday['_days_away'] ?? 0;
+        $date     = $holiday['_date'] ?? '';
 
+        // If the holiday is upcoming (not today), add "dans X jours" context
+        if ($daysAway > 0) {
+            $datePart = $date ? " ({$date}, dans {$daysAway} jours)" : " (dans {$daysAway} jours)";
+            return match ($type) {
+                'national'   => "📅 Prochain Jour Férié : {$name}{$datePart}",
+                'observance' => "📅 Prochain Événement : {$name}{$datePart}",
+                'season'     => "📅 Prochaine Saison : {$name}{$datePart}",
+                default      => "📅 Prochain Jour Spécial : {$name}{$datePart}",
+            };
+        }
+
+        // Today's holiday
         return match ($type) {
             'national'   => "🎉 Jour Férié National : {$name} — Profitez de votre long weekend !",
             'observance' => "🌟 Événement spécial : {$name} — Une belle occasion de voyager !",

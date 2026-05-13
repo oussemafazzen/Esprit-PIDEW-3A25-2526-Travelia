@@ -50,7 +50,14 @@ final class HebergementController extends AbstractController
 
             // Reuse result if we already queried this country in this request
             if (!array_key_exists($isoCode, $countryHolidays)) {
-                $countryHolidays[$isoCode] = $this->holidayService->getHoliday($pays, $today);
+                // Try today first; fall back to next upcoming holiday
+                $todayHoliday = $this->holidayService->getHoliday($pays, $today);
+                if ($todayHoliday !== null) {
+                    $todayHoliday['_days_away'] = 0;
+                    $countryHolidays[$isoCode] = $todayHoliday;
+                } else {
+                    $countryHolidays[$isoCode] = $this->holidayService->getNextHoliday($pays, $today);
+                }
             }
 
             $holiday = $countryHolidays[$isoCode];
