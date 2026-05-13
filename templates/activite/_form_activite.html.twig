@@ -1,0 +1,41 @@
+{{ form_start(form) }}
+<div>
+    {{ form_label(form.nom) }}
+    {{ form_widget(form.nom) }}
+    {{ form_errors(form.nom) }}
+</div>
+<div>
+    {{ form_label(form.description) }}
+    {{ form_widget(form.description) }}
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+    <div>
+        {{ form_label(form.lieu) }}
+        {{ form_widget(form.lieu) }}
+    </div>
+    <div>
+        {{ form_label(form.categorie) }}
+        {{ form_widget(form.categorie) }}
+    </div>
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+    <div>
+        {{ form_label(form.duree) }}
+        {{ form_widget(form.duree) }}
+        {{ form_errors(form.duree) }}
+    </div>
+    <div>
+        {{ form_label(form.prix) }}
+        {{ form_widget(form.prix) }}
+        {{ form_errors(form.prix) }}
+    </div>
+    <div>
+        {{ form_label(form.capaciteMax) }}
+        {{ form_widget(form.capaciteMax) }}
+        {{ form_errors(form.capaciteMax) }}
+    </div>
+</div>
+<button type="submit" class="btn">
+    {{ isNew ? '✦ Créer l\'activité' : '✦ Sauvegarder les modifications' }}
+</button>
+{{ form_end(form) }}

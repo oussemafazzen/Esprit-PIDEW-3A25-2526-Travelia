@@ -1,0 +1,31 @@
+{{ form_start(form) }}
+<div>
+    {{ form_label(form.activite) }}
+    {{ form_widget(form.activite) }}
+    {{ form_errors(form.activite) }}
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+    <div>
+        {{ form_label(form.dateActivite) }}
+        {{ form_widget(form.dateActivite) }}
+    </div>
+    <div>
+        {{ form_label(form.nombreParticipants) }}
+        {{ form_widget(form.nombreParticipants) }}
+        {{ form_errors(form.nombreParticipants) }}
+    </div>
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+    <div>
+        {{ form_label(form.idClient) }}
+        {{ form_widget(form.idClient) }}
+    </div>
+    <div>
+        {{ form_label(form.statut) }}
+        {{ form_widget(form.statut) }}
+    </div>
+</div>
+<button type="submit" class="btn">
+    {{ isNew ? '✦ Créer l\'inscription' : '✦ Sauvegarder les modifications' }}
+</button>
+{{ form_end(form) }}

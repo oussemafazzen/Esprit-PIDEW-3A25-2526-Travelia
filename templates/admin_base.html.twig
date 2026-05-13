@@ -404,9 +404,10 @@
         {{ is_billet ? 'billets' : 'réservations' }}
       </a>
 
-      <a href="#" class="nav-item">
+      {% set is_activite = (route starts with 'app_activite') or (route starts with 'app_inscription') %}
+      <a href="{{ path('app_activite_index') }}" class="nav-item {% if is_activite %}active{% endif %}">
         <span class="nav-icon">🛶</span>
-        Activities
+        Activités
       </a>
       <a href="{{ path('app_admin_travelers') }}" class="nav-item {% if route == 'app_admin_travelers' %}active{% endif %}">
         <span class="nav-icon">👥</span>

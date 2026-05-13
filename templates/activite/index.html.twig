@@ -1,0 +1,243 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Activités — Travelia Admin{% endblock %}
+
+{% block body %}
+
+{# ── Stat Cards ───────────────────────────────────────────────── #}
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-bottom:2rem;">
+
+  <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:1.5rem 1.8rem;">
+    <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.35); font-weight:700; margin-bottom:0.6rem;">Activités totales</div>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:#fff; line-height:1;">{{ totalActivites }}</div>
+    <div style="font-size:0.78rem; color:var(--gold); margin-top:0.4rem;">Toutes les activités</div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:1.5rem 1.8rem;">
+    <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.35); font-weight:700; margin-bottom:0.6rem;">Prix moyen</div>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:#fff; line-height:1;">{{ avgPrix }} DT</div>
+    <div style="font-size:0.78rem; color:var(--gold); margin-top:0.4rem;">Tarif moyen des activités</div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:1.5rem 1.8rem;">
+    <div style="font-size:0.65rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.35); font-weight:700; margin-bottom:0.6rem;">Inscriptions totales</div>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:#fff; line-height:1;">{{ totalInscriptions }}</div>
+    <div style="font-size:0.78rem; color:var(--gold); margin-top:0.4rem;">{{ totalParticipants }} participants au total</div>
+  </div>
+
+</div>
+
+{# ── Statut breakdown ──────────────────────────────────────────── #}
+{% if statutStats|length > 0 %}
+<div style="display:flex; gap:0.8rem; margin-bottom:2rem; flex-wrap:wrap;">
+  {% for stat in statutStats %}
+    {% set color = stat.statut == 'Confirmée' ? '#22c55e' : (stat.statut == 'Annulée' ? '#ef4444' : '#e8c97e') %}
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:0.7rem 1.2rem; display:flex; align-items:center; gap:0.6rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:{{ color }};flex-shrink:0;"></span>
+      <span style="font-size:0.82rem; color:rgba(255,255,255,0.7);">{{ stat.statut ?? '—' }}</span>
+      <strong style="color:{{ color }}; font-size:0.88rem;">{{ stat.total }}</strong>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{# ── View switcher ─────────────────────────────────────────────── #}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+  <div style="display:flex; gap:0.8rem;">
+    <a href="{{ path('app_activite_index', {view: 'activites', search: search, sort_by: sortBy, direction: direction}) }}"
+       class="switch-btn {% if view == 'activites' %}active{% endif %}">
+      🛶 Activités
+    </a>
+    <a href="{{ path('app_activite_index', {view: 'inscriptions', insc_search: inscSearch, insc_sort: inscSort, insc_direction: inscDirection}) }}"
+       class="switch-btn {% if view == 'inscriptions' %}active{% endif %}">
+      📋 Inscriptions
+    </a>
+  </div>
+
+  {# ── Right side: create + PDF ── #}
+  <div style="display:flex; gap:0.8rem; align-items:center;">
+    {% if view == 'activites' %}
+      <a href="{{ path('app_activite_pdf') }}" target="_blank"
+         style="padding:0.7rem 1.4rem; border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:rgba(255,255,255,0.6); font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; text-decoration:none; transition:all 0.2s;"
+         onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+         onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='rgba(255,255,255,0.6)'">
+        ↓ PDF Activités
+      </a>
+      <a href="{{ path('app_activite_new') }}" class="create-new-btn lux-modal-trigger" data-modal-title="Nouvelle Activité">
+        + Nouvelle Activité
+      </a>
+    {% else %}
+      <a href="{{ path('app_inscription_pdf') }}" target="_blank"
+         style="padding:0.7rem 1.4rem; border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:rgba(255,255,255,0.6); font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; text-decoration:none; transition:all 0.2s;"
+         onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+         onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='rgba(255,255,255,0.6)'">
+        ↓ PDF Inscriptions
+      </a>
+      <a href="{{ path('app_inscription_new') }}" class="create-new-btn lux-modal-trigger" data-modal-title="Nouvelle Inscription">
+        + Nouvelle Inscription
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{# ═══════════════ ACTIVITÉS TABLE ═══════════════ #}
+{% if view == 'activites' %}
+
+<div class="crud-header-actions" style="margin-bottom:1.5rem;">
+  <div style="display:flex; align-items:center; gap:2rem;">
+    <h2>Activités</h2>
+    <form action="{{ path('app_activite_index') }}" method="get" style="display:flex; gap:0.5rem; align-items:center;">
+      <input type="hidden" name="view" value="activites">
+      <div style="position:relative;">
+        <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..."
+          style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:0.6rem 1rem; border-radius:8px; color:white; width:260px; font-size:0.9rem;">
+        {% if search %}
+          <a href="{{ path('app_activite_index', {view:'activites'}) }}"
+             style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.3); text-decoration:none;">✕</a>
+        {% endif %}
+      </div>
+      <button type="submit" style="background:var(--gold); border:none; padding:0.6rem 1.2rem; border-radius:8px; color:var(--ink); font-weight:700; cursor:pointer; font-size:0.85rem; text-transform:uppercase;">Rechercher</button>
+    </form>
+  </div>
+
+  <div class="sort-container">
+    <span class="sort-label">Trier par :</span>
+    <div class="sort-options">
+      {% for label, field in {'Nom':'nom','Lieu':'lieu','Prix':'prix','Durée':'duree','Capacité':'capacite_max','Catégorie':'categorie'} %}
+        <a href="{{ path('app_activite_index', {view:'activites', sort_by: field, direction: (sortBy == field and direction == 'ASC') ? 'DESC' : 'ASC', search: search}) }}"
+           class="sort-pill {% if sortBy == field %}active{% endif %}">
+          {{ label }}{% if sortBy == field %} {{ direction == 'ASC' ? '↑' : '↓' }}{% endif %}
+        </a>
+      {% endfor %}
+      {% if sortBy %}
+        <a href="{{ path('app_activite_index', {view:'activites', search:search}) }}" class="sort-reset" title="Réinitialiser">↺</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<table class="crud-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th style="color:var(--gold);">Nom</th>
+      <th>Lieu</th>
+      <th>Durée</th>
+      <th>Prix</th>
+      <th>Capacité max</th>
+      <th>Catégorie</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for activite in activites %}
+    <tr>
+      <td style="color:rgba(255,255,255,0.3); font-size:0.78rem;">#{{ activite.idActivite }}</td>
+      <td><strong style="color:#fff; font-weight:600;">{{ activite.nom }}</strong></td>
+      <td>{{ activite.lieu ?? '—' }}</td>
+      <td>{{ activite.duree ? activite.duree ~ 'h' : '—' }}</td>
+      <td><strong style="color:var(--gold2);">{{ activite.prix ? activite.prix ~ ' DT' : '—' }}</strong></td>
+      <td>{{ activite.capaciteMax ?? '—' }}</td>
+      <td>
+        {% if activite.categorie %}
+          <span style="background:rgba(232,201,126,0.1); border:1px solid rgba(232,201,126,0.2); border-radius:20px; padding:0.25rem 0.8rem; font-size:0.75rem; color:var(--gold);">{{ activite.categorie }}</span>
+        {% else %}—{% endif %}
+      </td>
+      <td>
+        <div class="crud-actions">
+          <a class="crud-action-btn lux-modal-trigger" data-modal-title="Modifier l'activité"
+             href="{{ path('app_activite_edit', {id: activite.idActivite}) }}">Modifier</a>
+          <form method="post" action="{{ path('app_activite_delete', {id: activite.idActivite}) }}" class="delete-form-custom" style="display:inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_activite_' ~ activite.idActivite) }}">
+            <button type="submit" class="crud-action-btn" style="background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.2); color:#ef4444; cursor:pointer;">Supprimer</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="8" style="text-align:center; padding:4rem; opacity:0.4;">Aucune activité. Cliquez sur « Nouvelle Activité » pour commencer.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{# ═══════════════ INSCRIPTIONS TABLE ═══════════════ #}
+{% else %}
+
+<div class="crud-header-actions" style="margin-bottom:1.5rem;">
+  <div style="display:flex; align-items:center; gap:2rem;">
+    <h2>Inscriptions</h2>
+    <form action="{{ path('app_activite_index') }}" method="get" style="display:flex; gap:0.5rem; align-items:center;">
+      <input type="hidden" name="view" value="inscriptions">
+      <div style="position:relative;">
+        <input type="text" name="insc_search" value="{{ inscSearch }}" placeholder="Rechercher..."
+          style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:0.6rem 1rem; border-radius:8px; color:white; width:260px; font-size:0.9rem;">
+        {% if inscSearch %}
+          <a href="{{ path('app_activite_index', {view:'inscriptions'}) }}"
+             style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.3); text-decoration:none;">✕</a>
+        {% endif %}
+      </div>
+      <button type="submit" style="background:var(--gold); border:none; padding:0.6rem 1.2rem; border-radius:8px; color:var(--ink); font-weight:700; cursor:pointer; font-size:0.85rem; text-transform:uppercase;">Rechercher</button>
+    </form>
+  </div>
+
+  <div class="sort-container">
+    <span class="sort-label">Trier par :</span>
+    <div class="sort-options">
+      {% for label, field in {'Date':'date','Statut':'statut','Participants':'participants','Activité':'activite','Client':'client'} %}
+        <a href="{{ path('app_activite_index', {view:'inscriptions', insc_sort: field, insc_direction: (inscSort == field and inscDirection == 'ASC') ? 'DESC' : 'ASC', insc_search: inscSearch}) }}"
+           class="sort-pill {% if inscSort == field %}active{% endif %}">
+          {{ label }}{% if inscSort == field %} {{ inscDirection == 'ASC' ? '↑' : '↓' }}{% endif %}
+        </a>
+      {% endfor %}
+      {% if inscSort %}
+        <a href="{{ path('app_activite_index', {view:'inscriptions', insc_search:inscSearch}) }}" class="sort-reset" title="Réinitialiser">↺</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<table class="crud-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th style="color:var(--gold);">Activité</th>
+      <th>Date</th>
+      <th>Participants</th>
+      <th>ID Client</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for inscription in inscriptions %}
+    {% set statutColor = inscription.statut == 'Confirmée' ? '#22c55e' : (inscription.statut == 'Annulée' ? '#ef4444' : '#e8c97e') %}
+    <tr>
+      <td style="color:rgba(255,255,255,0.3); font-size:0.78rem;">#{{ inscription.idInscription }}</td>
+      <td><strong style="color:#fff; font-weight:600;">{{ inscription.activite ? inscription.activite.nom : '—' }}</strong></td>
+      <td>{{ inscription.dateActivite ? inscription.dateActivite|date('d/m/Y') : '—' }}</td>
+      <td>{{ inscription.nombreParticipants ?? '—' }}</td>
+      <td>{{ inscription.idClient ?? '—' }}</td>
+      <td>
+        {% if inscription.statut %}
+          <span style="background:{{ statutColor }}1a; border:1px solid {{ statutColor }}40; border-radius:20px; padding:0.25rem 0.8rem; font-size:0.75rem; color:{{ statutColor }}; font-weight:600;">{{ inscription.statut }}</span>
+        {% else %}—{% endif %}
+      </td>
+      <td>
+        <div class="crud-actions">
+          <a class="crud-action-btn lux-modal-trigger" data-modal-title="Modifier l'inscription"
+             href="{{ path('app_inscription_edit', {id: inscription.idInscription}) }}">Modifier</a>
+          <form method="post" action="{{ path('app_inscription_delete', {id: inscription.idInscription}) }}" class="delete-form-custom" style="display:inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_inscription_' ~ inscription.idInscription) }}">
+            <button type="submit" class="crud-action-btn" style="background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.2); color:#ef4444; cursor:pointer;">Supprimer</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" style="text-align:center; padding:4rem; opacity:0.4;">Aucune inscription. Cliquez sur « Nouvelle Inscription » pour commencer.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

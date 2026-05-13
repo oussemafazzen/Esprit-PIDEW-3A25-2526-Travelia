@@ -377,10 +377,15 @@
     {% set confirmedBillets = confirmedBillets|default(0) %}
     {% set billetConfirmationRate = billetConfirmationRate|default(0) %}
 
+    {% set totalActivites = totalActivites|default(0) %}
+    {% set totalInscriptions = totalInscriptions|default(0) %}
+    {% set totalParticipants = totalParticipants|default(0) %}
+
     {% set labels = labels|default(['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUI', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC']) %}
     {% set chartData = chartData|default([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) %}
     {% set recentReservations = recentReservations|default([]) %}
-    {% set recentBillets = recentBillets|default([]) %}
+    {% set recentBillets = recentBillets|default([])
+    %}
 
     <aside class="app-sidebar">
         <div class="logo-area">
@@ -400,7 +405,7 @@
                 <span class="nav-icon">✈</span>
                 Billets
             </a>
-            <a href="#" class="nav-item">
+            <a href="{{ path('app_activite_index') }}" class="nav-item">
                 <span class="nav-icon">🛶</span>
                 Activités
             </a>
@@ -473,6 +478,25 @@
                 <div class="stat-label">Billets confirmés</div>
                 <div class="stat-value">{{ confirmedBillets }}</div>
                 <div class="stat-trend">{{ billetConfirmationRate }}% de confirmation</div>
+            </div>
+
+            {# ── Activités stats ── #}
+            <div class="stat-card" style="border-color:rgba(232,201,126,0.15);">
+                <div class="stat-label">🛶 Activités</div>
+                <div class="stat-value">{{ totalActivites }}</div>
+                <div class="stat-trend"><a href="{{ path('app_activite_index') }}" style="color:var(--gold); text-decoration:none;">Gérer les activités →</a></div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(232,201,126,0.15);">
+                <div class="stat-label">📋 Inscriptions activités</div>
+                <div class="stat-value">{{ totalInscriptions }}</div>
+                <div class="stat-trend"><a href="{{ path('app_activite_index', {view:'inscriptions'}) }}" style="color:var(--gold); text-decoration:none;">Voir les inscriptions →</a></div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(232,201,126,0.15);">
+                <div class="stat-label">👥 Total participants</div>
+                <div class="stat-value">{{ totalParticipants }}</div>
+                <div class="stat-trend" style="color:var(--gold);">Participants aux activités</div>
             </div>
 
             <div class="overview-section">

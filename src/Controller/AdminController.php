@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Repository\ActiviteRepository;
 use App\Repository\BilletRepository;
 use App\Repository\ClientRepository;
+use App\Repository\InscriptionActiviteRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +21,9 @@ final class AdminController extends AbstractController
     public function dashboard(
         Request $request,
         ReservationRepository $reservationRepository,
-        BilletRepository $billetRepository
+        BilletRepository $billetRepository,
+        ActiviteRepository $activiteRepository,
+        InscriptionActiviteRepository $inscriptionRepository
     ): Response {
         $reservations = $reservationRepository->findAll();
         $billets = $billetRepository->findAll();
@@ -220,6 +224,11 @@ final class AdminController extends AbstractController
 
         $recentBillets = array_slice($filteredBillets, 0, 10);
 
+        // Activity stats for dashboard
+        $totalActivites    = count($activiteRepository->findAll());
+        $totalInscriptions = count($inscriptionRepository->findAll());
+        $totalParticipants = $inscriptionRepository->totalParticipants();
+
         return $this->render('admin/dashboard.html.twig', [
             'totalRevenue' => $totalRevenue,
 
@@ -232,6 +241,10 @@ final class AdminController extends AbstractController
             'pendingBillets' => $pendingBillets,
             'confirmedBillets' => $confirmedBillets,
             'billetConfirmationRate' => $billetConfirmationRate,
+
+            'totalActivites'    => $totalActivites,
+            'totalInscriptions' => $totalInscriptions,
+            'totalParticipants' => $totalParticipants,
 
             'labels' => $labels,
             'chartData' => $chartData,

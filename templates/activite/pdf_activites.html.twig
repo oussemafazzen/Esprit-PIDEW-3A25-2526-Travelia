@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: DejaVu Sans, sans-serif; color: #1a1a2e; font-size: 11px; margin: 0; padding: 20px; }
+  h1 { font-size: 22px; font-weight: 300; color: #c9a050; border-bottom: 2px solid #c9a050; padding-bottom: 8px; margin-bottom: 4px; }
+  .meta { color: #888; font-size: 9px; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th { background: #1a1a2e; color: #c9a050; padding: 8px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 10px; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: bold; background: #f0e6c8; color: #9a7b2f; }
+</style>
+</head>
+<body>
+  <h1>Liste des Activités — Travelia</h1>
+  <div class="meta">Généré le {{ generatedAt|date('d/m/Y à H:i') }} • {{ activites|length }} activité(s)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Nom</th><th>Lieu</th><th>Durée</th><th>Prix (DT)</th><th>Capacité max</th><th>Catégorie</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for a in activites %}
+      <tr>
+        <td>#{{ a.idActivite }}</td>
+        <td><strong>{{ a.nom }}</strong></td>
+        <td>{{ a.lieu ?? '—' }}</td>
+        <td>{{ a.duree ? a.duree ~ 'h' : '—' }}</td>
+        <td>{{ a.prix ? a.prix ~ ' DT' : '—' }}</td>
+        <td>{{ a.capaciteMax ?? '—' }}</td>
+        <td>{% if a.categorie %}<span class="badge">{{ a.categorie }}</span>{% else %}—{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

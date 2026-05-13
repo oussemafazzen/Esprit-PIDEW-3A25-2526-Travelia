@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: DejaVu Sans, sans-serif; color: #1a1a2e; font-size: 11px; margin: 0; padding: 20px; }
+  h1 { font-size: 22px; font-weight: 300; color: #c9a050; border-bottom: 2px solid #c9a050; padding-bottom: 8px; margin-bottom: 4px; }
+  .meta { color: #888; font-size: 9px; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th { background: #1a1a2e; color: #c9a050; padding: 8px 10px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 7px 10px; border-bottom: 1px solid #eee; font-size: 10px; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  .badge-confirm { background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:bold; }
+  .badge-annule  { background:#fee2e2; color:#b91c1c; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:bold; }
+  .badge-attente { background:#fef9c3; color:#92400e; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:bold; }
+</style>
+</head>
+<body>
+  <h1>Inscriptions Activités — Travelia</h1>
+  <div class="meta">Généré le {{ generatedAt|date('d/m/Y à H:i') }} • {{ inscriptions|length }} inscription(s)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Activité</th><th>Date</th><th>Participants</th><th>ID Client</th><th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in inscriptions %}
+      {% set badgeClass = i.statut == 'Confirmée' ? 'badge-confirm' : (i.statut == 'Annulée' ? 'badge-annule' : 'badge-attente') %}
+      <tr>
+        <td>#{{ i.idInscription }}</td>
+        <td><strong>{{ i.activite ? i.activite.nom : '—' }}</strong></td>
+        <td>{{ i.dateActivite ? i.dateActivite|date('d/m/Y') : '—' }}</td>
+        <td>{{ i.nombreParticipants ?? '—' }}</td>
+        <td>{{ i.idClient ?? '—' }}</td>
+        <td>{% if i.statut %}<span class="{{ badgeClass }}">{{ i.statut }}</span>{% else %}—{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
